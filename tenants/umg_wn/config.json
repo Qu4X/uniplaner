@@ -1,0 +1,32 @@
+{
+  "id": "umg_wn",
+  "name": "Uniwersytet Morski w Gdyni — Wydział Nawigacyjny",
+  "institution": "UMG",
+  "faculty": "WN",
+  "locale": "pl",
+  "tally_form_id": "mZ0L9d",
+  "forms": {
+    "lecture": { "label": "Wykład", "badge_color": "#3b82f6" },
+    "exercise": { "label": "Ćwiczenia", "badge_color": "#10b981" },
+    "lab": { "label": "Laboratorium", "badge_color": "#ec4899" },
+    "simulator": { "label": "Symulator", "badge_color": "#f59e0b" },
+    "project": { "label": "Projekt", "badge_color": "#8b5cf6" },
+    "seminar": { "label": "Seminarium", "badge_color": "#6366f1" },
+    "elective": { "label": "Fakultet", "badge_color": "#14b8a6" },
+    "other": { "label": "Inne", "badge_color": "#64748b" }
+  },
+  "features": {
+    "cross_reference": true,
+    "free_rooms": true,
+    "events": true,
+    "lesson_hiding": {
+      "enabled": true,
+      "bulk_electives_dialog": false
+    },
+    "voting": {
+      "enabled": false,
+      "threshold": 10
+    },
+    "changelog": true
+  }
+}

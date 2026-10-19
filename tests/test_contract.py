@@ -140,6 +140,35 @@ class TestContractV1(unittest.TestCase):
         self.assertTrue(ok)
         self.assertEqual(errors, [])
 
+    def test_validate_umg_wn_tenant_config(self):
+        import json
+        import os
+        config_path = os.path.join(os.path.dirname(__file__), "..", "tenants", "umg_wn", "config.json")
+        self.assertTrue(os.path.exists(config_path), "Brak pliku tenants/umg_wn/config.json")
+
+        with open(config_path, "r", encoding="utf-8") as f:
+            cfg = json.load(f)
+
+        self.assertEqual(cfg.get("id"), "umg_wn")
+        self.assertTrue(isinstance(cfg.get("name"), str))
+        self.assertEqual(cfg.get("locale"), "pl")
+        self.assertIn("forms", cfg)
+        for expected_form in ("lecture", "exercise", "lab", "simulator"):
+            self.assertIn(expected_form, cfg["forms"])
+            self.assertIn("label", cfg["forms"][expected_form])
+            self.assertIn("badge_color", cfg["forms"][expected_form])
+
+        features = cfg.get("features", {})
+        self.assertTrue(features.get("cross_reference"))
+        self.assertTrue(features.get("free_rooms"))
+        self.assertTrue(features.get("events"))
+        self.assertTrue(isinstance(features.get("lesson_hiding"), dict))
+        self.assertTrue(features["lesson_hiding"].get("enabled"))
+        self.assertTrue(isinstance(features.get("voting"), dict))
+        self.assertFalse(features["voting"].get("enabled"))
+        self.assertTrue(features.get("changelog"))
+
 
 if __name__ == "__main__":
     unittest.main()
+
