@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://planwn.pl/schemas/schedule.schema.json",
+  "title": "GroupSchedule",
+  "description": "Harmonogram zajęć dla pojedynczej grupy",
+  "type": "object",
+  "required": ["schema_version", "plan_id", "group", "generated_at", "lessons"],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "plan_id": {
+      "type": "string"
+    },
+    "group": {
+      "type": "string"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "lessons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "subject",
+          "start_time",
+          "end_time",
+          "duration_minutes",
+          "form",
+          "occurrences"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "raw_subject": {
+            "type": ["string", "null"]
+          },
+          "teacher": {
+            "type": ["string", "null"]
+          },
+          "room": {
+            "type": ["string", "null"]
+          },
+          "remote": {
+            "type": "boolean",
+            "default": false
+          },
+          "form": {
+            "type": "string",
+            "enum": [
+              "lecture",
+              "exercise",
+              "lab",
+              "simulator",
+              "project",
+              "seminar",
+              "elective",
+              "other"
+            ]
+          },
+          "hideable": {
+            "type": "boolean",
+            "default": false
+          },
+          "day_of_week": {
+            "type": ["string", "null"],
+            "enum": ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN", null]
+          },
+          "start_time": {
+            "type": "string",
+            "pattern": "^\\d{2}:\\d{2}$"
+          },
+          "end_time": {
+            "type": "string",
+            "pattern": "^\\d{2}:\\d{2}$"
+          },
+          "duration_minutes": {
+            "type": "integer",
+            "minimum": 15
+          },
+          "start_date": {
+            "type": ["string", "null"],
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "interval_weeks": {
+            "type": "integer",
+            "default": 1
+          },
+          "half_semester": {
+            "type": ["integer", "null"],
+            "enum": [1, 2, null]
+          },
+          "groups": {
+            "type": "array",
+            "items": { "type": "string" },
+            "default": []
+          },
+          "occurrences": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["date", "number", "of"],
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                "number": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "of": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

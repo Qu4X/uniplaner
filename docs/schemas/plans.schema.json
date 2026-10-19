@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://planwn.pl/schemas/plans.schema.json",
+  "title": "PlansIndex",
+  "description": "Indeks dostępnych planów zajęć tenanta",
+  "type": "object",
+  "required": ["schema_version", "tenant", "generated_at", "plans"],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "tenant": {
+      "type": "string"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "plans": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "institution",
+          "faculty",
+          "name",
+          "study_mode",
+          "version_token",
+          "groups"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "institution": { "type": "string" },
+          "faculty": { "type": "string" },
+          "name": { "type": "string" },
+          "study_mode": {
+            "type": "string",
+            "enum": ["full_time", "part_time"]
+          },
+          "semester_number": {
+            "type": ["integer", "null"]
+          },
+          "version_token": { "type": "string" },
+          "published_at": {
+            "type": ["string", "null"]
+          },
+          "archived": {
+            "type": "boolean",
+            "default": false
+          },
+          "groups": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://planwn.pl/schemas/tenant-config.schema.json",
+  "title": "TenantConfig",
+  "description": "Konfiguracja tenanta (uczelni/wydziału)",
+  "type": "object",
+  "required": ["id", "name", "locale", "forms", "features"],
+  "properties": {
+    "id": { "type": "string" },
+    "name": { "type": "string" },
+    "institution": { "type": "string" },
+    "faculty": { "type": "string" },
+    "locale": { "type": "string", "default": "pl" },
+    "tally_form_id": { "type": ["string", "null"] },
+    "forms": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["label"],
+        "properties": {
+          "label": { "type": "string" },
+          "badge_color": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "features": {
+      "type": "object",
+      "required": ["cross_reference", "free_rooms", "events", "lesson_hiding", "voting", "changelog"],
+      "properties": {
+        "cross_reference": { "type": "boolean" },
+        "free_rooms": { "type": "boolean" },
+        "events": { "type": "boolean" },
+        "lesson_hiding": {
+          "type": "object",
+          "required": ["enabled"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "bulk_electives_dialog": { "type": "boolean", "default": false }
+          },
+          "additionalProperties": false
+        },
+        "voting": {
+          "type": "object",
+          "required": ["enabled"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "threshold": { "type": "integer", "default": 10 },
+            "supabase_url": { "type": "string" },
+            "supabase_anon_key": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "changelog": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

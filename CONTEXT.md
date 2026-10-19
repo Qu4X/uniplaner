@@ -124,8 +124,26 @@ _Avoid_: Baza danych, indeks globalny.
 Weryfikacja dostępności sal w czasie rzeczywistym na podstawie zagregowanych danych ze wszystkich planów uczelni (`getRoomOccupancyAt`), z uwzględnieniem cykli, przerw i zamian rektorskich.
 _Avoid_: Wolne sale, sprawdzarka sal.
 
+## Architektura Modularna i Multi-Tenant
+
+**Tenant (Najemca / Instancja wydziałowa)**:
+Wyodrębniona konfiguracja dla konkretnego wydziału lub uczelni (`tenants/<tenant_id>/`), zawierająca własny kalendarz akademicki, motyw wizualny, konfigurację włączonych modułów (`config.json`) oraz manifest PWA.
+_Avoid_: Klient, profil, środowisko.
+
+**Adapter źródła (Schedule Source Adapter)**:
+Moduł w katalogu `sources/` implementujący protokół `ScheduleSource`, odpowiedzialny za pobieranie i parsowanie surowych danych o planach zajęć z konkretnego systemu uczelni (np. HTML Arktur, arkusz Excel z SharePoint, PDF) i mapowanie ich na ujednolicony format `RawLesson`.
+_Avoid_: Scraper, parser uczelniany, importer.
+
+**Token wersji (Version Token)**:
+Ciąg znaków jednoznacznie identyfikujący wersję publikacji planu (np. data i numer wersji z Arktura lub skrót SHA-256 pobranego pliku arkusza), wykorzystywany przez detektor zmian (`core/detector.py`) do unikania zbędnego przetwarzania niezmienionych planów.
+_Avoid_: Hash, wersja planu, znacznik czasu.
+
+**Wystąpienie (Occurrence)**:
+Pojedyncza, konkretna data kalendarzowa (`date`), w której odbywa się dane spotkanie z siatki, wyliczona deterministycznie przez backend (`core/expand.py`) z przypisanym numerem spotkania (`number` z `of`), z uwzględnieniem dni wolnych, przerw dydaktycznych i zarządzeń rektorskich o zamianach dni.
+_Avoid_: Zjazd, termin lekcji, slot datowany.
+
 ## Granice systemu / Scope & Constraints
 
 **Zakres wydziałowy (Faculty Scope)**:
-Wydział Nawigacyjny (WN) — jedyny zakres: Aplikacja celowo obsługuje wyłącznie plany Wydziału Nawigacyjnego UMG. Grupy innych wydziałów (np. INF, M, E z Wydziału Elektrycznego lub Mechanicznego) znajdują się poza systemem arktur.umg.edu.pl/planyzaj/ i są celowo pomijane w scraperze.
-_Avoid_: Wszystkie wydziały, ogólnouczelniany, brak grup WE/WM jako błąd.
+W architekturze modularnej każdy tenant definiuje swój własny zakres. Dla tenanta `umg_wn` obsługiwane są wyłącznie plany Wydziału Nawigacyjnego UMG z systemu arktur.umg.edu.pl/planyzaj/. Nowe wydziały lub uczelnie są dołączane jako niezależne tenanty i adaptery bez ingerencji w kod źródłowy istniejących wydziałów.
+_Avoid_: Hardkodowanie wydziałów w silniku, brak grup WE/WM jako błąd.
