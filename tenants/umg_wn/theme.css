@@ -1,9 +1,14 @@
 /**
  * UMG Wydział Nawigacyjny — Theme CSS
- * Barwy morskie (granat nawigacyjny i złote akcenty).
+ * Barwy morskie (granat nawigacyjny i błękitne akcenty).
  */
 
 :root {
+  --brand-navy: #0e2a47;
+  --brand-primary: #1a4f8a;
+  --brand-primary-hover: #133c69;
+  --brand-accent: #0284c7;
+  --brand-light: #e0f2fe;
   --primary-color: #0d233a;
   --primary-hover: #163656;
   --primary-light: #e8eef5;
@@ -13,6 +18,11 @@
 }
 
 [data-theme="dark"] {
+  --brand-navy: #0b1828;
+  --brand-primary: #2563eb;
+  --brand-primary-hover: #1d4ed8;
+  --brand-accent: #38bdf8;
+  --brand-light: #1e293b;
   --primary-color: #1e3a5f;
   --primary-hover: #254b7a;
   --primary-light: #112236;

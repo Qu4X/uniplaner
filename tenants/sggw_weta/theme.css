@@ -4,6 +4,11 @@
  */
 
 :root {
+  --brand-navy: #144518;
+  --brand-primary: #1b5e20;
+  --brand-primary-hover: #2e7d32;
+  --brand-accent: #2e7d32;
+  --brand-light: #e8f5e9;
   --primary-color: #1b5e20;
   --primary-hover: #2e7d32;
   --primary-light: #e8f5e9;
@@ -13,6 +18,11 @@
 }
 
 [data-theme="dark"] {
+  --brand-navy: #0f2912;
+  --brand-primary: #2e7d32;
+  --brand-primary-hover: #388e3c;
+  --brand-accent: #66bb6a;
+  --brand-light: #1b3820;
   --primary-color: #2e7d32;
   --primary-hover: #388e3c;
   --primary-light: #1b3820;

@@ -1,6 +1,6 @@
 /**
- * Timeline Module (web/js/timeline.js)
- * Obliczenia kalendarzowe, tygodnie akademickie i strefy czasowe.
+ * Timeline & Plan Metadata Module (web/js/timeline.js)
+ * Obliczenia kalendarzowe, tygodnie akademickie, deklinacje dni tygodnia oraz parsowanie i sortowanie planów.
  * Zgodny z UMD: działa w przeglądarce i środowisku Node.js.
  */
 (function (root, factory) {
@@ -12,6 +12,59 @@
 })(typeof self !== "undefined" ? self : this, function () {
   "use strict";
 
+  const DNI_TYGODNIA = ["PON", "WT", "ŚR", "CZW", "PT", "SOB", "ND"];
+  const DNI_MAP_SUNDAY_FIRST = ["ND", "PON", "WT", "ŚR", "CZW", "PT", "SOB"];
+
+  const DNI_PELNE = {
+    PON: "Poniedziałek",
+    WT: "Wtorek",
+    ŚR: "Środa",
+    CZW: "Czwartek",
+    PT: "Piątek",
+    SOB: "Sobota",
+    ND: "Niedziela"
+  };
+
+  const DNI_DOPELNIACZ = {
+    PON: "poniedziałku",
+    WT: "wtorku",
+    ŚR: "środy",
+    CZW: "czwartku",
+    PT: "piątku",
+    SOB: "soboty",
+    ND: "niedzieli"
+  };
+
+  const DNI_MIEJSCOWNIK = {
+    PON: "poniedziałek",
+    WT: "wtorek",
+    ŚR: "środę",
+    CZW: "czwartek",
+    PT: "piątek",
+    SOB: "sobotę",
+    ND: "niedzielę"
+  };
+
+  const DNI_PRZYMIOTNIK = {
+    PON: "poniedziałkowym",
+    WT: "wtorkowym",
+    ŚR: "środowym",
+    CZW: "czwartkowym",
+    PT: "piątkowym",
+    SOB: "sobotnim",
+    ND: "niedzielnym"
+  };
+
+  const DNI_PRZYIMEK = {
+    PON: "w",
+    WT: "we",
+    ŚR: "w",
+    CZW: "w",
+    PT: "w",
+    SOB: "w",
+    ND: "w"
+  };
+
   const _engineModule =
     typeof module === "object" && module.exports
       ? require("./schedule-engine.js")
@@ -19,6 +72,24 @@
       ? window.ScheduleEngine
       : null;
   const _defaultEngine = _engineModule ? _engineModule.create({}) : null;
+
+  function loadDefaultCalendar() {
+    if (typeof module === "object" && module.exports) {
+      try {
+        return require("../../data/academic_calendar.json");
+      } catch (_) {}
+    }
+    return { daySwaps: {}, holidays: {}, periods: [] };
+  }
+
+  function getTodayCode(respectMode = false, daysView = "workdays") {
+    const dayIdx = new Date().getDay();
+    const code = DNI_MAP_SUNDAY_FIRST[dayIdx];
+    if (respectMode && daysView === "workdays" && (code === "SOB" || code === "ND")) {
+      return "PON";
+    }
+    return code;
+  }
 
   function formatDateISO(date) {
     if (_defaultEngine) return _defaultEngine.formatDateISO(date);
@@ -108,7 +179,6 @@
     let earliestMonday = null;
     let latestMonday = null;
 
-    // Obsługa formatu legacy oraz kontraktu v1 (lessons list)
     if (Array.isArray(scheduleData.lessons)) {
       for (const lesson of scheduleData.lessons) {
         const occs = lesson.occurrences || [];
@@ -152,11 +222,236 @@
     return 0;
   }
 
+  function normalizePlansData(raw) {
+    if (!raw || typeof raw !== "object") return { plans: {} };
+    if (Array.isArray(raw.plans)) {
+      const map = {};
+      for (const entry of raw.plans) {
+        if (!entry || !entry.id) continue;
+        map[String(entry.id)] = {
+          ...entry,
+          name: entry.name || entry.id,
+          clean_name: entry.clean_name || entry.name || entry.id,
+          version: entry.version || entry.version_token || null,
+          mode: entry.mode || (entry.study_mode === "part_time" ? "niestacjonarne" : "stacjonarne"),
+          groups: Array.isArray(entry.groups) ? entry.groups : []
+        };
+      }
+      return {
+        ...raw,
+        last_updated: raw.last_updated || (raw.generated_at ? String(raw.generated_at).slice(0, 16).replace("T", " ") : ""),
+        plans_list: raw.plans,
+        plans: map
+      };
+    }
+    return raw;
+  }
+
+  function parsePlanInfo(rawName) {
+    if (!rawName) return { cleanName: "", publishedAt: null, version: null, isSecondDegree: false };
+
+    const dateMatch = rawName.match(/\[(\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2})?)\]/);
+    const publishedAt = dateMatch ? dateMatch[1] : null;
+
+    const verMatch = rawName.match(/\b(?:wer\.?|wersja)\s*(\d+)\b/i);
+    const version = verMatch ? `wer. ${verMatch[1]}` : null;
+
+    const isSecondDegree = /drugiego\s+stopnia|II\s+st/i.test(rawName);
+
+    let clean = rawName.replace(/^\[[^\]]+\]\s*/, "");
+    clean = clean.replace(/\s*\[modyfikowany\]\s*/gi, " ");
+    clean = clean.replace(/\s*\[\d{4}-\d{2}-\d{2}[^\]]*\]\s*(?:wer\.?\s*\d+)?/gi, "");
+    clean = clean.replace(/\s*\b(?:wer\.?|wersja)\s*\d+\b/gi, "");
+    clean = clean.replace(/\s*(?:pierwszego|drugiego)\s+stopnia\s*/gi, " ");
+    clean = clean.replace(/\s*(?:I|II)\s+stopnia\s*/gi, " ");
+    clean = clean.replace(/\s+/g, " ").trim();
+
+    if (isSecondDegree && !clean.includes("II st")) {
+      clean += " (II st.)";
+    }
+
+    return {
+      cleanName: clean || rawName,
+      publishedAt,
+      version,
+      isSecondDegree
+    };
+  }
+
+  function getShortPlanCode(planName, planObj = null) {
+    if (!planName && !planObj) return "";
+    const raw = planName || (planObj && planObj.name) || "";
+    const prefixMatch = raw.match(/^\[([^\]]+)\]/);
+    if (prefixMatch) {
+      return prefixMatch[1].trim();
+    }
+    const info = parsePlanInfo(raw);
+    const majorWords = info.cleanName
+      .replace(/\bsem\.?\s*\d+.*$/i, "")
+      .replace(/\([^)]*\)/g, "")
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+
+    let major = "";
+    if (majorWords.length === 1) {
+      major = majorWords[0].slice(0, 3).toUpperCase();
+    } else if (majorWords.length > 1) {
+      major = majorWords
+        .map((w) => (/^(i|w|z|na|do)$/i.test(w) ? w.toLowerCase() : w[0].toUpperCase()))
+        .join("");
+    } else if (planObj && planObj.faculty) {
+      major = planObj.faculty;
+    }
+
+    const semMatch = raw.match(/sem\.?\s*(\d+)/i);
+    const semNum = semMatch ? semMatch[1] : (planObj && planObj.semester_number ? String(planObj.semester_number) : "");
+    const sem = semNum ? `Sem ${semNum}` : "";
+
+    return [major, sem].filter(Boolean).join(" ");
+  }
+
+  function getPlanSortKey(planObj) {
+    const name = (planObj && (planObj.clean_name || planObj.name)) || "";
+    const planInfo = parsePlanInfo(name);
+    const cleanName = planInfo.cleanName || name;
+
+    const semMatch = cleanName.match(/\bsem\.?\s*(\d+)\b/i);
+    const semNum = semMatch ? parseInt(semMatch[1], 10) : (planObj && planObj.semester_number ? Number(planObj.semester_number) : 0);
+
+    const isSecondDegree = Boolean(planInfo.isSecondDegree || /\bII\s+st/i.test(cleanName) || /drugiego\s+stopnia/i.test(name));
+    const degreeOrder = isSecondDegree ? 2 : 1;
+
+    const major = cleanName
+      .replace(/\bsem\.?\s*\d+\b/gi, "")
+      .replace(/\(II\s+st\.?\)/gi, "")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    return {
+      major,
+      degreeOrder,
+      semNum,
+      cleanName
+    };
+  }
+
+  function comparePlans(planA, planB) {
+    const keyA = getPlanSortKey(planA);
+    const keyB = getPlanSortKey(planB);
+
+    const majorCmp = keyA.major.localeCompare(keyB.major, "pl", { sensitivity: "base" });
+    if (majorCmp !== 0) return majorCmp;
+
+    if (keyA.degreeOrder !== keyB.degreeOrder) {
+      return keyA.degreeOrder - keyB.degreeOrder;
+    }
+
+    if (keyA.semNum !== keyB.semNum) {
+      return keyA.semNum - keyB.semNum;
+    }
+
+    const cleanCmp = keyA.cleanName.localeCompare(keyB.cleanName, "pl", { sensitivity: "base" });
+    if (cleanCmp !== 0) return cleanCmp;
+
+    const verA = planA.version || "";
+    const verB = planB.version || "";
+    return verA.localeCompare(verB, "pl", { numeric: true });
+  }
+
+  function getDuplicatePlanInfo(planId, state) {
+    if (!planId || !state || !state.plansData || !state.plansData.plans || !state.plansData.plans[planId]) {
+      return null;
+    }
+
+    const currentPlan = state.plansData.plans[planId];
+    const currentInfo = parsePlanInfo(currentPlan.clean_name || currentPlan.name);
+    const cleanName = currentInfo.cleanName;
+    if (!cleanName) return null;
+
+    if (state.dismissedDuplicatePlans && state.dismissedDuplicatePlans.has(cleanName)) {
+      return null;
+    }
+
+    const currentMode = state.studyMode || "stacjonarne";
+    const alternatives = [];
+
+    for (const [id, plan] of Object.entries(state.plansData.plans)) {
+      if (id === String(planId)) continue;
+      const planMode = plan.mode || (plan.name && /niestacjonarne/i.test(plan.name) ? "niestacjonarne" : "stacjonarne");
+      if (planMode !== currentMode) continue;
+
+      const info = parsePlanInfo(plan.clean_name || plan.name);
+      if (info.cleanName === cleanName) {
+        alternatives.push({
+          id,
+          version: plan.version || info.version,
+          publishedAt: plan.published_at || info.publishedAt,
+          name: plan.name,
+          cleanName: info.cleanName
+        });
+      }
+    }
+
+    if (alternatives.length === 0) return null;
+
+    return {
+      planId,
+      cleanName,
+      currentVersion: currentPlan.version || currentInfo.version,
+      currentPublishedAt: currentPlan.published_at || currentInfo.publishedAt,
+      alternatives
+    };
+  }
+
+  function getPlanModificationInfo(planId, state) {
+    if (!planId || !state || !state.plansData || !state.plansData.plans || !state.plansData.plans[planId]) {
+      return null;
+    }
+
+    const plan = state.plansData.plans[planId];
+    if (!plan.modification || !plan.modification.is_modifying) {
+      return null;
+    }
+
+    const planInfo = parsePlanInfo(plan.clean_name || plan.name);
+    const cleanName = planInfo.cleanName;
+    if (!cleanName) return null;
+
+    if (state.dismissedModificationPlans && state.dismissedModificationPlans.has(cleanName)) {
+      return null;
+    }
+
+    return {
+      planId,
+      cleanName,
+      currentVersion: plan.version || planInfo.version,
+      draftVersion: plan.modification.draft_version,
+      draftDate: plan.modification.draft_date
+    };
+  }
+
   return {
+    DNI_TYGODNIA,
+    DNI_MAP_SUNDAY_FIRST,
+    DNI_PELNE,
+    DNI_DOPELNIACZ,
+    DNI_MIEJSCOWNIK,
+    DNI_PRZYMIOTNIK,
+    DNI_PRZYIMEK,
+    loadDefaultCalendar,
+    getTodayCode,
     formatDateISO,
     getMonday,
     getWeekMonday,
     getAcademicInfoForWeek,
-    resolveInitialWeekOffset
+    resolveInitialWeekOffset,
+    normalizePlansData,
+    parsePlanInfo,
+    getShortPlanCode,
+    getPlanSortKey,
+    comparePlans,
+    getDuplicatePlanInfo,
+    getPlanModificationInfo
   };
 });

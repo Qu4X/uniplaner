@@ -120,6 +120,22 @@ def setup_dist_directories():
         shutil.copy2(events_src, events_dst)
         logger.info("Copied events.json -> dist/data/")
 
+    # Copy tenant_config.json and append tenant theme.css for umg_wn
+    try:
+        from core.build import load_tenant_config
+        umg_cfg = load_tenant_config("umg_wn", repo_root=BASE_DIR)
+        with open(os.path.join(DATA_DIR, "tenant_config.json"), "w", encoding="utf-8") as tf:
+            json.dump(umg_cfg, tf, ensure_ascii=False, indent=2)
+        theme_src = os.path.join(BASE_DIR, "tenants", "umg_wn", "theme.css")
+        style_dst = os.path.join(DIST_DIR, "style.css")
+        if os.path.exists(theme_src) and os.path.exists(style_dst):
+            with open(theme_src, "r", encoding="utf-8") as thf:
+                theme_css = thf.read()
+            with open(style_dst, "a", encoding="utf-8") as sf:
+                sf.write("\n/* Tenant Theme Overrides */\n" + theme_css)
+    except Exception as e:
+        logger.warning(f"Could not sync tenant_config.json / theme.css: {e}")
+
 
 def regenerate_all_ics():
     """Regeneruje pliki .ics w dist/calendars/ na podstawie istniejących plików JSON w dist/data/schedules/"""
@@ -151,58 +167,6 @@ def regenerate_all_ics():
     return count
 
 
-def parse_plan_title(raw_name: str) -> dict:
-    """
-    Ekstraktuje czystą nazwę kierunku/semestru, datę publikacji oraz wersję planu.
-    Przykład: '[TM Sem 1] Transport Morski pierwszego stopnia sem. 1 [2026-09-14 17:55] wer. 2'
-              -> {'clean_name': 'Transport Morski sem. 1', 'published_at': '2026-09-14 17:55', 'version': 'wer. 2'}
-    """
-    if not raw_name:
-        return {"clean_name": "", "published_at": None, "version": None}
-
-    # Data publikacji [YYYY-MM-DD HH:MM] lub [YYYY-MM-DD]
-    date_match = re.search(r'\[(\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2})?)\]', raw_name)
-    published_at = date_match.group(1) if date_match else None
-
-    # Wersja planu (np. wer. 1, wer. 2)
-    ver_match = re.search(r'\b(?:wer\.?|wersja)\s*(\d+)\b', raw_name, re.IGNORECASE)
-    version = f"wer. {ver_match.group(1)}" if ver_match else None
-
-    is_second_degree = bool(re.search(r'drugiego\s+stopnia|II\s+st', raw_name, re.IGNORECASE))
-
-    # Oczyszczenie nazwy
-    clean = re.sub(r'^\[[^\]]+\]\s*', '', raw_name)
-    clean = re.sub(r'\s*\[modyfikowany\]\s*', ' ', clean, flags=re.IGNORECASE)
-    clean = re.sub(r'\s*\[\d{4}-\d{2}-\d{2}[^\]]*\]\s*(?:wer\.?\s*\d+)?', '', clean, flags=re.IGNORECASE)
-    clean = re.sub(r'\s*\b(?:wer\.?|wersja)\s*\d+\b', '', clean, flags=re.IGNORECASE)
-    clean = re.sub(r'\s*(?:pierwszego|drugiego)\s+stopnia\s*', ' ', clean, flags=re.IGNORECASE)
-    clean = re.sub(r'\s*(?:I|II)\s+stopnia\s*', ' ', clean, flags=re.IGNORECASE)
-    clean = re.sub(r'\s+', ' ', clean).strip()
-
-    if is_second_degree and "II st" not in clean:
-        clean += " (II st.)"
-
-    return {
-        "clean_name": clean or raw_name,
-        "published_at": published_at,
-        "version": version
-    }
-
-
-def get_plan_sort_key(plan_entry: tuple) -> tuple:
-    """Klucz naturalnego sortowania planów: kierunek alfabetycznie, stopień, semestr rosnąco."""
-    pid, pdata = plan_entry
-    name = (pdata.get("clean_name") or pdata.get("name") or "") if isinstance(pdata, dict) else str(pdata)
-    m_sem = re.search(r'\bsem\.?\s*(\d+)\b', name, re.IGNORECASE)
-    sem_num = int(m_sem.group(1)) if m_sem else 0
-    is_second_degree = bool(re.search(r'drugiego\s+stopnia|II\s+st', name, re.IGNORECASE))
-    degree_order = 2 if is_second_degree else 1
-    clean_major = re.sub(r'\bsem\.?\s*\d+\b', '', name, flags=re.IGNORECASE)
-    clean_major = re.sub(r'\(II\s+st\.?\)', '', clean_major, flags=re.IGNORECASE)
-    clean_major = re.sub(r'\s+', ' ', clean_major).strip()
-    return (clean_major.lower(), degree_order, sem_num, name)
-
-
 def load_curriculum_forms(path: Optional[str] = None) -> Dict[str, Any]:
     """Wczytuje oficjalny katalog siatek godzinowych WN z wn_curriculum_forms.json"""
     target_path = path or CURRICULUM_FORMS_PATH
@@ -227,7 +191,12 @@ def load_forms_manual(path: Optional[str] = None) -> Dict[str, Any]:
     return {}
 
 
-from sources.umg_wn.arktur_html import normalize_form_key, classify_lesson_form
+from sources.umg_wn.arktur_html import (
+    normalize_form_key,
+    classify_lesson_form,
+    parse_plan_title,
+    get_plan_sort_key,
+)
 
 
 def build(limit=None, plan_ids=None, filter_query=None):

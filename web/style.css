@@ -3559,4 +3559,128 @@ iframe[src*="tally.so"] {
   content-visibility: auto;
   contain-intrinsic-size: auto 50px;
 }
+
+/* Contract v1 Form Color Classes (Multi-tenant) */
+.lesson-card.form-lecture,
+.legend-item.form-lecture { border-left-color: var(--form-lecture-color, var(--form-wyklad)); }
+.legend-dot.form-lecture { background-color: var(--form-lecture-color, var(--form-wyklad)); }
+.legend-item.form-lecture .legend-abbr { color: var(--form-lecture-color, var(--form-wyklad)); }
+
+.lesson-card.form-exercise,
+.legend-item.form-exercise { border-left-color: var(--form-exercise-color, var(--form-cwiczenia)); }
+.legend-dot.form-exercise { background-color: var(--form-exercise-color, var(--form-cwiczenia)); }
+.legend-item.form-exercise .legend-abbr { color: var(--form-exercise-color, var(--form-cwiczenia)); }
+
+.lesson-card.form-lab,
+.legend-item.form-lab { border-left-color: var(--form-lab-color, var(--form-laboratorium)); }
+.legend-dot.form-lab { background-color: var(--form-lab-color, var(--form-laboratorium)); }
+.legend-item.form-lab .legend-abbr { color: var(--form-lab-color, var(--form-laboratorium)); }
+
+.lesson-card.form-practical,
+.legend-item.form-practical { border-left-color: var(--form-practical-color, var(--form-symulator)); }
+.legend-dot.form-practical { background-color: var(--form-practical-color, var(--form-symulator)); }
+.legend-item.form-practical .legend-abbr { color: var(--form-practical-color, var(--form-symulator)); }
+
+.lesson-card.form-clinical,
+.legend-item.form-clinical { border-left-color: var(--form-clinical-color, #db2777); }
+.legend-dot.form-clinical { background-color: var(--form-clinical-color, #db2777); }
+.legend-item.form-clinical .legend-abbr { color: var(--form-clinical-color, #db2777); }
+
+.lesson-card.form-seminar,
+.legend-item.form-seminar { border-left-color: var(--form-seminar-color, #6366f1); }
+.legend-dot.form-seminar { background-color: var(--form-seminar-color, #6366f1); }
+.legend-item.form-seminar .legend-abbr { color: var(--form-seminar-color, #6366f1); }
+
+.lesson-card.form-project,
+.legend-item.form-project { border-left-color: var(--form-project-color, #8b5cf6); }
+.legend-dot.form-project { background-color: var(--form-project-color, #8b5cf6); }
+.legend-item.form-project .legend-abbr { color: var(--form-project-color, #8b5cf6); }
+
+.lesson-card.form-other,
+.legend-item.form-other { border-left-color: var(--form-other-color, #0d9488); }
+.legend-dot.form-other { background-color: var(--form-other-color, #0d9488); }
+.legend-item.form-other .legend-abbr { color: var(--form-other-color, #0d9488); }
+
+/* Bulk Electives Modal (#electives-dialog) & Voting Modal (#propose-dialog) */
+.electives-list,
+.proposals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 360px;
+  overflow-y: auto;
+  margin: 0.75rem 0;
+}
+
+.elective-item,
+.proposal-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.elective-item label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  cursor: pointer;
+  flex: 1;
+  font-size: 0.88rem;
+}
+
+.elective-item input[type="checkbox"] {
+  margin-top: 0.2rem;
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--brand-primary);
+}
+
+.propose-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+  margin-top: 0.65rem;
+}
+
+.propose-form-grid .full-width {
+  grid-column: 1 / -1;
+}
+
+.propose-form-grid label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.propose-form-grid input,
+.propose-form-grid select,
+.propose-form-grid textarea {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+}
+
+.proposal-overlay-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-success);
+}
+
 

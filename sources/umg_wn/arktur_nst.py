@@ -10,8 +10,8 @@ from typing import List, Dict, Optional, Any
 from datetime import datetime
 
 from sources.base import ScheduleSource, PlanMetadata, RawLesson
-from nst_client import fetch_nst_plans_list, download_pdf_file
-from nst_parser import parse_pdf_schedule
+from sources.umg_wn.nst_client import fetch_nst_plans_list, download_pdf_file
+from sources.umg_wn.nst_parser import parse_pdf_schedule
 
 logger = logging.getLogger("umg_arktur_nst")
 

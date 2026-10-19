@@ -207,6 +207,18 @@
             <use href="#icon-meeting_room"></use>
           </svg> <span class="btn-text">Znajdź wolną salę</span>
         </button>
+        <button id="electives-btn" class="btn-secondary btn-sidebar-tool hidden" title="Wybierz przedmioty do wyboru (fakultety)"
+          style="margin-top: 0.5rem;">
+          <svg class="icon btn-tool-icon" aria-hidden="true">
+            <use href="#icon-visibility"></use>
+          </svg> <span class="btn-text">Wybierz fakultety</span>
+        </button>
+        <button id="propose-btn" class="btn-secondary btn-sidebar-tool hidden" title="Propozycje zmian i głosowanie nad planem"
+          style="margin-top: 0.5rem;">
+          <svg class="icon btn-tool-icon" aria-hidden="true">
+            <use href="#icon-swap_horiz"></use>
+          </svg> <span class="btn-text">Propozycje zmian</span>
+        </button>
         <button id="events-btn" class="btn-secondary btn-sidebar-tool" title="Wydarzenia"
           style="margin-top: 0.5rem;">
           <svg class="icon btn-tool-icon" aria-hidden="true">
@@ -286,7 +298,7 @@
         <summary class="legend-summary">
           <span class="legend-summary-left">
             <span class="legend-summary-title">Legenda form zajęć</span>
-            <span class="legend-preview" aria-hidden="true">
+            <span class="legend-preview" id="legend-preview-dots" aria-hidden="true">
               <span class="legend-dot form-wyklad" title="Wykład"></span>
               <span class="legend-dot form-cwiczenia" title="Ćwiczenia"></span>
               <span class="legend-dot form-laboratorium" title="Laboratorium"></span>
@@ -295,7 +307,7 @@
           </span>
           <span class="legend-chevron" aria-hidden="true">›</span>
         </summary>
-        <ul class="legend-list" role="list">
+        <ul class="legend-list" id="legend-items-list" role="list">
           <li class="legend-item form-wyklad">
             <span class="legend-label"><strong class="legend-abbr">W</strong> Wykład</span>
           </li>
@@ -322,6 +334,7 @@
         <span id="hidden-lessons-banner-text">Ukryto terminy zajęć</span>
       </div>
       <div class="hidden-lessons-banner-actions">
+        <button type="button" id="banner-electives-btn" class="btn-banner-action hidden">Wybierz fakultety</button>
         <button type="button" id="preview-hidden-lessons-btn" class="btn-banner-action">Pokaż ukryte</button>
         <button type="button" id="restore-hidden-lessons-btn" class="btn-banner-action primary">Przywróć wszystkie</button>
         <button type="button" id="dismiss-hidden-lessons-btn" class="btn-banner-close" aria-label="Zamknij informację" title="Zamknij informację">✕</button>
@@ -606,6 +619,108 @@
     </div>
   </dialog>
 
+  <!-- Bulk Electives Selection Modal (Przedmioty do wyboru / Fakultety) -->
+  <dialog id="electives-dialog" class="modal-dialog" aria-labelledby="electives-modal-title" closedby="any">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-header-titles">
+          <span class="cross-modal-badge">Personalizacja</span>
+          <h3 id="electives-modal-title">Wybierz przedmioty (fakultety)</h3>
+        </div>
+        <button id="close-electives-modal" class="btn-close" aria-label="Zamknij">
+          <svg class="icon" aria-hidden="true">
+            <use href="#icon-close"></use>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="calendar-intro">
+          Zaznacz zajęcia do wyboru (fakultety lub podgrupy), na które uczęszczasz. Odznaczone pozycje zostaną ukryte w Twoim planie.
+        </p>
+        <div id="electives-list" class="electives-list"></div>
+        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+          <button type="button" id="save-electives-btn" class="btn-primary" style="flex: 1; justify-content: center;">Zapisz wybór</button>
+          <button type="button" id="select-all-electives-btn" class="btn-secondary">Zaznacz wszystkie</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Community Voting / Proposal Modal (Propozycje zmian w planie) -->
+  <dialog id="propose-dialog" class="modal-dialog" aria-labelledby="propose-modal-title" closedby="any">
+    <div class="modal-content modal-content-large">
+      <div class="modal-header">
+        <div class="modal-header-titles">
+          <span class="cross-modal-badge">Społeczność</span>
+          <h3 id="propose-modal-title">Propozycje zmian w planie</h3>
+        </div>
+        <button id="close-propose-modal" class="btn-close" aria-label="Zamknij">
+          <svg class="icon" aria-hidden="true">
+            <use href="#icon-close"></use>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="calendar-intro">
+          Głosuj na zgłoszone przez studentów korekty terminów zajęć lub zaproponuj zmianę dla wybranej grupy. Po osiągnięciu progu głosów korekta nakładana jest na widok planu.
+        </p>
+        <div id="proposals-list" class="proposals-list"></div>
+        <details style="margin-top: 1rem; border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;">
+          <summary style="cursor: pointer; font-weight: 600; font-size: 0.9rem; color: var(--brand-primary);">+ Zgłoś nową propozycję zmiany</summary>
+          <form id="propose-form" class="propose-form-grid">
+            <div class="full-width">
+              <label for="propose-lesson-select">Zajęcia z planu grupy:</label>
+              <select id="propose-lesson-select" required></select>
+            </div>
+            <div>
+              <label for="propose-scope-select">Zakres zmiany:</label>
+              <select id="propose-scope-select">
+                <option value="single">Jednorazowa (konkretna data)</option>
+                <option value="permanent">Stała (cały semestr)</option>
+              </select>
+            </div>
+            <div id="propose-target-date-wrap">
+              <label for="propose-target-date">Data zajęć:</label>
+              <input type="date" id="propose-target-date">
+            </div>
+            <div>
+              <label for="propose-new-day">Nowy dzień tygodnia:</label>
+              <select id="propose-new-day">
+                <option value="MON">Poniedziałek</option>
+                <option value="TUE">Wtorek</option>
+                <option value="WED">Środa</option>
+                <option value="THU">Czwartek</option>
+                <option value="FRI">Piątek</option>
+                <option value="SAT">Sobota</option>
+                <option value="SUN">Niedziela</option>
+              </select>
+            </div>
+            <div>
+              <label for="propose-new-room">Nowa sala (opcjonalnie):</label>
+              <input type="text" id="propose-new-room" placeholder="np. Aula II">
+            </div>
+            <div>
+              <label for="propose-new-start">Nowa godzina od:</label>
+              <input type="time" id="propose-new-start" required value="08:00">
+            </div>
+            <div>
+              <label for="propose-new-end">Nowa godzina do:</label>
+              <input type="time" id="propose-new-end" required value="09:30">
+            </div>
+            <div class="full-width">
+              <label for="propose-reason">Powód / komentarz (np. informacja od prowadzącego):</label>
+              <textarea id="propose-reason" rows="2" maxlength="500" placeholder="Krótki opis zmiany..."></textarea>
+            </div>
+            <div class="full-width">
+              <button type="submit" id="submit-propose-btn" class="btn-primary" style="width: 100%; justify-content: center;">Wyślij propozycję</button>
+              <p id="propose-feedback" class="subtext hidden" style="margin-top: 0.4rem; text-align: center;"></p>
+            </div>
+          </form>
+        </details>
+      </div>
+    </div>
+  </dialog>
+
   <!-- About App Modal -->
   <dialog id="about-modal" class="modal-dialog about-modal-dialog" aria-labelledby="about-modal-title" closedby="any">
     <div class="modal-content">
@@ -622,11 +737,11 @@
       </div>
       <div class="modal-body about-modal-body">
         <div class="about-card about-intro">
-          <div class="about-logo-badge">
+          <div class="about-logo-badge" id="about-logo-badge">
             <img src="planwn.svg" width="36" height="36" alt="" aria-hidden="true" style="display: block;">
           </div>
           <div>
-            <h4 style="margin: 0; font-size: 1.1rem; color: var(--text-primary);">Plan Zajęć WN</h4>
+            <h4 id="about-app-name" style="margin: 0; font-size: 1.1rem; color: var(--text-primary);">Plan Zajęć WN</h4>
             <p class="subtext" style="margin: 0.2rem 0 0; color: var(--text-muted); font-size: 0.8rem;">Wersja PWA v3.11.0
             </p>
           </div>
@@ -638,7 +753,7 @@
               <h5>O projekcie</h5>
               <p>Aplikacja powstała dla studentów jako szybka, responsywna i działająca offline alternatywa dla
                 klasycznego
-                planu. Dane pobierane są z publicznie dostępnego oficjalnego systemu <a
+                planu. Dane pobierane są z publicznie dostępnego oficjalnego systemu <a id="about-source-link"
                   href="https://arktur.umg.edu.pl/planyzaj/strpza5.php" target="_blank"
                   rel="noopener">arktur.umg.edu.pl</a>
                 i odświeżane codziennie rano.</p>
@@ -648,7 +763,7 @@
               <h5>Zgłaszanie uwag i błędów</h5>
               <p>Zauważyłeś brakującą grupę, błąd w planie lub masz pomysł na nową funkcję?</p>
               <div class="about-action-buttons">
-                <a href="https://tally.so/r/2E2vNj" target="_blank" rel="noopener" data-tally-open="2E2vNj"
+                <a id="about-tally-btn" href="https://tally.so/r/2E2vNj" target="_blank" rel="noopener" data-tally-open="2E2vNj"
                   data-tally-layout="modal" data-tally-emoji-animation="none" data-tally-auto-close="5000"
                   class="btn-about-action btn-tally-action">
                   <svg class="icon" style="width: 1.15em; height: 1.15em;" aria-hidden="true">
@@ -682,17 +797,16 @@
           </div>
         </div>
 
-        <div class="about-disclaimer">
+        <div class="about-disclaimer" id="about-disclaimer">
           <h6>Zastrzeżenie prawne (Nota prawna)</h6>
           <p>Niniejsza aplikacja jest <strong>nieoficjalnym projektem studenckim / open-source</strong> i nie jest w
-            żaden sposób powiązana, autoryzowana, wspierana ani prowadzona przez <strong>Uniwersytet Morski w Gdyni
+            żaden sposób powiązana, autoryzowana, wspierana ani prowadzona przez <strong id="about-disclaimer-inst">Uniwersytet Morski w Gdyni
               (UMG)</strong>.</p>
-          <p>Wszelkie nazwy własne, skróty i znaki (w tym „UMG” oraz „Uniwersytet Morski w Gdyni”) należą do ich
+          <p id="about-disclaimer-trademark">Wszelkie nazwy własne, skróty i znaki (w tym „UMG” oraz „Uniwersytet Morski w Gdyni”) należą do ich
             prawnych właścicieli i zostały użyte wyłącznie w celach informacyjnych oraz identyfikacyjnych.</p>
-          <p>Dane pobierane są ze stron publicznych (<a href="https://arktur.umg.edu.pl/planyzaj/strpza5.php"
+          <p>Dane pobierane są ze stron publicznych (<a id="about-disclaimer-link" href="https://arktur.umg.edu.pl/planyzaj/strpza5.php"
               target="_blank" rel="noopener">arktur.umg.edu.pl</a>). Aplikacja udostępniana jest na zasadzie <em>„tak
-              jak jest” (as is)</em>. Jedynym oficjalnym i wiążącym źródłem informacji są komunikaty uczelni, dziekanaty
-            oraz system arktur.umg.edu.pl. Autor nie ponosi odpowiedzialności za ewentualne skutki wynikające z
+              jak jest” (as is)</em>. Jedynym oficjalnym i wiążącym źródłem informacji są komunikaty uczelni oraz dziekanaty. Autor nie ponosi odpowiedzialności za ewentualne skutki wynikające z
             rozbieżności lub opóźnień w synchronizacji.</p>
         </div>
       </div>
@@ -700,7 +814,7 @@
   </dialog>
 
   <footer class="app-footer">
-    <p>Projekt nieoficjalny dla studentów WN. Dane pobierane z <a href="https://arktur.umg.edu.pl/planyzaj/strpza5.php"
+    <p><span id="footer-faculty-label">Projekt nieoficjalny dla studentów WN.</span> Dane pobierane z <a id="footer-source-link" href="https://arktur.umg.edu.pl/planyzaj/strpza5.php"
         target="_blank" rel="noopener">arktur.umg.edu.pl</a>. • <button id="footer-about-btn" class="footer-link-btn">O
         aplikacji</button></p>
   </footer>

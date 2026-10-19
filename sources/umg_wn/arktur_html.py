@@ -10,8 +10,8 @@ import logging
 from typing import List, Dict, Optional, Any
 
 from sources.base import ScheduleSource, PlanMetadata, RawLesson
-from arktur_client import pobierz_liste_planow, pobierz_surowy_plan
-from arktur_parser import przetworz_plan_na_grafike, _wspolny_parser_html
+from sources.umg_wn.arktur_client import pobierz_liste_planow, pobierz_surowy_plan
+from sources.umg_wn.arktur_parser import przetworz_plan_na_grafike, _wspolny_parser_html
 from models import LessonDict
 
 logger = logging.getLogger("umg_arktur_html")
@@ -45,6 +45,53 @@ def normalize_form_key(text: str) -> str:
         return ""
     text = text.strip().lower()
     return re.sub(r'[\s\-_.,/()]+', ' ', text).strip()
+
+
+def parse_plan_title(raw_name: str) -> dict:
+    """
+    Ekstraktuje czystą nazwę kierunku/semestru, datę publikacji oraz wersję planu UMG.
+    """
+    if not raw_name:
+        return {"clean_name": "", "published_at": None, "version": None}
+
+    date_match = re.search(r'\[(\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2})?)\]', raw_name)
+    published_at = date_match.group(1) if date_match else None
+
+    ver_match = re.search(r'\b(?:wer\.?|wersja)\s*(\d+)\b', raw_name, re.IGNORECASE)
+    version = f"wer. {ver_match.group(1)}" if ver_match else None
+
+    is_second_degree = bool(re.search(r'drugiego\s+stopnia|II\s+st', raw_name, re.IGNORECASE))
+
+    clean = re.sub(r'^\[[^\]]+\]\s*', '', raw_name)
+    clean = re.sub(r'\s*\[modyfikowany\]\s*', ' ', clean, flags=re.IGNORECASE)
+    clean = re.sub(r'\s*\[\d{4}-\d{2}-\d{2}[^\]]*\]\s*(?:wer\.?\s*\d+)?', '', clean, flags=re.IGNORECASE)
+    clean = re.sub(r'\s*\b(?:wer\.?|wersja)\s*\d+\b', '', clean, flags=re.IGNORECASE)
+    clean = re.sub(r'\s*(?:pierwszego|drugiego)\s+stopnia\s*', ' ', clean, flags=re.IGNORECASE)
+    clean = re.sub(r'\s*(?:I|II)\s+stopnia\s*', ' ', clean, flags=re.IGNORECASE)
+    clean = re.sub(r'\s+', ' ', clean).strip()
+
+    if is_second_degree and "II st" not in clean:
+        clean += " (II st.)"
+
+    return {
+        "clean_name": clean or raw_name,
+        "published_at": published_at,
+        "version": version
+    }
+
+
+def get_plan_sort_key(plan_entry: tuple) -> tuple:
+    """Klucz naturalnego sortowania planów: kierunek alfabetycznie, stopień, semestr rosnąco."""
+    pid, pdata = plan_entry
+    name = (pdata.get("clean_name") or pdata.get("name") or "") if isinstance(pdata, dict) else str(pdata)
+    m_sem = re.search(r'\bsem\.?\s*(\d+)\b', name, re.IGNORECASE)
+    sem_num = int(m_sem.group(1)) if m_sem else 0
+    is_second_degree = bool(re.search(r'drugiego\s+stopnia|II\s+st', name, re.IGNORECASE))
+    degree_order = 2 if is_second_degree else 1
+    clean_major = re.sub(r'\bsem\.?\s*\d+\b', '', name, flags=re.IGNORECASE)
+    clean_major = re.sub(r'\(II\s+st\.?\)', '', clean_major, flags=re.IGNORECASE)
+    clean_major = re.sub(r'\s+', ' ', clean_major).strip()
+    return (clean_major.lower(), degree_order, sem_num, name)
 
 
 def classify_lesson_form(

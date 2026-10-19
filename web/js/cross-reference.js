@@ -273,31 +273,42 @@
   const CACHE_KEY = "umg_cross_ref_cache";
   const SCHEMA_VERSION = 1;
 
+  function _resolveCrossRefCacheKey(tenantId = null) {
+    let tid = tenantId;
+    if (!tid && typeof window !== "undefined" && window.AppState && typeof window.AppState.getTenantId === "function") {
+      tid = window.AppState.getTenantId();
+    }
+    if (!tid || tid === "umg_wn") return CACHE_KEY;
+    return `${tid}_cross_ref_cache`;
+  }
+
   const DataService = {
     CACHE_KEY,
     SCHEMA_VERSION,
+    getCacheKey: _resolveCrossRefCacheKey,
 
     async load(options = {}) {
       const storage = options.storage || (typeof localStorage !== "undefined" ? localStorage : null);
       const fetchFn = options.fetchFn || (typeof fetch !== "undefined" ? fetch : null);
       const url = options.url || "data/cross_reference.json";
       const onUpdate = options.onUpdate || null;
+      const cacheKey = _resolveCrossRefCacheKey(options.tenantId);
 
       let cachedData = null;
 
       if (storage) {
         try {
-          const raw = storage.getItem(CACHE_KEY);
+          const raw = storage.getItem(cacheKey);
           if (raw) {
             const parsed = JSON.parse(raw);
             if (parsed && parsed.schemaVersion === SCHEMA_VERSION && parsed.data) {
               cachedData = parsed.data;
             } else {
-              storage.removeItem(CACHE_KEY);
+              storage.removeItem(cacheKey);
             }
           }
         } catch (e) {
-          try { storage.removeItem(CACHE_KEY); } catch (_) {}
+          try { storage.removeItem(cacheKey); } catch (_) {}
         }
       }
 
@@ -309,7 +320,7 @@
           const fresh = await res.json();
           if (fresh && storage) {
             try {
-              storage.setItem(CACHE_KEY, JSON.stringify({
+              storage.setItem(cacheKey, JSON.stringify({
                 schemaVersion: SCHEMA_VERSION,
                 cachedAt: Date.now(),
                 data: fresh

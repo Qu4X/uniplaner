@@ -1,6 +1,6 @@
 /**
  * Lesson Hiding Module (modules/lesson-hiding.js)
- * Zarządza ukrywaniem podgrup i fakultetów w harmonogramie.
+ * Zarządza ukrywaniem podgrup i fakultetów w harmonogramie oraz modalem masowego wyboru fakultetów (#electives-dialog).
  * Zgodny z UMD: działa w przeglądarce i środowisku Node.js.
  */
 (function (root, factory) {
@@ -11,6 +11,15 @@
   }
 })(typeof self !== "undefined" ? self : this, function () {
   "use strict";
+
+  function escapeHtml(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
 
   function isHideableLesson(lesson) {
     if (!lesson) return false;
@@ -43,7 +52,6 @@
 
   function getLessonSlotKey(lesson, day = null) {
     if (!lesson) return "";
-    // Kontrakt v1: jeśli lekcja ma stałe ID wyliczone deterministycznie
     if (lesson.id && typeof lesson.id === "string") {
       return lesson.id;
     }
@@ -200,6 +208,61 @@
     return `${count} ukrytych terminów zajęć`;
   }
 
+  function renderElectivesModalList(elements, appState) {
+    const listEl = elements && elements.electivesList;
+    if (!listEl) return;
+    const electives = getElectiveLessons(appState && appState.scheduleData);
+    if (electives.length === 0) {
+      listEl.innerHTML = `<p class="subtext" style="text-align: center; padding: 1.25rem 0;">W aktualnie wybranym planie grupy brak przedmiotów oznaczonych jako fakultety lub podgrupy do ukrycia.</p>`;
+      return;
+    }
+
+    const hiddenSet = (appState && appState.hiddenLessonSlots) || new Set();
+    const dayLabels = { MON: "Pon", TUE: "Wt", WED: "Śr", THU: "Czw", FRI: "Pt", SAT: "Sob", SUN: "Nd" };
+    listEl.innerHTML = electives
+      .map((l) => {
+        const key = getLessonSlotKey(l, l.day_of_week || l.sourceDay || "PON");
+        const isChecked = !hiddenSet.has(key);
+        const subj = escapeHtml(l.subject || l.przedmiot || "Zajęcia");
+        const dayStr = escapeHtml(dayLabels[l.day_of_week] || l.day_of_week || l.sourceDay || "");
+        const timeStr = escapeHtml(l.godziny || `${l.start_time || ""} - ${l.end_time || ""}`);
+        const roomStr = l.room || l.sala ? ` • ${escapeHtml(l.room || l.sala)}` : "";
+        return `
+          <div class="elective-item">
+            <label>
+              <input type="checkbox" class="elective-checkbox" data-slot-key="${escapeHtml(key)}" ${isChecked ? "checked" : ""}>
+              <div>
+                <strong>${subj}</strong>
+                <div class="subtext" style="font-size: 0.78rem;">${dayStr} ${timeStr}${roomStr}</div>
+              </div>
+            </label>
+          </div>
+        `;
+      })
+      .join("");
+  }
+
+  function openElectivesModal(elements, appState) {
+    const dialog = elements && elements.electivesDialog;
+    if (!dialog) return;
+    renderElectivesModalList(elements, appState);
+    if (typeof dialog.showModal === "function") {
+      dialog.showModal();
+    } else {
+      dialog.classList.remove("hidden");
+    }
+  }
+
+  function closeElectivesModal(elements) {
+    const dialog = elements && elements.electivesDialog;
+    if (!dialog) return;
+    if (typeof dialog.close === "function") {
+      dialog.close();
+    } else {
+      dialog.classList.add("hidden");
+    }
+  }
+
   return {
     isHideableLesson,
     getLessonSlotKey,
@@ -212,6 +275,9 @@
     restoreAllHiddenLessonSlots,
     getElectiveLessons,
     applyBulkElectivesSelection,
-    formatHiddenCount
+    formatHiddenCount,
+    renderElectivesModalList,
+    openElectivesModal,
+    closeElectivesModal
   };
 });

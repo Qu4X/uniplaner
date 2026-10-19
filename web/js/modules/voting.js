@@ -1,7 +1,7 @@
 /**
  * voting.js — Moduł propozycji i społecznego głosowania nad zmianami planu (ES/UMD).
  * Integracja z bazą Supabase: zgłaszanie przeniesień zajęć, oddawanie głosów,
- * oraz aplikowanie zatwierdzonych propozycji (overlay) w runtime.
+ * aplikowanie zatwierdzonych propozycji (overlay) w runtime oraz obsługa modala #propose-dialog.
  */
 
 (function (root, factory) {
@@ -12,6 +12,15 @@
   }
 })(typeof self !== "undefined" ? self : this, function () {
   "use strict";
+
+  function escapeHtml(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
 
   function generateUUID() {
     if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
@@ -122,7 +131,6 @@
       }
       if (!doFetch) throw new Error("Brak funkcji fetch");
 
-      // Anon payload constraint (RLS check: status='pending' and votes_count=0)
       const payload = {
         tenant_id: proposalData.tenant_id,
         plan_id: proposalData.plan_id,
@@ -186,7 +194,6 @@
       });
 
       if (!res.ok && res.status !== 409) {
-        // 409 Conflict = already voted, which is acceptable
         const text = await res.text();
         throw new Error(`Błąd oddawania głosu (HTTP ${res.status}): ${text}`);
       }
@@ -220,23 +227,14 @@
       return true;
     },
 
-    /**
-     * Aplikuje zatwierdzone propozycje na dane planu (Contract v1) przed renderowaniem.
-     * @param {Object} scheduleData - Obiekt planu grupy { plan_id, group, lessons: [...] }
-     * @param {Array} proposals - Tablica pobranych propozycji
-     * @param {string|null} currentPlanVersionToken - Aktualny token wersji planu
-     * @returns {Object} Sklonowany i zmodyfikowany obiekt scheduleData
-     */
     applyProposalOverlay(scheduleData, proposals, currentPlanVersionToken = null) {
       if (!scheduleData || !Array.isArray(scheduleData.lessons) || !Array.isArray(proposals)) {
         return scheduleData;
       }
 
-      // Klonujemy obiekt, aby nie mutować wejścia
       const cloned = JSON.parse(JSON.stringify(scheduleData));
       const approvedProposals = proposals.filter((p) => {
         if (p.status !== "approved") return false;
-        // Wygaszanie propozycji: jeśli propozycja ma token wersji, a plan ma inny token, ignorujemy
         if (p.plan_version_token && currentPlanVersionToken && p.plan_version_token !== currentPlanVersionToken) {
           return false;
         }
@@ -248,7 +246,6 @@
         if (!lesson) continue;
 
         if (prop.scope === "permanent") {
-          // Zmiana stała (dla całego semestru)
           lesson.day_of_week = prop.new_day_of_week;
           lesson.start_time = prop.new_start_time;
           lesson.end_time = prop.new_end_time;
@@ -259,7 +256,6 @@
             reason: prop.reason
           };
 
-          // Aktualizujemy occurrences jeśli istnieją
           if (Array.isArray(lesson.occurrences)) {
             lesson.occurrences.forEach((occ) => {
               occ.start_time = prop.new_start_time;
@@ -268,14 +264,11 @@
             });
           }
         } else if (prop.scope === "single" && prop.target_date) {
-          // Zmiana jednorazowa dla konkretnej daty
           if (Array.isArray(lesson.occurrences)) {
             const occIdx = lesson.occurrences.findIndex((o) => o.date === prop.target_date);
             if (occIdx !== -1) {
-              // Usuwamy to wystąpienie z oryginalnej lekcji
               lesson.occurrences.splice(occIdx, 1);
 
-              // Tworzymy blok zajęć jednorazowych z nowym dniem/godziną (zgodny z Contract v1)
               const singleLesson = {
                 ...JSON.parse(JSON.stringify(lesson)),
                 id: `${lesson.id}_override_${prop.target_date}`,
@@ -308,6 +301,90 @@
       }
 
       return cloned;
+    },
+
+    renderProposalsList(elements, appState) {
+      const listEl = elements && elements.proposalsList;
+      if (!listEl) return;
+
+      const proposals = (appState && Array.isArray(appState.proposals)) ? appState.proposals : [];
+      const threshold = (appState && appState.tenantConfig && appState.tenantConfig.features && appState.tenantConfig.features.voting && appState.tenantConfig.features.voting.threshold) || 10;
+
+      if (proposals.length === 0) {
+        listEl.innerHTML = `<p class="subtext" style="text-align: center; padding: 1rem 0;">Brak zgłoszonych propozycji zmian dla aktualnie wybranej grupy.</p>`;
+        return;
+      }
+
+      const dayLabels = { MON: "Pon", TUE: "Wt", WED: "Śr", THU: "Czw", FRI: "Pt", SAT: "Sob", SUN: "Nd" };
+      listEl.innerHTML = proposals
+        .map((p) => {
+          const isApproved = p.status === "approved";
+          const statusBadge = isApproved
+            ? `<span class="proposal-overlay-badge">✓ Zatwierdzona (${p.votes_count || 0}/${threshold})</span>`
+            : `<span class="subtext">Głosy: <strong>${p.votes_count || 0} / ${threshold}</strong></span>`;
+          const scopeLabel = p.scope === "permanent" ? "Stała (cały semestr)" : `Jednorazowa (${escapeHtml(p.target_date || "")})`;
+          const newDay = dayLabels[p.new_day_of_week] || p.new_day_of_week || "";
+          return `
+            <div class="proposal-item" data-proposal-id="${escapeHtml(p.id)}">
+              <div>
+                <strong>${escapeHtml(p.subject || "Zajęcia")}</strong>
+                <div class="subtext" style="font-size: 0.8rem;">
+                  ${scopeLabel} → <strong>${escapeHtml(newDay)} ${escapeHtml(p.new_start_time)}–${escapeHtml(p.new_end_time)}</strong>${p.new_room ? ` (${escapeHtml(p.new_room)})` : ""}
+                </div>
+                ${p.reason ? `<div class="subtext" style="font-size: 0.76rem; font-style: italic;">„${escapeHtml(p.reason)}”</div>` : ""}
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                ${statusBadge}
+                <button type="button" class="btn-secondary btn-vote-proposal" data-proposal-id="${escapeHtml(p.id)}" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">👍 Popieram</button>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    },
+
+    populateProposeLessonSelect(elements, appState) {
+      const sel = elements && elements.proposeLessonSelect;
+      if (!sel) return;
+      sel.innerHTML = "";
+      const lessons = (appState && appState.scheduleData && Array.isArray(appState.scheduleData.lessons))
+        ? appState.scheduleData.lessons
+        : [];
+      if (lessons.length === 0) {
+        sel.innerHTML = `<option value="">Wybierz najpierw plan i grupę...</option>`;
+        return;
+      }
+      const dayLabels = { MON: "Pon", TUE: "Wt", WED: "Śr", THU: "Czw", FRI: "Pt", SAT: "Sob", SUN: "Nd" };
+      for (const l of lessons) {
+        if (!l || !l.id) continue;
+        const opt = document.createElement("option");
+        opt.value = l.id;
+        const dayStr = dayLabels[l.day_of_week] || l.day_of_week || "";
+        opt.textContent = `${l.subject || l.przedmiot} (${dayStr} ${l.start_time}–${l.end_time})`;
+        sel.appendChild(opt);
+      }
+    },
+
+    openProposeModal(elements, appState) {
+      const dialog = elements && elements.proposeDialog;
+      if (!dialog) return;
+      this.renderProposalsList(elements, appState);
+      this.populateProposeLessonSelect(elements, appState);
+      if (typeof dialog.showModal === "function") {
+        dialog.showModal();
+      } else {
+        dialog.classList.remove("hidden");
+      }
+    },
+
+    closeProposeModal(elements) {
+      const dialog = elements && elements.proposeDialog;
+      if (!dialog) return;
+      if (typeof dialog.close === "function") {
+        dialog.close();
+      } else {
+        dialog.classList.add("hidden");
+      }
     }
   };
 
