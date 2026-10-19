@@ -140,6 +140,10 @@ const _ScheduleRender = (typeof ScheduleRender !== "undefined")
   ? ScheduleRender
   : (typeof require !== "undefined" ? require("./js/render.js") : null);
 
+const _VotingModule = (typeof VotingModule !== "undefined")
+  ? VotingModule
+  : (typeof require !== "undefined" ? require("./js/modules/voting.js") : null);
+
 const savedDaysView = typeof localStorage !== "undefined"
   ? (localStorage.getItem("umg_days_view") || (localStorage.getItem("umg_show_weekends") === "true" ? "all" : "workdays"))
   : "workdays";
@@ -2483,6 +2487,7 @@ if (typeof module !== "undefined" && module.exports) {
     restoreAllHiddenLessonSlots,
     togglePreviewHiddenLessons,
     updateHiddenLessonsBannerUI,
+    _VotingModule,
     state,
     elements
   };

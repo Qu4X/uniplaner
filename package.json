@@ -4,10 +4,11 @@
   "description": "Nowoczesny, responsywny plan zajęć dla studentów Wydziału Nawigacyjnego Uniwersytetu Morskiego w Gdyni",
   "private": true,
   "scripts": {
-    "test": "node tests/test_calendar.js && node tests/test_cross_reference.js && node tests/test_schedule_engine.js && node tests/test_events.js",
+    "test": "node tests/test_calendar.js && node tests/test_cross_reference.js && node tests/test_schedule_engine.js && node tests/test_events.js && node tests/test_voting.js",
     "test:calendar": "node tests/test_calendar.js",
     "test:crossref": "node tests/test_cross_reference.js",
     "test:engine": "node tests/test_schedule_engine.js",
-    "test:events": "node tests/test_events.js"
+    "test:events": "node tests/test_events.js",
+    "test:voting": "node tests/test_voting.js"
   }
 }
