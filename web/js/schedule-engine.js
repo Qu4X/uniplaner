@@ -388,8 +388,45 @@ function create(academicCalendar, options = {}) {
 
       // Jeśli status to holiday, break lub exam -> lessons jest zawsze [] (zgodnie z D3)
       if (status === "normal" || status === "daySwap") {
-        // 1. Sprawdź format niestacjonarny: bezpośredni klucz dateISO (np. "2026-10-03")
-        if (rawSchedule && Array.isArray(rawSchedule[dateISO])) {
+        // 0. Sprawdź format Contract v1: lista lessons z wyliczonymi occurrences
+        if (rawSchedule && Array.isArray(rawSchedule.lessons)) {
+          for (const lesson of rawSchedule.lessons) {
+            if (!lesson) continue;
+            let occ = null;
+            if (Array.isArray(lesson.occurrences)) {
+              occ = lesson.occurrences.find(o => o.date === dateISO);
+            }
+            if (occ || scheduleOptions.includeInactive) {
+              const mNum = occ ? (occ.index != null ? occ.index : (occ.number != null ? occ.number : 1)) : 0;
+              const total = occ ? (occ.total != null ? occ.total : (occ.of != null ? occ.of : 15)) : 15;
+              const isFin = mNum >= total;
+
+              let slotNum = 0;
+              if (lesson.start_time) {
+                const [sh, sm] = lesson.start_time.split(":").map(Number);
+                slotNum = (sh - 7) * 12 + Math.floor(sm / 5);
+              }
+
+              lessons.push({
+                ...lesson,
+                slot: slotNum,
+                isActive: Boolean(occ),
+                meetingNumber: mNum,
+                totalMeetings: total,
+                isFinalMeeting: isFin,
+                sourceDay: day,
+                lessonDate: dateISO,
+                przedmiot: lesson.subject,
+                raw_przedmiot: lesson.raw_subject || lesson.subject,
+                godziny: `${lesson.start_time} - ${lesson.end_time}`,
+                sala: lesson.room || "brak sali",
+                forma: lesson.type || lesson.form || "",
+                prowadzacy: Array.isArray(lesson.teachers) ? lesson.teachers.join(", ") : (lesson.teacher || "")
+              });
+            }
+          }
+        } else if (rawSchedule && Array.isArray(rawSchedule[dateISO])) {
+          // 1. Sprawdź format niestacjonarny: bezpośredni klucz dateISO (np. "2026-10-03")
           const nstLessons = rawSchedule[dateISO];
           for (let idx = 0; idx < nstLessons.length; idx++) {
             const lesson = nstLessons[idx];
@@ -440,24 +477,54 @@ function create(academicCalendar, options = {}) {
 
         // Obsługa baseDayPreview w dniu zamiany dnia
         if (status === "daySwap") {
-          const originalDaySlots = (rawSchedule && rawSchedule[day]) || {};
-          const originalEntries = Array.isArray(originalDaySlots)
-            ? originalDaySlots.map((item, idx) => [idx, item])
-            : Object.entries(originalDaySlots);
+          if (rawSchedule && Array.isArray(rawSchedule.lessons)) {
+            const DOW_PL_TO_EN = { PON: "MON", WT: "TUE", ŚR: "WED", CZW: "THU", PT: "FRI", SOB: "SAT", ND: "SUN" };
+            const targetDowEn = DOW_PL_TO_EN[day] || day;
+            baseDayPreview = [];
+            for (const lesson of rawSchedule.lessons) {
+              if (lesson.day_of_week === targetDowEn || lesson.day_of_week === day) {
+                let slotNum = 0;
+                if (lesson.start_time) {
+                  const [sh, sm] = lesson.start_time.split(":").map(Number);
+                  slotNum = (sh - 7) * 12 + Math.floor(sm / 5);
+                }
+                baseDayPreview.push({
+                  ...lesson,
+                  slot: slotNum,
+                  isActive: true,
+                  meetingNumber: null,
+                  totalMeetings: 15,
+                  isFinalMeeting: false,
+                  sourceDay: day,
+                  lessonDate: dateISO,
+                  przedmiot: lesson.subject,
+                  godziny: `${lesson.start_time} - ${lesson.end_time}`,
+                  sala: lesson.room || "brak sali",
+                  forma: lesson.type || lesson.form || "",
+                  prowadzacy: Array.isArray(lesson.teachers) ? lesson.teachers.join(", ") : (lesson.teacher || "")
+                });
+              }
+            }
+          } else {
+            const originalDaySlots = (rawSchedule && rawSchedule[day]) || {};
+            const originalEntries = Array.isArray(originalDaySlots)
+              ? originalDaySlots.map((item, idx) => [idx, item])
+              : Object.entries(originalDaySlots);
 
-          baseDayPreview = [];
-          for (const [slotKey, lesson] of originalEntries) {
-            if (!lesson) continue;
-            baseDayPreview.push({
-              ...lesson,
-              slot: parseInt(slotKey) || 0,
-              isActive: true,
-              meetingNumber: null, // semantyka D5: podgląd nie liczy spotkań
-              totalMeetings: lesson.tygodnie || 15,
-              isFinalMeeting: false,
-              sourceDay: day,
-              lessonDate: dateISO
-            });
+            baseDayPreview = [];
+            for (const [slotKey, lesson] of originalEntries) {
+              if (!lesson) continue;
+              baseDayPreview.push({
+                ...lesson,
+                slot: parseInt(slotKey) || 0,
+                isActive: true,
+                meetingNumber: null, // semantyka D5: podgląd nie liczy spotkań
+                totalMeetings: lesson.tygodnie || 15,
+                isFinalMeeting: false,
+                sourceDay: day,
+                lessonDate: dateISO
+              });
+            }
           }
           baseDayPreview.sort((a, b) => a.slot - b.slot);
         }

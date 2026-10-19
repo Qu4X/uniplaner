@@ -218,4 +218,46 @@ assert.strictEqual(engine.resolveBaseDay(""), null);
 assert.strictEqual(engine.resolveBaseDay("invalid-date"), null);
 console.log("✅ [PASS] resolveBaseDay poprawnie rozwiązuje dzień bazowy i zamiany rektorskie.");
 
+// --- Test 15: resolveWeekSchedule — Contract v1 (lessons array z occurrences) ---
+console.log("\n-- Test 15: resolveWeekSchedule — Contract v1 z pre-computed occurrences");
+const contractV1Schedule = {
+  schema_version: 1,
+  plan_id: "wmw_sem_7",
+  group: "gr. 1",
+  lessons: [
+    {
+      id: "sggw_wmw_1",
+      subject: "Badanie zw rzeźnych",
+      subject_code: "BZR",
+      type: "ćwiczenia",
+      teachers: ["dr hab. Kowalski"],
+      room: "Klinika Dużych Zwierząt",
+      day_of_week: "PON",
+      start_time: "08:15",
+      end_time: "10:00",
+      weeks_count: 15,
+      start_date: "2026-10-05",
+      occurrences: [
+        {
+          date: "2026-11-09",
+          index: 5,
+          total: 15,
+          start_time: "08:15",
+          end_time: "10:00",
+          status: "scheduled"
+        }
+      ]
+    }
+  ]
+};
+const v1WeekResult = engine.resolveWeekSchedule(targetMon, contractV1Schedule);
+assert.strictEqual(v1WeekResult["PON"].lessons.length, 1);
+assert.strictEqual(v1WeekResult["PON"].lessons[0].przedmiot, "Badanie zw rzeźnych");
+assert.strictEqual(v1WeekResult["PON"].lessons[0].sala, "Klinika Dużych Zwierząt");
+assert.strictEqual(v1WeekResult["PON"].lessons[0].godziny, "08:15 - 10:00");
+assert.strictEqual(v1WeekResult["PON"].lessons[0].meetingNumber, 5);
+assert.strictEqual(v1WeekResult["PON"].lessons[0].isActive, true);
+console.log("✅ [PASS] resolveWeekSchedule poprawnie obsługuje harmonogramy Contract v1.");
+
 console.log("\n🎉 Wszystkie testy ScheduleEngine zakończone sukcesem (100% PASS)!\n");
+

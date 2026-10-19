@@ -1487,12 +1487,14 @@ function updateDayTabsUI(filteredSchedule = null) {
       }
       const holiday = ACADEMIC_CALENDAR.holidays[dateKey] || null;
 
-      const daySlots = state.scheduleData[sourceDay] || {};
       let hasLessons = false;
       if (!holiday) {
-        if (Array.isArray(state.scheduleData[dateKey])) {
+        if (Array.isArray(state.scheduleData.lessons)) {
+          hasLessons = state.scheduleData.lessons.some(l => l.occurrences && l.occurrences.some(o => o.date === dateKey));
+        } else if (Array.isArray(state.scheduleData[dateKey])) {
           hasLessons = state.scheduleData[dateKey].length > 0;
         } else {
+          const daySlots = state.scheduleData[sourceDay] || {};
           for (const lessonInfo of Object.values(daySlots)) {
             if (isLessonInWeek(lessonInfo, sourceDay, targetMonday)) {
               hasLessons = true;
@@ -1689,10 +1691,19 @@ function renderSchedule() {
     elements.noClassesState.classList.remove("hidden");
 
     let minStartDate = null;
-    for (const d of Object.values(state.scheduleData)) {
-      for (const l of Object.values(d)) {
-        if (l.data_start) {
-          if (!minStartDate || l.data_start < minStartDate) minStartDate = l.data_start;
+    if (Array.isArray(state.scheduleData.lessons)) {
+      for (const l of state.scheduleData.lessons) {
+        const sDate = l.start_date || (l.occurrences && l.occurrences[0] && l.occurrences[0].date);
+        if (sDate) {
+          if (!minStartDate || sDate < minStartDate) minStartDate = sDate;
+        }
+      }
+    } else {
+      for (const d of Object.values(state.scheduleData)) {
+        for (const l of Object.values(d)) {
+          if (l.data_start) {
+            if (!minStartDate || l.data_start < minStartDate) minStartDate = l.data_start;
+          }
         }
       }
     }
