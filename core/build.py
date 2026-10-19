@@ -3,11 +3,17 @@ Główny orchestrator kompilacji statycznej strony planów zajęć (core.build).
 Zapewnia multi-tenantowość, detekcję zmian, fail-safe oraz generowanie JSON i ICS zgodnych z kontraktem v1.
 """
 import os
+import sys
 import re
 import json
 import logging
 from typing import Dict, List, Optional, Any
 from datetime import datetime
+
+# Ensure project root is in sys.path
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
 
 from sources.base import ScheduleSource, PlanMetadata, RawLesson
 from core.contracts import GroupSchedule, Lesson, PlanEntry, PlansIndex
@@ -317,6 +323,31 @@ def build_tenant(
         if os.path.exists(target_style):
             with open(target_style, "a", encoding="utf-8") as sf:
                 sf.write("\n/* Tenant Theme Overrides */\n" + theme_css)
+
+    # Personalizacja index.html pod tenanta
+    index_path = os.path.join(target_dist, "index.html")
+    if os.path.exists(index_path):
+        with open(index_path, "r", encoding="utf-8") as f:
+            html_content = f.read()
+
+        brand_title = config.get("short_name") or config.get("name") or "Plan Zajęć"
+        icon = config.get("icon")
+        theme_col = config.get("theme_color")
+
+        html_content = re.sub(r"<title>.*?</title>", f"<title>{brand_title}</title>", html_content)
+        html_content = re.sub(r"<h1>Plan Zajęć WN</h1>", f"<h1>{brand_title}</h1>", html_content)
+        html_content = re.sub(r'content="Plan UMG"', f'content="{brand_title}"', html_content)
+        if icon:
+            html_content = re.sub(
+                r'<link rel="icon"\s+href="[^"]*">',
+                f'<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>{icon}</text></svg>">',
+                html_content
+            )
+        if theme_col:
+            html_content = re.sub(r'name="theme-color" content=".*?"', f'name="theme-color" content="{theme_col}"', html_content)
+
+        with open(index_path, "w", encoding="utf-8") as f:
+            f.write(html_content)
 
     data_dir = os.path.join(target_dist, "data")
     os.makedirs(data_dir, exist_ok=True)

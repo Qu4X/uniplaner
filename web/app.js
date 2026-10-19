@@ -266,6 +266,7 @@ const elements = typeof document !== "undefined" ? {
 // Initialize App
 if (typeof document !== "undefined") {
   document.addEventListener("DOMContentLoaded", () => {
+    loadTenantConfig();
     initTheme();
     setupThemeListener();
     setupEventListeners();
@@ -276,6 +277,24 @@ if (typeof document !== "undefined") {
     updateDayTabsUI();
     loadPlans();
   });
+}
+
+async function loadTenantConfig() {
+  try {
+    const res = await fetch("data/tenant_config.json");
+    if (res.ok) {
+      const config = await res.json();
+      state.tenantConfig = config;
+      const brandName = config.short_name || config.name;
+      if (brandName) {
+        document.title = brandName;
+        const brandH1 = document.querySelector(".brand-titles h1");
+        if (brandH1) brandH1.textContent = brandName;
+      }
+    }
+  } catch (e) {
+    // Defaults fallback
+  }
 }
 
 function initCrossRefUI() {

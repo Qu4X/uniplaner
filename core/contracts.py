@@ -11,6 +11,7 @@ FormType = Literal[
     "simulator",
     "project",
     "seminar",
+    "clinic",
     "elective",
     "other"
 ]

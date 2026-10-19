@@ -1,6 +1,9 @@
 {
   "id": "sggw_weta",
   "name": "Szkoła Główna Gospodarstwa Wiejskiego — Wydział Medycyny Weterynaryjnej",
+  "short_name": "Plan SGGW WETA",
+  "icon": "🐾",
+  "theme_color": "#006633",
   "institution": "SGGW",
   "faculty": "WMW",
   "locale": "pl",

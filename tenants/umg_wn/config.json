@@ -1,6 +1,9 @@
 {
   "id": "umg_wn",
   "name": "Uniwersytet Morski w Gdyni — Wydział Nawigacyjny",
+  "short_name": "Plan Zajęć WN",
+  "icon": "⚓",
+  "theme_color": "#0d233a",
   "institution": "UMG",
   "faculty": "WN",
   "locale": "pl",

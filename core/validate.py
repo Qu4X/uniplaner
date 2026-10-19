@@ -11,6 +11,7 @@ VALID_FORMS = {
     "simulator",
     "project",
     "seminar",
+    "clinic",
     "elective",
     "other"
 }
