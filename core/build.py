@@ -249,3 +249,36 @@ class BuildOrchestrator:
             "failed_plans": failed_plans,
             "total_plans": len(plans_metadata_dict)
         }
+
+
+def load_tenant_config(tenant_id: str, repo_root: Optional[str] = None) -> Dict[str, Any]:
+    base = repo_root or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    tenant_dir = os.path.join(base, "tenants", tenant_id)
+    config_file = os.path.join(tenant_dir, "config.json")
+    if not os.path.exists(config_file):
+        raise FileNotFoundError(f"Brak pliku konfiguracji tenanta: {config_file}")
+    with open(config_file, "r", encoding="utf-8") as f:
+        config = json.load(f)
+
+    # Load academic calendar
+    cal_file = os.path.join(tenant_dir, "academic_calendar.json")
+    if not os.path.exists(cal_file):
+        cal_file = os.path.join(base, "data", "academic_calendar.json")
+    if os.path.exists(cal_file):
+        with open(cal_file, "r", encoding="utf-8") as f:
+            config["academic_calendar"] = json.load(f)
+
+    return config
+
+
+def get_tenant_sources(tenant_id: str) -> List[ScheduleSource]:
+    if tenant_id == "umg_wn":
+        from sources.umg_wn.arktur_html import ArkturHtmlSource
+        from sources.umg_wn.arktur_nst import ArkturNstSource
+        return [ArkturHtmlSource(), ArkturNstSource()]
+    elif tenant_id == "sggw_weta":
+        from sources.sggw_weta.adapter import SggwExcelSource
+        return [SggwExcelSource()]
+    else:
+        raise ValueError(f"Nieznany tenant: {tenant_id}")
+

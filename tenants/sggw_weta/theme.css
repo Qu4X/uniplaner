@@ -1,0 +1,20 @@
+/**
+ * SGGW Wydział Medycyny Weterynaryjnej — Theme CSS
+ * Barwy zieleni leśnej, nawiązujące do tradycji SGGW i weterynarii.
+ */
+
+:root {
+  --primary-color: #1b5e20;
+  --primary-hover: #2e7d32;
+  --primary-light: #e8f5e9;
+  --accent-color: #43a047;
+  --accent-badge: #2e7d32;
+  --border-radius: 10px;
+}
+
+[data-theme="dark"] {
+  --primary-color: #2e7d32;
+  --primary-hover: #388e3c;
+  --primary-light: #1b3820;
+  --accent-color: #66bb6a;
+}

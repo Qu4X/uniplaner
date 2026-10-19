@@ -168,6 +168,29 @@ class TestContractV1(unittest.TestCase):
         self.assertFalse(features["voting"].get("enabled"))
         self.assertTrue(features.get("changelog"))
 
+    def test_validate_sggw_weta_tenant_config(self):
+        import json
+        import os
+        config_path = os.path.join(os.path.dirname(__file__), "..", "tenants", "sggw_weta", "config.json")
+        self.assertTrue(os.path.exists(config_path), "Brak pliku tenants/sggw_weta/config.json")
+
+        with open(config_path, "r", encoding="utf-8") as f:
+            cfg = json.load(f)
+
+        self.assertEqual(cfg.get("id"), "sggw_weta")
+        self.assertEqual(cfg.get("institution"), "SGGW")
+        self.assertEqual(cfg.get("faculty"), "WMW")
+        self.assertEqual(cfg.get("locale"), "pl")
+        self.assertIn("forms", cfg)
+        for expected_form in ("lecture", "exercise", "lab", "clinic", "elective"):
+            self.assertIn(expected_form, cfg["forms"])
+
+        features = cfg.get("features", {})
+        self.assertTrue(features.get("cross_reference"))
+        self.assertTrue(features["lesson_hiding"].get("enabled"))
+        self.assertTrue(features["lesson_hiding"].get("bulk_electives_dialog"))
+        self.assertTrue(features["voting"].get("enabled"))
+
 
 if __name__ == "__main__":
     unittest.main()

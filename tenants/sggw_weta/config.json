@@ -1,0 +1,31 @@
+{
+  "id": "sggw_weta",
+  "name": "Szkoła Główna Gospodarstwa Wiejskiego — Wydział Medycyny Weterynaryjnej",
+  "institution": "SGGW",
+  "faculty": "WMW",
+  "locale": "pl",
+  "tally_form_id": null,
+  "forms": {
+    "lecture": { "label": "Wykład", "badge_color": "#3b82f6" },
+    "exercise": { "label": "Ćwiczenia", "badge_color": "#10b981" },
+    "lab": { "label": "Laboratorium", "badge_color": "#ec4899" },
+    "clinic": { "label": "Klinika / Staż", "badge_color": "#8b5cf6" },
+    "seminar": { "label": "Seminarium", "badge_color": "#6366f1" },
+    "elective": { "label": "Fakultet", "badge_color": "#14b8a6" },
+    "other": { "label": "Inne", "badge_color": "#64748b" }
+  },
+  "features": {
+    "cross_reference": true,
+    "free_rooms": true,
+    "events": true,
+    "lesson_hiding": {
+      "enabled": true,
+      "bulk_electives_dialog": true
+    },
+    "voting": {
+      "enabled": true,
+      "threshold": 10
+    },
+    "changelog": true
+  }
+}
