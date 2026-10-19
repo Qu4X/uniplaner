@@ -137,3 +137,7 @@ def validate_plans_index(index_data: Dict[str, Any]) -> Tuple[bool, List[str]]:
                 errors.append(f"plans[{idx}].study_mode musi być full_time lub part_time: {p.get('study_mode')}")
 
     return len(errors) == 0, errors
+
+
+validate_schedule = validate_group_schedule
+

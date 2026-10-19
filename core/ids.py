@@ -39,3 +39,7 @@ def generate_lesson_id(
 
     raw_payload = f"{s_norm}|{f_norm}|{d_norm}|{st_norm}|{et_norm}|{r_norm}|{hs_norm}|{iw_norm}|{date_anchor}"
     return hashlib.sha256(raw_payload.encode("utf-8")).hexdigest()[:16]
+
+
+compute_lesson_id = generate_lesson_id
+

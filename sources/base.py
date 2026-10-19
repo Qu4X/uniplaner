@@ -14,7 +14,7 @@ class PlanMetadata:
     study_mode: str  # "full_time" | "part_time"
     semester_number: Optional[int]
     version_token: str
-    groups: List[str]
+    groups: List[str] = field(default_factory=list)
     published_at: Optional[str] = None
     archived: bool = False
 
@@ -34,10 +34,12 @@ class RawLesson:
     day_of_week: Optional[str] = None  # "MON".."SUN" (None dla NST)
     start_date: Optional[str] = None   # "YYYY-MM-DD"
     interval_weeks: int = 1
+    start_week: int = 1
     half_semester: Optional[int] = None
     weeks: int = 15
     groups: List[str] = field(default_factory=list)
-    occurrences: List[Dict[str, Any]] = field(default_factory=list)  # Dla planów o stałych terminach (np. NST)
+    occurrences: Optional[List[Dict[str, Any]]] = None  # Dla planów o stałych terminach (np. NST)
+
 
 
 class ScheduleSource(Protocol):
