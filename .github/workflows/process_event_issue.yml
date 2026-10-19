@@ -42,7 +42,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/events.json
+          git add tenants/umg_wn/events.json
           git commit -m "feat(events): add event from issue #${{ github.event.issue.number }}"
           git push
 
@@ -54,7 +54,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '🎉 **Wydarzenie zostało pomyślnie dodane do bazy `data/events.json` i opublikowane w planie!**\n\nZmiany zostały wdrożone do gałęzi `main`. Strona na GitHub Pages zaktualizuje się automatycznie w ciągu około 1-2 minut.'
+              body: '🎉 **Wydarzenie zostało pomyślnie dodane do bazy `tenants/umg_wn/events.json` i opublikowane w planie!**\n\nZmiany zostały wdrożone do gałęzi `main`. Strona na GitHub Pages zaktualizuje się automatycznie w ciągu około 1-2 minut.'
             });
             github.rest.issues.update({
               issue_number: context.issue.number,

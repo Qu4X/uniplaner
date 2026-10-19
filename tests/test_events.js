@@ -1,7 +1,7 @@
 const assert = require("assert");
 const path = require("path");
 const ROOT_DIR = path.resolve(__dirname, "..");
-const EventsService = require(path.join(ROOT_DIR, "web/js/events-service.js"));
+const EventsService = require(path.join(ROOT_DIR, "web/js/modules/events.js"));
 
 console.log("\n🧪 Running EventsService TDD Tests...\n");
 

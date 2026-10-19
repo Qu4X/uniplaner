@@ -49,6 +49,15 @@ def build_cross_reference_indexes(
     Buduje połączony indeks nauczycieli, sal i przedmiotów.
     Zwraca słownik indeksu i opcjonalnie zapisuje go do output_path.
     """
+    if not schedules_dir or not os.path.exists(schedules_dir):
+        logger.warning(f"Katalog planów nie istnieje: {schedules_dir}")
+        return {}
+
+    json_files = [f for f in os.listdir(schedules_dir) if f.endswith(".json") and f != "cross_reference.json"]
+    if not json_files:
+        logger.warning(f"Brak plików planów w katalogu: {schedules_dir}")
+        return {}
+
     raw_plans = (plans_metadata or {}).get("plans", {})
     if isinstance(raw_plans, list):
         plans_dict = {str(p["id"]): p for p in raw_plans if isinstance(p, dict) and "id" in p}

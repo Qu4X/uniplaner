@@ -76,7 +76,7 @@
   function loadDefaultCalendar() {
     if (typeof module === "object" && module.exports) {
       try {
-        return require("../../data/academic_calendar.json");
+        return require("../../tenants/umg_wn/academic_calendar.json");
       } catch (_) {}
     }
     return { daySwaps: {}, holidays: {}, periods: [] };

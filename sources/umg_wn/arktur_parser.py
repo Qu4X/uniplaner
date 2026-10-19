@@ -8,19 +8,35 @@ import logging
 import os
 import re
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, TypedDict
 
 from bs4 import BeautifulSoup
-from models import LessonDict
+
+
+class LessonDict(TypedDict, total=False):
+    przedmiot: str
+    raw_przedmiot: str
+    prowadzacy: str
+    godziny: str
+    sala: str
+    height: int
+    colspan: int
+    data_start: str
+    tygodnie: int
+    co_ile: int
+    od_tyg: Optional[int]
+    polowa_sem: Optional[int]
+    arktur_kolor: Optional[str]
+    forma: Optional[str]
+
 
 logger = logging.getLogger(__name__)
 
 DNI_MAPA = {"1": "PON", "2": "WT", "3": "ŚR", "4": "CZW", "5": "PT", "6": "SOB"}
 
 _SOURCE_DIR = os.path.dirname(os.path.abspath(__file__))
-_REPO_ROOT = os.path.dirname(os.path.dirname(_SOURCE_DIR))
-_DATA_PATH = os.path.join(_REPO_ROOT, "data", "subjects_manual.json")
-MANUAL_DICT_PATH = _DATA_PATH if os.path.exists(_DATA_PATH) else os.path.join(_SOURCE_DIR, "subjects_manual.json")
+_SUBJECTS_DIR_PATH = os.path.join(_SOURCE_DIR, "subjects", "subjects_manual.json")
+MANUAL_DICT_PATH = _SUBJECTS_DIR_PATH if os.path.exists(_SUBJECTS_DIR_PATH) else os.path.join(_SOURCE_DIR, "subjects_manual.json")
 
 
 def load_manual_subjects(path: Optional[str] = None) -> Dict[str, str]:

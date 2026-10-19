@@ -12,12 +12,12 @@ console.log("\n🧪 Running CrossRef Unit Tests (Phase 1 TDD)...\n");
 const path = require("path");
 const ROOT_DIR = path.resolve(__dirname, "..");
 const ScheduleEngine = require(path.join(ROOT_DIR, "web/js/schedule-engine.js"));
-const academicCalendar = require(path.join(ROOT_DIR, "data/academic_calendar.json"));
+const academicCalendar = require(path.join(ROOT_DIR, "tenants/umg_wn/academic_calendar.json"));
 const engine = ScheduleEngine.create(academicCalendar);
 
 let CrossRef;
 try {
-  CrossRef = require(path.join(ROOT_DIR, "web/js/cross-reference.js"));
+  CrossRef = require(path.join(ROOT_DIR, "web/js/modules/cross-reference.js"));
 } catch (e) {
   CrossRef = null;
 }
@@ -36,11 +36,7 @@ const fixtureCrossRefData = {
         groups: ["GR 1", "GR 2"],
         plan_id: "plan_wn_1",
         plan_name: "Nawigacja 1",
-        weeks: 15,
-        data_start: "2026-10-05",
-        co_ile: 1,
-        od_tyg: 1,
-        polowa_sem: null
+        dates: ["2026-10-05", "2026-10-12"]
       }
     ],
     "Wawrzyńska Aleksandra": [
@@ -53,11 +49,7 @@ const fixtureCrossRefData = {
         groups: ["GR 3"],
         plan_id: "plan_wn_1",
         plan_name: "Nawigacja 1",
-        weeks: 15,
-        data_start: "2026-10-06",
-        co_ile: 1,
-        od_tyg: 1,
-        polowa_sem: null
+        dates: ["2026-10-06", "2026-10-13"]
       }
     ],
     "Daniszewska Małgorzata": [
@@ -70,11 +62,7 @@ const fixtureCrossRefData = {
         groups: ["GR 1"],
         plan_id: "plan_wn_1",
         plan_name: "Nawigacja 1",
-        weeks: 15,
-        data_start: "2026-10-07",
-        co_ile: 1,
-        od_tyg: 1,
-        polowa_sem: null
+        dates: ["2026-10-07", "2026-11-04", "2026-11-13"]
       }
     ]
   },
@@ -89,27 +77,19 @@ const fixtureCrossRefData = {
           groups: ["GR 1"],
           plan_id: "plan_wn_1",
           plan_name: "Nawigacja 1",
-          weeks: 15,
-          data_start: "2026-10-05",
-          co_ile: 1,
-          od_tyg: 1,
-          polowa_sem: null
+          dates: ["2026-10-05", "2026-10-12"]
         }
       ],
       "ŚR": [
         {
           slot: 3,
-          hours: "10:15 - 11:45", // Nieregularny blok uczelniany
+          hours: "10:15 - 11:45",
           subject: "Chemia",
           teacher: "Daniszewska Małgorzata",
           groups: ["GR 1"],
           plan_id: "plan_wn_1",
           plan_name: "Nawigacja 1",
-          weeks: 15,
-          data_start: "2026-10-07",
-          co_ile: 1,
-          od_tyg: 1,
-          polowa_sem: null
+          dates: ["2026-10-07", "2026-11-04", "2026-11-13"]
         }
       ],
       "SOB": [
@@ -121,11 +101,7 @@ const fixtureCrossRefData = {
           groups: ["NZ 1"],
           plan_id: "plan_wn_z",
           plan_name: "Nawigacja Zaoczna",
-          weeks: 10,
-          data_start: "2026-10-10",
-          co_ile: 1,
-          od_tyg: 1,
-          polowa_sem: null
+          dates: ["2026-10-10"]
         }
       ]
     },
@@ -142,11 +118,7 @@ const fixtureCrossRefData = {
           groups: ["GR 3"],
           plan_id: "plan_wn_1",
           plan_name: "Nawigacja 1",
-          weeks: 15,
-          data_start: "2026-10-06",
-          co_ile: 1,
-          od_tyg: 1,
-          polowa_sem: null
+          dates: ["2026-10-06"]
         }
       ]
     },

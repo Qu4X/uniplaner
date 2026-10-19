@@ -73,3 +73,39 @@ class GroupSchedule(TypedDict):
     group: str
     generated_at: str
     lessons: List[Lesson]
+
+
+class RoomScheduleEntry(TypedDict, total=False):
+    slot: int
+    hours: str
+    subject: str
+    teacher: str
+    groups: List[str]
+    plan_id: str
+    plan_name: str
+    dates: List[str]
+
+
+class TeacherScheduleEntry(TypedDict, total=False):
+    day: str
+    slot: int
+    hours: str
+    subject: str
+    raw_subject: str
+    room: str
+    groups: List[str]
+    plan_id: str
+    plan_name: str
+    dates: List[str]
+
+
+class AcademicCalendarPeriod(TypedDict, total=False):
+    name: str
+    type: str
+    start: str
+    end: str
+
+
+class AcademicCalendarDaySwap(TypedDict, total=False):
+    replaceWith: str
+    note: str

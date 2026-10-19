@@ -89,6 +89,17 @@ class BuildOrchestrator:
         os.makedirs(self.calendars_dir, exist_ok=True)
         os.makedirs(self.data_dir, exist_ok=True)
 
+    def check_only(self, sources: Optional[List[ScheduleSource]] = None) -> List[PlanMetadata]:
+        """Sprawdza jedynie (poprzez discover()), które plany uległy zmianie względem .build-state.json."""
+        all_discovered: List[PlanMetadata] = []
+        for src in (sources or self.sources):
+            try:
+                all_discovered.extend(src.discover())
+            except Exception as e:
+                logger.error(f"Błąd podczas discover w źródle {src.source_id}: {e}")
+        plans_to_fetch, _ = self.detector.detect_changes(all_discovered, force=False)
+        return plans_to_fetch
+
     def run(
         self,
         force: bool = False,
@@ -317,11 +328,13 @@ def load_tenant_config(tenant_id: str, repo_root: Optional[str] = None) -> Dict[
         config = json.load(f)
 
     cal_file = os.path.join(tenant_dir, "academic_calendar.json")
-    if not os.path.exists(cal_file):
-        cal_file = os.path.join(base, "data", "academic_calendar.json")
     if os.path.exists(cal_file):
         with open(cal_file, "r", encoding="utf-8") as f:
             config["academic_calendar"] = json.load(f)
+
+    catalog_file = os.path.join(base, "sources", tenant_id, "subjects", "wn_subjects_catalog.json")
+    if os.path.exists(catalog_file) and "curriculum_catalog_path" not in config:
+        config["curriculum_catalog_path"] = catalog_file
 
     return config
 
@@ -350,6 +363,12 @@ def build_tenant(
     target_dist = dist_dir or os.path.join(base, "dist")
     config = load_tenant_config(tenant_id, repo_root=base)
     sources = get_tenant_sources(tenant_id)
+
+    try:
+        from scripts.sync_version import sync_version
+        sync_version()
+    except Exception as e:
+        logger.debug(f"Pominięto synchronizację wersji: {e}")
 
     os.makedirs(target_dist, exist_ok=True)
     web_dir = os.path.join(base, "web")
@@ -381,6 +400,10 @@ def build_tenant(
     if "academic_calendar" in config:
         with open(os.path.join(data_dir, "academic_calendar.json"), "w", encoding="utf-8") as f:
             json.dump(config["academic_calendar"], f, ensure_ascii=False, indent=2)
+
+    events_file = os.path.join(tenant_dir, "events.json")
+    if os.path.exists(events_file):
+        shutil.copy2(events_file, os.path.join(data_dir, "events.json"))
 
     orchestrator = BuildOrchestrator(
         tenant_config=config,

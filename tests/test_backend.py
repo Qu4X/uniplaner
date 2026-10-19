@@ -27,7 +27,8 @@ def check(name, condition, detail=""):
     return condition
 
 
-from scrapper import _wspolny_parser_html, generuj_ics
+from sources.umg_wn.arktur_parser import _wspolny_parser_html
+from core.ics import generuj_ics
 
 # ── 1. Parser smoke-test ──────────────────────────────────────────────────────
 print("\n-- 1. Parser (real HTML fixture) ------------------------------------")
@@ -230,7 +231,7 @@ check("Friday class does NOT occur on swapped Fri 2026-11-13", not any("20261113
 
 # ── 14. Cell AJAX Key Resolution (Hermetization S4) ──────────────────────────
 print("\n-- 14. Cell AJAX Key Resolution (Hermetization S4) ------------------")
-from scrapper import _resolve_cell_ajax_key
+from sources.umg_wn.arktur_parser import _resolve_cell_ajax_key
 
 inputs_full = {
     "id_pzz_PN_39_0": "101",
@@ -253,11 +254,11 @@ check("Malformed cell ID defaults to 0_0_0", key_empty == "0_0_0", f"got {key_em
 print("\n-- 15. Reindex precondition check (S5) ------------------------------")
 import tempfile
 import json
-from build_static import build_cross_reference_indexes
+from core.cross_ref import build_cross_reference_indexes
 
 with tempfile.TemporaryDirectory() as empty_tmp:
     res_empty = build_cross_reference_indexes(schedules_dir=empty_tmp)
-    check("Empty directory safely fails reindex", res_empty is False)
+    check("Empty directory safely fails reindex", not bool(res_empty))
 
 with tempfile.TemporaryDirectory() as valid_tmp:
     with open(os.path.join(valid_tmp, "1_GR_1.json"), "w", encoding="utf-8") as f:
@@ -268,11 +269,12 @@ with tempfile.TemporaryDirectory() as valid_tmp:
         schedules_dir=valid_tmp,
         output_path=out_tmp
     )
-    check("Valid dist directory succeeds reindex", res_valid is True)
+    check("Valid dist directory succeeds reindex", bool(res_valid) and "room_list" in res_valid)
 
 # ── 16. Typed schedule models (S3 Data Clumps) ────────────────────────────────
 print("\n-- 16. Typed schedule models (S3) -----------------------------------")
-from models import LessonDict, RoomScheduleEntry
+from sources.umg_wn.arktur_parser import LessonDict
+from core.contracts import RoomScheduleEntry
 
 lesson_typed: LessonDict = {
     "przedmiot": "Nawigacja",
@@ -304,23 +306,21 @@ room_typed: RoomScheduleEntry = {
 }
 check("RoomScheduleEntry model validates cycle fields", "co_ile" in room_typed and "weeks" in room_typed)
 
-# ── 17. Deep module ics_export (S2) ----------------------------------
-print("\n-- 17. Deep module ics_export (S2) ----------------------------------")
-import ics_export
-import scrapper
+# ── 17. Deep module core.ics (S2) ------------------------------------
+print("\n-- 17. Deep module core.ics (S2) ------------------------------------")
+from core import ics as ics_export
 
-check("ics_export exports generuj_ics", hasattr(ics_export, "generuj_ics"))
-check("ics_export exports generate_ics alias", hasattr(ics_export, "generate_ics"))
-check("ics_export exports load_academic_calendar", callable(ics_export.load_academic_calendar))
-check("scrapper re-exports generuj_ics cleanly", scrapper.generuj_ics is ics_export.generuj_ics)
+check("core.ics exports generuj_ics", hasattr(ics_export, "generuj_ics"))
+check("core.ics exports generate_ics alias", hasattr(ics_export, "generate_ics"))
+check("core.ics exports generate_group_ics", callable(ics_export.generate_group_ics))
+check("core.ics exports load_academic_calendar", callable(ics_export.load_academic_calendar))
 test_plan = {"PON": {24: {"przedmiot": "Test", "data_start": "2026-10-05", "godziny": "08:00 - 09:30", "tygodnie": 1}}}
 ics_direct = ics_export.generate_ics(test_plan, "TEST_GRP")
 check("generate_ics returns valid RFC 5545", "BEGIN:VCALENDAR" in ics_direct and "END:VCALENDAR" in ics_direct)
 
 # ── 18. Deep modules arktur_client and arktur_parser (S2) ------------
 print("\n-- 18. Deep modules arktur_client and arktur_parser (S2) ------------")
-import arktur_client
-import arktur_parser
+from sources.umg_wn import arktur_client, arktur_parser
 
 check("arktur_client exports pobierz_liste_planow", callable(arktur_client.pobierz_liste_planow))
 check("arktur_client exports pobierz_surowy_plan", callable(arktur_client.pobierz_surowy_plan))
@@ -329,12 +329,11 @@ check("arktur_parser exports _wspolny_parser_html", callable(arktur_parser._wspo
 check("arktur_parser exports parsuj_plan_html alias", callable(arktur_parser.parsuj_plan_html))
 check("arktur_parser exports przetworz_plan_na_grafike", callable(arktur_parser.przetworz_plan_na_grafike))
 check("arktur_parser exports _resolve_cell_ajax_key", callable(arktur_parser._resolve_cell_ajax_key))
-check("scrapper facade re-exports arktur_client cleanly", scrapper.pobierz_liste_planow is arktur_client.pobierz_liste_planow)
-check("scrapper facade re-exports arktur_parser cleanly", scrapper._wspolny_parser_html is arktur_parser._wspolny_parser_html)
+check("arktur_parser alias matches _wspolny_parser_html", arktur_parser.parsuj_plan_html is arktur_parser._wspolny_parser_html)
 
 # ── 19. Clean plan titles and version extraction ---------------------
 print("\n-- 19. Clean plan titles and version extraction ---------------------")
-from build_static import parse_plan_title
+from sources.umg_wn.arktur_html import parse_plan_title
 
 p1 = parse_plan_title("[TM Sem 1] Transport Morski pierwszego stopnia sem. 1 [2026-09-14 17:55] wer. 2")
 check("Clean name removes prefix and degree", p1["clean_name"] == "Transport Morski sem. 1")
@@ -353,7 +352,7 @@ print("\n-- 20. Teacher index alternating cycle deduplication isolation ------")
 import tempfile
 import json
 import os
-from build_static import build_cross_reference_indexes
+from core.cross_ref import build_cross_reference_indexes
 
 with tempfile.TemporaryDirectory() as td:
     plan_meta_test = {
@@ -420,7 +419,7 @@ check("Default cell parsed as default", color_by_sub.get("CWICZENIA") == "defaul
 
 # ── 22. Lesson form classification (classify_lesson_form) ─────────────────────
 print("\n-- 22. Lesson form classification (classify_lesson_form) -------------")
-from build_static import classify_lesson_form, load_curriculum_forms, load_forms_manual
+from sources.umg_wn.arktur_html import classify_lesson_form, load_curriculum_forms, load_forms_manual
 
 curr_cat = load_curriculum_forms()
 forms_cfg = load_forms_manual()
@@ -504,7 +503,7 @@ for g in neg_groups:
 
 # ── 24. Natural sorting of plans (get_plan_sort_key) ──────────────────────────
 print("\n-- 24. Natural sorting of plans (get_plan_sort_key) -------------------")
-from build_static import get_plan_sort_key
+from sources.umg_wn.arktur_html import get_plan_sort_key, classify_lesson_form as clf
 
 plans_to_sort = {
     "557": {"name": "Transport Morski pierwszego stopnia sem. 1"},
@@ -523,13 +522,8 @@ check("Plans sorted alphabetically by major and ascending by semester",
 # ── 25. Regressions: symulator branch reachability + group regex strip ─────────
 print("\n-- 25. Regressions: symulator branch + group regex strip ---------------")
 
-# 25a. Symulator-only entry — musi zwrócić "symulator" (przed fixem: wypadało na "cwiczenia" przez global fallback)
 sym_lesson = {"przedmiot": "Symulator Ratunkowy", "raw_przedmiot": "SRat", "sala": "Symulator", "colspan": 1, "arktur_kolor": "default"}
-# Inject a curriculum entry z tylko "symulator" w forms — używamy forms_manual override w testowym katalogu
-# Najprostszy test: symulator room w forms_manual → symulator
-# Zamiast tego sprawdzamy bezpośrednio, że jeśli catalog entry ma forms=["symulator"], wynik to "symulator",
-# a nie "cwiczenia" (domyślny fallback).
-from build_static import classify_lesson_form as clf
+from sources.umg_wn.arktur_html import classify_lesson_form as clf
 _sym_catalog = {
     "majors": {
         "transport i logistyka": {
@@ -572,9 +566,9 @@ check("'A1\\t' with strip() matches II-degree group regex",
 
 # ── 26. Niestacjonarne (NST) client & parser tests ───────────────────────────
 print("\n-- 26. Niestacjonarne (NST) client & parser --------------------------")
-from nst_client import fetch_nst_plans_list, pobierz_liste_planow_nst
-from nst_parser import normalize_iso_date, _parse_single_table
-from ics_export import generate_nst_ics, generuj_ics_nst
+from sources.umg_wn.nst_client import fetch_nst_plans_list, pobierz_liste_planow_nst
+from sources.umg_wn.nst_parser import normalize_iso_date, _parse_single_table, parse_pdf_schedule, extract_stream_runs, _extract_lesson_details
+from core.ics import generate_nst_ics, generuj_ics_nst
 
 # 26a. Canonical English exports and backward compatibility aliases
 check("fetch_nst_plans_list is pobierz_liste_planow_nst", fetch_nst_plans_list is pobierz_liste_planow_nst)
@@ -616,8 +610,6 @@ ics_output = generate_nst_ics(sample_nst_schedule, "GR.01")
 check("generate_nst_ics produces valid iCal with VEVENT", "BEGIN:VEVENT" in ics_output and "Matematyka" in ics_output)
 
 # 26e. Regression test for Saturday multi-group & multi-period classes without gridlines (2026-11-21)
-from nst_parser import parse_pdf_schedule
-
 sample_pdf_path = os.path.join(REPO_ROOT, "cache_nst_pdf", "TiL_I.pdf")
 if not os.path.exists(sample_pdf_path):
     sample_pdf_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "cache_nst_pdf", "TiL_I.pdf")
@@ -669,12 +661,10 @@ else:
 
 # 26g. Deterministyczny test: extract_stream_runs — split na font-change i is_glued_title (regresja 28.11 18:30)
 print("\n-- 26g. extract_stream_runs — split na zmianie fontu i is_glued_title ----------")
-from nst_parser import extract_stream_runs
 
 def _make_char(text, x0, x1, top=100.0, bottom=108.0, fontname="BCDEEE+Calibri"):
     return {"text": text, "x0": x0, "x1": x1, "top": top, "bottom": bottom, "fontname": fontname}
 
-# Znaki tego samego fontu bez przerwy — jeden run
 same_font_chars = [
     _make_char("P", 78.0, 84.0),
     _make_char("o", 84.0, 89.0),
@@ -684,11 +674,10 @@ same_font_runs = extract_stream_runs(same_font_chars)
 check("Znaki tego samego fontu tworzą jeden run", len(same_font_runs) == 1, f"got {len(same_font_runs)}")
 check("Treść runu: 'Pod'", same_font_runs[0]["text"] == "Pod", f"got {same_font_runs[0]['text']}")
 
-# Zmiana fontu bez przerwy — dwa runy (regresja: scalanie nazw przedmiotów GR.01 i GR.03 na 28.11)
 font_change_chars = [
     _make_char("P", 78.0, 84.0, fontname="BCDEEE+Calibri"),
     _make_char("o", 84.0, 89.0, fontname="BCDEEE+Calibri"),
-    _make_char("G", 89.0, 95.0, fontname="BCDFEE+Calibri"),  # inna rodzina fontu
+    _make_char("G", 89.0, 95.0, fontname="BCDFEE+Calibri"),
     _make_char("r", 95.0, 100.0, fontname="BCDFEE+Calibri"),
 ]
 font_change_runs = extract_stream_runs(font_change_chars)
@@ -697,16 +686,14 @@ check("Zmiana fontu tworzy nowy run (regresja 28.11)", len(font_change_runs) == 
 check("Run 1 to 'Po'", font_change_runs[0]["text"] == "Po", f"got {font_change_runs[0]['text']}")
 check("Run 2 to 'Gr'", font_change_runs[1]["text"] == "Gr", f"got {font_change_runs[1]['text']}")
 
-# is_glued_title: lowercase bezpośrednio przed uppercase bez przerwy (gap < 3pt) — dwa runy
 glued_chars = [
-    _make_char("a", 78.0, 83.0),   # lowercase
-    _make_char("B", 83.0, 89.0),   # uppercase, gap = 0.0 < 3.0
+    _make_char("a", 78.0, 83.0),
+    _make_char("B", 83.0, 89.0),
 ]
 glued_runs = extract_stream_runs(glued_chars)
 check("Glued lowercase→uppercase bez luki tworzy nowy run (is_glued_title)", len(glued_runs) == 2,
       f"got {len(glued_runs)}: {[r['text'] for r in glued_runs]}")
 
-# Brak over-splitu: ciąg uppercase bez zmiany fontu i bez luki — jeden run
 all_upper_chars = [
     _make_char("A", 78.0, 84.0),
     _make_char("B", 84.0, 90.0),
@@ -716,7 +703,6 @@ all_upper_runs = extract_stream_runs(all_upper_chars)
 check("Ciąg uppercase bez zmiany fontu i bez luki pozostaje jednym runem", len(all_upper_runs) == 1,
       f"got {len(all_upper_runs)}")
 
-# Brak over-splitu: normalne słowo lowercase — jeden run
 normal_word_chars = [
     _make_char("t", 78.0, 83.0),
     _make_char("r", 83.0, 88.0),
@@ -729,9 +715,7 @@ check("Normalne słowo lowercase (bez luki, bez zmiany fontu) tworzy jeden run",
 
 # 26h. Deterministyczny test: _extract_lesson_details — odrzuca tekst złożony wyłącznie z tokenów grupy
 print("\n-- 26h. _extract_lesson_details — guard dla tokenów grupy (regresja 29/30.10) --")
-from nst_parser import _extract_lesson_details
 
-# Tekst będący samym nagłówkiem grupy — powinien zwrócić None (regresja pustych dni 29.10, 30.10)
 check("_extract_lesson_details('GR.01') zwraca None",
       _extract_lesson_details("GR.01", fallback_room="", time_range="08:00-10:25",
                               day_name="Sobota", date_iso="2026-10-29", group_name="GR.01") is None)
@@ -742,7 +726,6 @@ check("_extract_lesson_details('GR 1 GR 2') zwraca None",
       _extract_lesson_details("GR 1 GR 2", fallback_room="", time_range="08:00-10:25",
                               day_name="Sobota", date_iso="2026-10-29", group_name="GR.01") is None)
 
-# Prawidłowy tekst zajęć — nie powinien zwrócić None
 ok_result = _extract_lesson_details(
     "Matematyka W Milczek Beata, dr Aula",
     fallback_room="", time_range="08:00-10:25", day_name="Sobota", date_iso="2026-10-03", group_name="GR.01"
@@ -754,10 +737,9 @@ if ok_result:
 # ── 27. Plany w trakcie modyfikacji przez uczelnię ([modyfikowany]) ───────────
 print("\n-- 27. Plany w trakcie modyfikacji przez uczelnię --------------------")
 from unittest.mock import patch, MagicMock
-from arktur_client import pobierz_liste_planow, pobierz_plany_w_modyfikacji
-from build_static import parse_plan_title
+from sources.umg_wn.arktur_client import pobierz_liste_planow, pobierz_plany_w_modyfikacji
+from sources.umg_wn.arktur_html import parse_plan_title
 
-# 27a. parse_plan_title oczyszcza [modyfikowany]
 raw_mod_title = "[TM Sem 1] Transport Morski pierwszego stopnia sem. 1 [modyfikowany] [2026-09-28 08:25] wer. 3"
 p_title = parse_plan_title(raw_mod_title)
 check("parse_plan_title usuwa [modyfikowany] z clean_name",
@@ -770,7 +752,6 @@ check("parse_plan_title wyciąga poprawną datę",
       p_title["published_at"] == "2026-09-28 08:25",
       f"got {p_title['published_at']}")
 
-# 27b. pobierz_liste_planow filtruje value="0" oraz [modyfikowany]
 html_with_mod = """
 <select name="kierunek">
   <option value="557">[TM Sem 1] Transport Morski sem. 1 [2026-09-14 17:55] wer. 2</option>
@@ -782,7 +763,7 @@ mock_resp = MagicMock()
 mock_resp.text = html_with_mod
 mock_resp.raise_for_status = MagicMock()
 
-with patch("arktur_client.requests.get", return_value=mock_resp):
+with patch("sources.umg_wn.arktur_client.requests.get", return_value=mock_resp):
     active_plans = pobierz_liste_planow()
     mod_plans = pobierz_plany_w_modyfikacji()
 
@@ -797,18 +778,18 @@ if mod_plans:
     check("mod_plans draft_date is 2026-09-28 08:25", mod_parsed["published_at"] == "2026-09-28 08:25")
     check("mod_plans clean_name matches 557", mod_parsed["clean_name"] == p_title["clean_name"])
 
-# ── 28. Walidacja schematu bazy wydarzeń (data/events.json) ────────────────────
-print("\n-- 28. Walidacja schematu bazy wydarzeń (data/events.json) -----------")
-events_json_path = os.path.join(REPO_ROOT, "data", "events.json")
-check("Plik data/events.json istnieje", os.path.exists(events_json_path))
+# ── 28. Walidacja schematu bazy wydarzeń (tenants/umg_wn/events.json) ─────────
+print("\n-- 28. Walidacja schematu bazy wydarzeń (tenants/umg_wn/events.json) --")
+events_json_path = os.path.join(REPO_ROOT, "tenants", "umg_wn", "events.json")
+check("Plik tenants/umg_wn/events.json istnieje", os.path.exists(events_json_path))
 
 events_data = None
 try:
     with open(events_json_path, "r", encoding="utf-8") as ef:
         events_data = json.load(ef)
-    check("Plik data/events.json zawiera poprawny format JSON", isinstance(events_data, list))
+    check("Plik tenants/umg_wn/events.json zawiera poprawny format JSON", isinstance(events_data, list))
 except Exception as e:
-    check(f"Plik data/events.json zawiera poprawny format JSON (error: {e})", False)
+    check(f"Plik tenants/umg_wn/events.json zawiera poprawny format JSON (error: {e})", False)
 
 if isinstance(events_data, list):
     date_regex = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -901,64 +882,29 @@ all (Wszyscy studenci - stacjonarni i niestacjonarni)
 except Exception as e:
     check(f"GitOps Issue Form Parser error: {e}", False)
 
-# ── 30. Quality Gate w build_static.py ────────────────────────────────────────
+# ── 30. Quality Gate w build_static.py (thin wrapper -> core.build) ───────────
 print("\n-- 30. Quality Gate w build_static.py --------------------------------")
 import build_static
 
-# 30a. Awaryjne przerwanie buildu, gdy Arktur zwraca 0 grup (np. zmiana HTML / awaria scrapera)
-with tempfile.TemporaryDirectory() as tmp_dist:
-    tmp_data = os.path.join(tmp_dist, "data")
-    tmp_sched = os.path.join(tmp_data, "schedules")
-    tmp_cal = os.path.join(tmp_dist, "calendars")
-    os.makedirs(tmp_sched, exist_ok=True)
-    os.makedirs(tmp_cal, exist_ok=True)
-    try:
-        with patch("build_static.DIST_DIR", tmp_dist), \
-             patch("build_static.DATA_DIR", tmp_data), \
-             patch("build_static.SCHEDULES_DIR", tmp_sched), \
-             patch("build_static.CALENDARS_DIR", tmp_cal), \
-             patch("build_static.setup_dist_directories"), \
-             patch("build_static.pobierz_liste_planow", return_value={"Transport Morski": "999"}), \
-             patch("build_static.pobierz_plany_w_modyfikacji", return_value=[]), \
-             patch("build_static.pobierz_surowy_plan", return_value=("<html></html>", [])), \
-             patch("build_static.fetch_nst_plans_list", return_value=[]):
-            build_static.build()
-        check("Quality gate: build() przerywa z kodem 1 przy braku przetworzonych grup", False, "build() zakończył się bez błędu (0 grup!)")
-    except SystemExit as se:
-        check("Quality gate: build() przerywa z kodem 1 przy braku przetworzonych grup", se.code == 1, f"exit code: {se.code}")
-    except Exception as e:
-        check(f"Quality gate 30a: nieoczekiwany wyjątek: {e}", False)
+# 30a. Awaryjne przerwanie buildu, gdy build_tenant zwraca 0 planów i 0 grup
+try:
+    with patch("build_static.build_tenant", return_value={"total_groups_processed": 0, "total_plans": 0}):
+        build_static.build()
+    check("Quality gate: build() przerywa z kodem 1 przy 0 planów i 0 grup", False, "build() zakończył się bez błędu")
+except SystemExit as se:
+    check("Quality gate: build() przerywa z kodem 1 przy 0 planów i 0 grup", se.code == 1, f"exit code: {se.code}")
+except Exception as e:
+    check(f"Quality gate 30a: nieoczekiwany wyjątek: {e}", False)
 
-# 30b. Awaryjne przerwanie buildu, gdy generowanie indeksów cross-reference zwróci błąd (False)
-with tempfile.TemporaryDirectory() as tmp_dist:
-    tmp_data = os.path.join(tmp_dist, "data")
-    tmp_sched = os.path.join(tmp_data, "schedules")
-    tmp_cal = os.path.join(tmp_dist, "calendars")
-    os.makedirs(tmp_sched, exist_ok=True)
-    os.makedirs(tmp_cal, exist_ok=True)
-    try:
-        with patch("build_static.DIST_DIR", tmp_dist), \
-             patch("build_static.DATA_DIR", tmp_data), \
-             patch("build_static.SCHEDULES_DIR", tmp_sched), \
-             patch("build_static.CALENDARS_DIR", tmp_cal), \
-             patch("build_static.setup_dist_directories"), \
-             patch("build_static.pobierz_liste_planow", return_value={"Transport Morski": "999"}), \
-             patch("build_static.pobierz_plany_w_modyfikacji", return_value=[]), \
-             patch("build_static.pobierz_surowy_plan", return_value=("<html></html>", ["GR. 1"])), \
-             patch("build_static.przetworz_plan_na_grafike", return_value=({"PON": {}}, 1, 1)), \
-             patch("build_static.fetch_nst_plans_list", return_value=[]), \
-             patch("build_static.build_cross_reference_indexes", return_value=False):
-            build_static.build(limit=1)
-        check("Quality gate: build() przerywa z kodem 1 gdy indeksowanie nie powiodło się", False, "build() zakończył się bez błędu mimo błędu indeksów")
-    except SystemExit as se:
-        check("Quality gate: build() przerywa z kodem 1 gdy indeksowanie nie powiodło się", se.code == 1, f"exit code: {se.code}")
-    except Exception as e:
-        check(f"Quality gate 30b: nieoczekiwany wyjątek: {e}", False)
+# 30b. Sukces buildu, gdy build_tenant zwraca przetworzone grupy
+with patch("build_static.build_tenant", return_value={"total_groups_processed": 12, "total_plans": 2}):
+    res_total = build_static.build(limit=1)
+    check("build_static.build() zwraca liczbę przetworzonych grup z core.build", res_total == 12, f"got {res_total}")
 
 # ── 31. Poprawność końców linii w plikach .ics (RFC 5545 CRLF bez podwójnego \\r)
 print("\n-- 31. Pliki .ics bez podwójnego carriage return (\\r\\r\\n) na Windows --")
 import tempfile
-from ics_export import generuj_ics
+from core.ics import generuj_ics
 
 # Przetestuj czy zapisany plik ICS nie zawiera podwójnych znaków powrotu karetki
 test_cal_dict = {

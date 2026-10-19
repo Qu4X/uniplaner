@@ -655,17 +655,6 @@ function isTeachingDay(iso) {
   return engine ? engine.isTeachingDay(iso) : true;
 }
 
-function getLessonMeetingInfo(lesson, baseDay, targetMonday, targetDate = null) {
-  return engine
-    ? engine.getLessonMeetingInfo(lesson, baseDay, targetMonday, targetDate)
-    : { active: true, meetingNum: 1, total: (lesson && lesson.tygodnie) || 15 };
-}
-
-function isLessonInWeek(lesson, baseDay, targetMonday, targetDate = null) {
-  if (!lesson || !lesson.data_start) return true;
-  return getLessonMeetingInfo(lesson, baseDay, targetMonday, targetDate).active;
-}
-
 function getLessonProgress(lesson, baseDay, targetMonday, targetDate = null) {
   return engine ? engine.getLessonProgress(lesson, baseDay, targetMonday, targetDate) : null;
 }
@@ -705,7 +694,6 @@ function updateDayTabsUI(filteredSchedule = null) {
     _ScheduleRender.updateDayTabsUI(filteredSchedule, state, elements, {
       getWeekMonday,
       formatDateISO,
-      isLessonInWeek,
       parsePlanInfo,
       academicCalendar: ACADEMIC_CALENDAR,
       eventsService: _EventsService
@@ -1337,7 +1325,6 @@ if (typeof module !== "undefined" && module.exports) {
     formatDateISO,
     getMonday,
     isTeachingDay,
-    getLessonMeetingInfo,
     getLessonProgress,
     getSafeGroupName,
     getRoomOccupancyAt,

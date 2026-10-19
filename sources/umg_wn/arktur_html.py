@@ -11,8 +11,7 @@ from typing import List, Dict, Optional, Any
 
 from sources.base import ScheduleSource, PlanMetadata, RawLesson
 from sources.umg_wn.arktur_client import pobierz_liste_planow, pobierz_surowy_plan
-from sources.umg_wn.arktur_parser import przetworz_plan_na_grafike, _wspolny_parser_html
-from models import LessonDict
+from sources.umg_wn.arktur_parser import przetworz_plan_na_grafike, _wspolny_parser_html, LessonDict
 
 logger = logging.getLogger("umg_arktur_html")
 
@@ -209,19 +208,51 @@ def is_hideable_simulator_lesson(lesson: LessonDict) -> bool:
     return True
 
 
+_SOURCE_DIR = os.path.dirname(os.path.abspath(__file__))
+_FORMS_DIR = os.path.join(_SOURCE_DIR, "forms")
+_SUBJECTS_DIR = os.path.join(_SOURCE_DIR, "subjects")
+CURRICULUM_FORMS_PATH = os.path.join(_FORMS_DIR, "wn_curriculum_forms.json")
+FORMS_MANUAL_PATH = os.path.join(_FORMS_DIR, "forms_manual.json")
+SUBJECTS_CATALOG_PATH = os.path.join(_SUBJECTS_DIR, "wn_subjects_catalog.json")
+
+
+def load_curriculum_forms(path: Optional[str] = None) -> Dict[str, Any]:
+    """Wczytuje oficjalny katalog siatek godzinowych WN z wn_curriculum_forms.json"""
+    target_path = path or (CURRICULUM_FORMS_PATH if os.path.exists(CURRICULUM_FORMS_PATH) else os.path.join(_SOURCE_DIR, "wn_curriculum_forms.json"))
+    if os.path.exists(target_path):
+        try:
+            with open(target_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            logger.warning(f"Nie udało się wczytać curriculum forms ({target_path}): {e}")
+    return {}
+
+
+def load_forms_manual(path: Optional[str] = None) -> Dict[str, Any]:
+    """Wczytuje manualne nadpisania form zajęć z forms_manual.json"""
+    target_path = path or (FORMS_MANUAL_PATH if os.path.exists(FORMS_MANUAL_PATH) else os.path.join(_SOURCE_DIR, "forms_manual.json"))
+    if os.path.exists(target_path):
+        try:
+            with open(target_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            logger.warning(f"Nie udało się wczytać forms_manual.json ({target_path}): {e}")
+    return {}
+
+
 class UmgArkturHtmlSource:
     source_id = "umg_arktur_html"
 
     def __init__(self, data_dir: Optional[str] = None):
-        source_dir = os.path.dirname(os.path.abspath(__file__))
-        base_dir = os.path.dirname(os.path.dirname(source_dir))
-        self.source_dir = source_dir
-        self.data_dir = data_dir or os.path.join(base_dir, "data")
+        self.source_dir = _SOURCE_DIR
+        self.data_dir = data_dir or _FORMS_DIR
         self.curriculum_catalog = self._load_json("wn_curriculum_forms.json")
         self.manual_config = self._load_json("forms_manual.json")
 
     def _load_json(self, filename: str) -> Dict[str, Any]:
-        for directory in (self.data_dir, self.source_dir):
+        for directory in (_FORMS_DIR, _SUBJECTS_DIR, self.source_dir, self.data_dir):
+            if not directory:
+                continue
             p = os.path.join(directory, filename)
             if os.path.exists(p):
                 try:
@@ -235,7 +266,12 @@ class UmgArkturHtmlSource:
         plans_raw = pobierz_liste_planow()
         discovered: List[PlanMetadata] = []
 
-        for p in plans_raw:
+        if isinstance(plans_raw, dict):
+            iterable = [{"id": pid, "nazwa": name, "grupy": []} for name, pid in plans_raw.items()]
+        else:
+            iterable = list(plans_raw or [])
+
+        for p in iterable:
             pid = str(p.get("id"))
             name = p.get("nazwa", "")
 
