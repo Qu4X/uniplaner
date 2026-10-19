@@ -80,7 +80,12 @@ def expand_occurrences(
     dni wolnych, przerw, zamian dni (daySwaps) i połówek semestru.
     """
     # 1. Sprawdź, czy lekcja ma już bezpośrednio podane daty (np. tryb NST)
-    existing_occurrences = lesson.get("occurrences")
+    def _get(key, default=None):
+        if isinstance(lesson, dict):
+            return lesson.get(key, default)
+        return getattr(lesson, key, default)
+
+    existing_occurrences = _get("occurrences")
     if existing_occurrences and isinstance(existing_occurrences, list):
         # Sprawdź, czy mają już poprawne pola
         formatted = []
@@ -101,7 +106,7 @@ def expand_occurrences(
         if formatted:
             return formatted
 
-    start_date_str = lesson.get("start_date")
+    start_date_str = _get("start_date")
     if not start_date_str:
         return []
 
@@ -110,14 +115,14 @@ def expand_occurrences(
     except ValueError:
         return []
 
-    dow = lesson.get("day_of_week")
+    dow = _get("day_of_week")
     # Guard: jeśli dow nie jest poprawnym dniem tygodnia ('Inny' itp.) -> unikaj iteracji
     if dow not in DOW_TO_WEEKDAY:
         return []
 
-    target_total = total_meetings or lesson.get("total_meetings") or lesson.get("weeks") or 15
-    interval = lesson.get("interval_weeks", 1) or 1
-    half_sem = lesson.get("half_semester")
+    target_total = total_meetings or _get("total_meetings") or _get("weeks") or 15
+    interval = _get("interval_weeks", 1) or 1
+    half_sem = _get("half_semester")
 
     # Obsługa połówek semestru z kalendarza tenanta
     half_boundaries = calendar.get("half_boundaries", {})

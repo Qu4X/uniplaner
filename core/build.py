@@ -282,3 +282,65 @@ def get_tenant_sources(tenant_id: str) -> List[ScheduleSource]:
     else:
         raise ValueError(f"Nieznany tenant: {tenant_id}")
 
+
+def build_tenant(
+    tenant_id: str,
+    dist_dir: Optional[str] = None,
+    force: bool = False,
+    plan_filter: Optional[List[str]] = None,
+    limit: Optional[int] = None
+) -> Dict[str, Any]:
+    import shutil
+    base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    target_dist = dist_dir or os.path.join(base, "dist")
+    config = load_tenant_config(tenant_id, repo_root=base)
+    sources = get_tenant_sources(tenant_id)
+
+    os.makedirs(target_dist, exist_ok=True)
+    web_dir = os.path.join(base, "web")
+    if os.path.exists(web_dir):
+        for item in os.listdir(web_dir):
+            s = os.path.join(web_dir, item)
+            d = os.path.join(target_dist, item)
+            if os.path.isdir(s):
+                shutil.copytree(s, d, dirs_exist_ok=True)
+            else:
+                shutil.copy2(s, d)
+
+    # Dołączenie motywu tenanta (theme.css)
+    tenant_dir = os.path.join(base, "tenants", tenant_id)
+    theme_file = os.path.join(tenant_dir, "theme.css")
+    if os.path.exists(theme_file):
+        with open(theme_file, "r", encoding="utf-8") as tf:
+            theme_css = tf.read()
+        target_style = os.path.join(target_dist, "style.css")
+        if os.path.exists(target_style):
+            with open(target_style, "a", encoding="utf-8") as sf:
+                sf.write("\n/* Tenant Theme Overrides */\n" + theme_css)
+
+    data_dir = os.path.join(target_dist, "data")
+    os.makedirs(data_dir, exist_ok=True)
+    with open(os.path.join(data_dir, "tenant_config.json"), "w", encoding="utf-8") as f:
+        json.dump(config, f, ensure_ascii=False, indent=2)
+
+    orchestrator = BuildOrchestrator(
+        tenant_config=config,
+        sources=sources,
+        dist_dir=target_dist
+    )
+    return orchestrator.run(force=force, plan_filter=plan_filter, limit=limit)
+
+
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description="Multi-tenant Static Build Orchestrator")
+    parser.add_argument("--tenant", type=str, default="umg_wn", help="Tenant ID (umg_wn, sggw_weta)")
+    parser.add_argument("--out", type=str, default="dist", help="Output directory")
+    parser.add_argument("--force", action="store_true", help="Force rebuild all plans")
+    parser.add_argument("--plan", type=str, default=None, help="Filter specific plan ID")
+    parser.add_argument("--limit", type=int, default=None, help="Limit number of plans")
+    args = parser.parse_args()
+
+    plans_list = [p.strip() for p in args.plan.split(",")] if args.plan else None
+    build_tenant(args.tenant, dist_dir=args.out, force=args.force, plan_filter=plans_list, limit=args.limit)
+
