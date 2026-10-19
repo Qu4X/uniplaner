@@ -1,0 +1,28 @@
+{
+  "override_by_subject": {
+    "wychowanie fizyczne": "cwiczenia",
+    "wf": "cwiczenia",
+    "język angielski": "cwiczenia",
+    "język obcy": "cwiczenia",
+    "jo": "cwiczenia",
+    "joa": "cwiczenia",
+    "bhp": "wyklad",
+    "bezpieczeństwo i higiena pracy": "wyklad",
+    "szkolenie bhp": "wyklad",
+    "szkolenie biblioteczne": "wyklad"
+  },
+  "override_by_room": {
+    "306,400": "laboratorium",
+    "306": "symulator",
+    "aula": "wyklad",
+    "audytorium": "wyklad",
+    "c136": "wyklad",
+    "basen": "cwiczenia",
+    "hala": "cwiczenia"
+  },
+  "room_regex": [
+    ["\\b(symulator|sym\\.|arpa|ecdis|gmdss)\\b", "symulator"],
+    ["\\b(aula|audytorium)\\b", "wyklad"],
+    ["\\b(basen|hala)\\b", "cwiczenia"]
+  ]
+}

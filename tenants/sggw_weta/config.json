@@ -12,10 +12,57 @@
     "lecture": { "label": "Wykład", "badge_color": "#3b82f6" },
     "exercise": { "label": "Ćwiczenia", "badge_color": "#10b981" },
     "lab": { "label": "Laboratorium", "badge_color": "#ec4899" },
-    "clinic": { "label": "Klinika / Staż", "badge_color": "#8b5cf6" },
+    "simulator": { "label": "Symulator", "badge_color": "#f59e0b" },
+    "project": { "label": "Klinika / Staż", "badge_color": "#8b5cf6" },
     "seminar": { "label": "Seminarium", "badge_color": "#6366f1" },
     "elective": { "label": "Fakultet", "badge_color": "#14b8a6" },
     "other": { "label": "Inne", "badge_color": "#64748b" }
+  },
+  "sources": {
+    "plans": {
+      "wmw_sem_1": {
+        "id": "wmw_sem_1",
+        "name": "Weterynaria sem. 1 (I rok)",
+        "sharepoint_url": "https://sggwpl-my.sharepoint.com/:x:/g/personal/p104180_sggw_edu_pl/IQBcyH8mcxXPQaPenU0RLYeBAWpMZW0xk9dmuun0jyqtwY8?e=svsMNY",
+        "faculty": "WMW",
+        "semester": 1
+      },
+      "wmw_sem_3": {
+        "id": "wmw_sem_3",
+        "name": "Weterynaria sem. 3 (II rok)",
+        "sharepoint_url": "https://sggwpl-my.sharepoint.com/:x:/g/personal/p104180_sggw_edu_pl/IQDhYhbBZ2D3S4D7e-S7Pak9AZ33wCz9I1F92XcGMfpyKZg?e=5Za9Jo",
+        "faculty": "WMW",
+        "semester": 3
+      },
+      "wmw_sem_5": {
+        "id": "wmw_sem_5",
+        "name": "Weterynaria sem. 5 (III rok)",
+        "sharepoint_url": "https://sggwpl-my.sharepoint.com/:x:/g/personal/p104180_sggw_edu_pl/IQAsjiuRwdAQSIEX2ODerN3TAc88vBeOiWSbt8mi0ruY4bE?e=dE6xM3",
+        "faculty": "WMW",
+        "semester": 5
+      },
+      "wmw_sem_7": {
+        "id": "wmw_sem_7",
+        "name": "Weterynaria sem. 7 (IV rok)",
+        "sharepoint_url": "https://sggwpl-my.sharepoint.com/:x:/g/personal/p104180_sggw_edu_pl/IQB6QFz3yl8FRYXMqAhlLpVoAYNgS1MCPw5p2CDIc8PdADU?e=zhzcON",
+        "faculty": "WMW",
+        "semester": 7
+      },
+      "wmw_sem_9": {
+        "id": "wmw_sem_9",
+        "name": "Weterynaria sem. 9 (V rok)",
+        "sharepoint_url": "https://sggwpl-my.sharepoint.com/:x:/g/personal/p104180_sggw_edu_pl/IQBs1xWlq9nQQq9byZjjUjHwAQNyI1j5sceaJjnDRRA5SY4?e=gSgq35",
+        "faculty": "WMW",
+        "semester": 9
+      },
+      "wmw_sem_11": {
+        "id": "wmw_sem_11",
+        "name": "Weterynaria sem. 11 (VI rok)",
+        "sharepoint_url": "https://sggwpl-my.sharepoint.com/:x:/g/personal/p104180_sggw_edu_pl/IQA4ICXmjmziSI_lq8NA_qKbAVtW8pKpxxZkexRHtwr_yzI?e=xC5Ftz",
+        "faculty": "WMW",
+        "semester": 11
+      }
+    }
   },
   "features": {
     "cross_reference": true,

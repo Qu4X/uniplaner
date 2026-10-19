@@ -49,7 +49,14 @@ def build_cross_reference_indexes(
     Buduje połączony indeks nauczycieli, sal i przedmiotów.
     Zwraca słownik indeksu i opcjonalnie zapisuje go do output_path.
     """
-    plans_dict = (plans_metadata or {}).get("plans", {})
+    raw_plans = (plans_metadata or {}).get("plans", {})
+    if isinstance(raw_plans, list):
+        plans_dict = {str(p["id"]): p for p in raw_plans if isinstance(p, dict) and "id" in p}
+    elif isinstance(raw_plans, dict):
+        plans_dict = raw_plans
+    else:
+        plans_dict = {}
+
     if not plans_dict:
         logger.warning("Brak metadanych planów do budowy indeksów cross-reference.")
 

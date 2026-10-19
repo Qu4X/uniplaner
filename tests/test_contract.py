@@ -182,7 +182,7 @@ class TestContractV1(unittest.TestCase):
         self.assertEqual(cfg.get("faculty"), "WMW")
         self.assertEqual(cfg.get("locale"), "pl")
         self.assertIn("forms", cfg)
-        for expected_form in ("lecture", "exercise", "lab", "clinic", "elective"):
+        for expected_form in ("lecture", "exercise", "lab", "project", "elective"):
             self.assertIn(expected_form, cfg["forms"])
 
         features = cfg.get("features", {})

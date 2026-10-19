@@ -1,0 +1,5688 @@
+{
+  "majors": {
+    "transport morski": {
+      "name": "Transport Morski",
+      "semesters": {
+        "1": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "wychowanie fizyczne": {
+            "name": "Wychowanie Fizyczne",
+            "A": 0,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "ekonomia": {
+            "name": "Ekonomia",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "psychologia i socjologia": {
+            "name": "Psychologia i Socjologia",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "bezpieczeństwo i higiena pracy": {
+            "name": "Bezpieczeństwo i Higiena Pracy",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "matematyka": {
+            "name": "Matematyka",
+            "A": 60,
+            "C": 60,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "fizyka": {
+            "name": "Fizyka",
+            "A": 30,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "nawigacja": {
+            "name": "Nawigacja",
+            "A": 30,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "łączność morska": {
+            "name": "Łączność Morska",
+            "A": 15,
+            "C": 0,
+            "L": 10,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "ochrona środowiska morskiego": {
+            "name": "Ochrona Środowiska Morskiego",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          }
+        },
+        "2": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "wychowanie fizyczne": {
+            "name": "Wychowanie Fizyczne",
+            "A": 0,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "matematyka": {
+            "name": "Matematyka",
+            "A": 45,
+            "C": 45,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "fizyka": {
+            "name": "Fizyka",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "informatyka": {
+            "name": "Informatyka",
+            "A": 30,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "mechanika techniczna": {
+            "name": "Mechanika Techniczna",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "nawigacja": {
+            "name": "Nawigacja",
+            "A": 15,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "astronawigacja": {
+            "name": "Astronawigacja",
+            "A": 5,
+            "C": 10,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "bezpieczeństwo nawigacji": {
+            "name": "Bezpieczeństwo Nawigacji",
+            "A": 15,
+            "C": 0,
+            "L": 10,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "urządzenia nawigacyjne": {
+            "name": "Urządzenia Nawigacyjne",
+            "A": 10,
+            "C": 0,
+            "L": 0,
+            "S": 10,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "meteorologia i oceanografia": {
+            "name": "Meteorologia i Oceanografia",
+            "A": 30,
+            "C": 0,
+            "L": 10,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "bezpieczeństwo statku": {
+            "name": "Bezpieczeństwo Statku",
+            "A": 15,
+            "C": 10,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "ceremoniał morski": {
+            "name": "Ceremoniał Morski",
+            "A": 0,
+            "C": 10,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "szkolenie w zakresie elementarnych zasad udzielania pierwszej pomocy medycznej": {
+            "name": "Szkolenie w zakresie elementarnych zasad udzielania pierwszej pomocy medycznej",
+            "A": 6,
+            "C": 6,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "szkolenie w zakresie indywidualnych technik ratunkowych": {
+            "name": "Szkolenie w zakresie indywidualnych technik ratunkowych",
+            "A": 14,
+            "C": 6,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "szkolenie w zakresie ochrony przeciwpożarowej stopień podstawowy": {
+            "name": "Szkolenie w zakresie ochrony przeciwpożarowej stopień podstawowy",
+            "A": 7,
+            "C": 10,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "szkolenia w zakresie bezpieczeństwa własnego i odpowiedzialności wspólnej": {
+            "name": "Szkolenia w zakresie bezpieczeństwa własnego i odpowiedzialności wspólnej",
+            "A": 23,
+            "C": 3,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "szkolenie w zakresie problematyki ochrony na statku": {
+            "name": "Szkolenie w zakresie problematyki ochrony na statku",
+            "A": 4,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          }
+        },
+        "3": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "wychowanie fizyczne": {
+            "name": "Wychowanie Fizyczne",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "technologie informacyjne": {
+            "name": "Technologie Informacyjne",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "elementy elektroniki": {
+            "name": "Elementy Elektroniki",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "elektrotechnika okrętowa": {
+            "name": "Elektrotechnika Okrętowa",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "podstawy automatyki": {
+            "name": "Podstawy Automatyki",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "grafika inżynierska": {
+            "name": "Grafika Inżynierska",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "nawigacja": {
+            "name": "Nawigacja",
+            "A": 15,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "astronawigacja": {
+            "name": "Astronawigacja",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "urządzenia nawigacyjne": {
+            "name": "Urządzenia Nawigacyjne",
+            "A": 15,
+            "C": 0,
+            "L": 14,
+            "S": 6,
+            "forms": [
+              "wyklad",
+              "laboratorium",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "meteorologia i oceanografia": {
+            "name": "Meteorologia i Oceanografia",
+            "A": 30,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "budowa i stateczność statku": {
+            "name": "Budowa i Stateczność Statku",
+            "A": 30,
+            "C": 0,
+            "L": 20,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "wykład monograficzny": {
+            "name": "Wykład Monograficzny",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          }
+        },
+        "4": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "wychowanie fizyczne": {
+            "name": "Wychowanie Fizyczne",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "chemia ładunkowa": {
+            "name": "Chemia Ładunkowa",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "nawigacja": {
+            "name": "Nawigacja",
+            "A": 15,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "astronawigacja": {
+            "name": "Astronawigacja",
+            "A": 15,
+            "C": 20,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "urządzenia nawigacyjne": {
+            "name": "Urządzenia Nawigacyjne",
+            "A": 15,
+            "C": 0,
+            "L": 6,
+            "S": 4,
+            "forms": [
+              "wyklad",
+              "laboratorium",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "budowa i stateczność statku": {
+            "name": "Budowa i Stateczność Statku",
+            "A": 30,
+            "C": 0,
+            "L": 20,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "przewozy morskie": {
+            "name": "Przewozy Morskie",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "prawo morskie": {
+            "name": "Prawo Morskie",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "manewrowanie statkiem": {
+            "name": "Manewrowanie Statkiem",
+            "A": 10,
+            "C": 0,
+            "L": 0,
+            "S": 10,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "ratownictwo morskie": {
+            "name": "Ratownictwo Morskie",
+            "A": 30,
+            "C": 0,
+            "L": 10,
+            "S": 5,
+            "forms": [
+              "wyklad",
+              "laboratorium",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "siłownie okrętowe": {
+            "name": "Siłownie Okrętowe",
+            "A": 15,
+            "C": 0,
+            "L": 5,
+            "S": 5,
+            "forms": [
+              "wyklad",
+              "laboratorium",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "ecdis": {
+            "name": "ECDIS",
+            "A": 10,
+            "C": 0,
+            "L": 0,
+            "S": 30,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "wykład monograficzny": {
+            "name": "Wykład Monograficzny",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          }
+        },
+        "5": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 60,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "nawigacja": {
+            "name": "Nawigacja",
+            "A": 20,
+            "C": 0,
+            "L": 35,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "bezpieczeństwo nawigacji": {
+            "name": "Bezpieczeństwo Nawigacji",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 10,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "urządzenia nawigacyjne": {
+            "name": "Urządzenia Nawigacyjne",
+            "A": 30,
+            "C": 0,
+            "L": 4,
+            "S": 26,
+            "forms": [
+              "wyklad",
+              "laboratorium",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "budowa i stateczność statku": {
+            "name": "Budowa i Stateczność Statku",
+            "A": 30,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "przewozy morskie": {
+            "name": "Przewozy Morskie",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "prawo morskie": {
+            "name": "Prawo Morskie",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "manewrowanie statkiem": {
+            "name": "Manewrowanie Statkiem",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "łączność morska": {
+            "name": "Łączność Morska",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 10,
+            "forms": [
+              "wyklad",
+              "laboratorium",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "wykład monograficzny": {
+            "name": "Wykład Monograficzny",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "seminarium dyplomowe": {
+            "name": "Seminarium Dyplomowe",
+            "A": 0,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          }
+        },
+        "6": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "nawigacja": {
+            "name": "Nawigacja",
+            "A": 15,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "urządzenia nawigacyjne": {
+            "name": "Urządzenia Nawigacyjne",
+            "A": 20,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "budowa i stateczność statku": {
+            "name": "Budowa i Stateczność Statku",
+            "A": 20,
+            "C": 0,
+            "L": 20,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "przewozy morskie": {
+            "name": "Przewozy Morskie",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 30,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "zarządzanie statkiem": {
+            "name": "Zarządzanie statkiem",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "ekonomika transportu morskiego": {
+            "name": "Ekonomika Transportu Morskiego",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "łączność morska": {
+            "name": "Łączność Morska",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 25,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "wykład monograficzny": {
+            "name": "Wykład Monograficzny",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "wykład fakultatywny": {
+            "name": "Wykład Fakultatywny",
+            "A": 40,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "seminarium dyplomowe": {
+            "name": "Seminarium Dyplomowe",
+            "A": 0,
+            "C": 0,
+            "L": 10,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "szkolenie w zakresie eksploatacji zbiornikowców do przewozu produktów naftowych oraz chemikaliów – stopień podstawowy": {
+            "name": "Szkolenie w zakresie eksploatacji zbiornikowców do przewozu produktów naftowych oraz chemikaliów – stopień podstawowy",
+            "A": 22,
+            "C": 3,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "szkolenie w zakresie eksploatacji zbiornikowców do przewozu gazów skroplonych – stopień podstawowy": {
+            "name": "Szkolenie w zakresie eksploatacji zbiornikowców do przewozu gazów skroplonych – stopień podstawowy",
+            "A": 19,
+            "C": 3,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "szkolenie w zakresie przewozu ładunków niebezpiecznych": {
+            "name": "Szkolenie w zakresie przewozu ładunków niebezpiecznych",
+            "A": 11,
+            "C": 1,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "szkolenie w zakresie kierowania tłumem": {
+            "name": "Szkolenie w zakresie kierowania tłumem",
+            "A": 4,
+            "C": 2,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "szkolenia w zakresie bezpieczeństwa dla członków załóg bezpośrednio obsługujących pasażerów w pomieszczeniach pasażerskich": {
+            "name": "Szkolenia w zakresie bezpieczeństwa dla członków załóg bezpośrednio obsługujących pasażerów w pomieszczeniach pasażerskich",
+            "A": 4,
+            "C": 2,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "szkolenia w zakresie zarządzania kryzysowego i zachowań ludzkich": {
+            "name": "Szkolenia w zakresie zarządzania kryzysowego i zachowań ludzkich",
+            "A": 11,
+            "C": 2,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          }
+        },
+        "8": {
+          "nawigacja": {
+            "name": "Nawigacja",
+            "A": 2,
+            "C": 0,
+            "L": 5,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "bezpieczeństwo nawigacji": {
+            "name": "Bezpieczeństwo Nawigacji",
+            "A": 0,
+            "C": 0,
+            "L": 5,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "urządzenia nawigacyjne": {
+            "name": "Urządzenia Nawigacyjne",
+            "A": 0,
+            "C": 0,
+            "L": 5,
+            "S": 40,
+            "forms": [
+              "laboratorium",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "budowa i stateczność statku": {
+            "name": "Budowa i Stateczność Statku",
+            "A": 0,
+            "C": 0,
+            "L": 5,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "przewozy morskie": {
+            "name": "Przewozy Morskie",
+            "A": 2,
+            "C": 0,
+            "L": 5,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "zarządzanie statkiem": {
+            "name": "Zarządzanie statkiem",
+            "A": 0,
+            "C": 0,
+            "L": 5,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "szkolenie w zakresie ochrony przeciwpożarowej stopień wyższy": {
+            "name": "Szkolenie w zakresie ochrony przeciwpożarowej stopień wyższy",
+            "A": 17,
+            "C": 13,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "szkolenie dla członków załóg z przydzielonymi obowiązkami w zakresie ochrony": {
+            "name": "Szkolenie dla członków załóg z przydzielonymi obowiązkami w zakresie ochrony",
+            "A": 3,
+            "C": 2,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "szkolenie w zakresie udzielania pierwszej pomocy medycznej": {
+            "name": "Szkolenie w zakresie udzielania pierwszej pomocy medycznej",
+            "A": 13,
+            "C": 7,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "szkolenie w celu uzyskania świadectwa ratownika": {
+            "name": "Szkolenie w celu uzyskania świadectwa ratownika",
+            "A": 15,
+            "C": 8,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          }
+        }
+      }
+    },
+    "transport i logistyka": {
+      "name": "Transport i Logistyka",
+      "semesters": {
+        "1": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "wychowanie fizyczne": {
+            "name": "Wychowanie Fizyczne",
+            "A": 0,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "nauki humanistyczne": {
+            "name": "Nauki Humanistyczne",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "bezpieczeństwo i higiena pracy": {
+            "name": "Bezpieczeństwo i Higiena Pracy",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "elementy prawa z prawem transportowym": {
+            "name": "Elementy Prawa z Prawem Transportowym",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "podstawy ekonomii": {
+            "name": "Podstawy Ekonomii",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "matematyka": {
+            "name": "Matematyka",
+            "A": 60,
+            "C": 60,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "fizyka": {
+            "name": "Fizyka",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "podstawy nautyki w transporcie": {
+            "name": "Podstawy Nautyki w Transporcie",
+            "A": 15,
+            "C": 0,
+            "L": 12,
+            "S": 3,
+            "forms": [
+              "wyklad",
+              "laboratorium",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "grafika inżynierska": {
+            "name": "Grafika Inżynierska",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          }
+        },
+        "2": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "wychowanie fizyczne": {
+            "name": "Wychowanie Fizyczne",
+            "A": 0,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "matematyka": {
+            "name": "Matematyka",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "fizyka": {
+            "name": "Fizyka",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "mechanika techniczna": {
+            "name": "Mechanika Techniczna",
+            "A": 15,
+            "C": 30,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "grafika inżynierska": {
+            "name": "Grafika Inżynierska",
+            "A": 0,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "elektrotechnika": {
+            "name": "Elektrotechnika",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "elementy elektroniki": {
+            "name": "Elementy Elektroniki",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "podstawy geodezji": {
+            "name": "Podstawy Geodezji",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "infrastruktura transportu": {
+            "name": "Infrastruktura Transportu",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          }
+        },
+        "3": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "wychowanie fizyczne": {
+            "name": "Wychowanie Fizyczne",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "informatyka": {
+            "name": "Informatyka",
+            "A": 30,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "materiałoznawstwo": {
+            "name": "Materiałoznawstwo",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "infrastruktura transportu": {
+            "name": "Infrastruktura Transportu",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "podstawy budowy i konstrukcji maszyn": {
+            "name": "Podstawy Budowy i Konstrukcji Maszyn",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "organizacja i zarządzanie": {
+            "name": "Organizacja i Zarządzanie",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "systemy satelitarne w transporcie": {
+            "name": "Systemy Satelitarne w Transporcie",
+            "A": 15,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "środki transportu": {
+            "name": "Środki Transportu",
+            "A": 30,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "systemy informacji przestrzennej w transporcie": {
+            "name": "Systemy Informacji Przestrzennej w Transporcie",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "technologia przewozu przeładunku i składowania": {
+            "name": "Technologia Przewozu Przeładunku i Składowania",
+            "A": 30,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          }
+        },
+        "4": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 60,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "wychowanie fizyczne": {
+            "name": "Wychowanie Fizyczne",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "podstawy statystyki": {
+            "name": "Podstawy Statystyki",
+            "A": 15,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "technologie informacyjne": {
+            "name": "Technologie Informacyjne",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "infrastruktura transportu": {
+            "name": "Infrastruktura Transportu",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "środki transportu": {
+            "name": "Środki Transportu",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "systemy informacji przestrzennej w transporcie": {
+            "name": "Systemy Informacji Przestrzennej w Transporcie",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "technologia przewozu przeładunku i składowania": {
+            "name": "Technologia Przewozu Przeładunku i Składowania",
+            "A": 30,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "podstawy automatyki": {
+            "name": "Podstawy Automatyki",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "podstawy eksploatacji technicznej": {
+            "name": "Podstawy Eksploatacji Technicznej",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "ekonomika transportu": {
+            "name": "Ekonomika Transportu",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "logistyka": {
+            "name": "Logistyka",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          }
+        },
+        "5": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 60,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "badania operacyjne": {
+            "name": "Badania Operacyjne",
+            "A": 15,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "technologia przewozu przeładunku i składowania": {
+            "name": "Technologia Przewozu Przeładunku i Składowania",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "systemy transportowe": {
+            "name": "Systemy Transportowe",
+            "A": 30,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "telematyka transportu": {
+            "name": "Telematyka Transportu",
+            "A": 30,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "podstawy inżynierii ruchu": {
+            "name": "Podstawy Inżynierii Ruchu",
+            "A": 15,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "eksploatacja obiektów transportu": {
+            "name": "Eksploatacja Obiektów Transportu",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "logistyka dostaw": {
+            "name": "Logistyka Dostaw",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "eksploatacja morskich systemów transportowych": {
+            "name": "Eksploatacja Morskich Systemów Transportowych",
+            "A": 30,
+            "C": 0,
+            "L": 10,
+            "S": 10,
+            "forms": [
+              "wyklad",
+              "laboratorium",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "spedycja": {
+            "name": "Spedycja",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "narzędzia wspomagania logistyki": {
+            "name": "Narzędzia Wspomagania Logistyki",
+            "A": 15,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "wykład fakultatywny": {
+            "name": "Wykład Fakultatywny",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "seminarium dyplomowe": {
+            "name": "Seminarium Dyplomowe",
+            "A": 0,
+            "C": 0,
+            "L": 5,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          }
+        },
+        "6": {
+          "podstawy inżynierii ruchu": {
+            "name": "Podstawy Inżynierii Ruchu",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "eksploatacja obiektów transportu": {
+            "name": "Eksploatacja Obiektów Transportu",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "niezawodność i bezpieczeństwo systemów transportowych": {
+            "name": "Niezawodność i Bezpieczeństwo Systemów Transportowych",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "ocena oddziaływania transportu na środowisko": {
+            "name": "Ocena Oddziaływania Transportu na Środowisko",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "spedycja": {
+            "name": "Spedycja",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "logistyka magazynowania": {
+            "name": "Logistyka Magazynowania",
+            "A": 15,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "planowanie sieci transportowych i logistycznych": {
+            "name": "Planowanie Sieci Transportowych i Logistycznych",
+            "A": 30,
+            "C": 15,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "wykład monograficzny": {
+            "name": "Wykład Monograficzny",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "wykład fakultatywny": {
+            "name": "Wykład Fakultatywny",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "seminarium dyplomowe": {
+            "name": "Seminarium Dyplomowe",
+            "A": 0,
+            "C": 0,
+            "L": 10,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "planowanie mobilności miejskiej": {
+            "name": "Planowanie Mobilności Miejskiej",
+            "A": 30,
+            "C": 15,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "laboratorium"
+            ],
+            "single_form": null
+          }
+        },
+        "7": {
+          "ocena oddziaływania transportu na środowisko": {
+            "name": "Ocena Oddziaływania Transportu na Środowisko",
+            "A": 20,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "organizacja i zarządzanie w systemach logistycznych": {
+            "name": "Organizacja i Zarządzanie w Systemach Logistycznych",
+            "A": 20,
+            "C": 20,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "zarządzanie globalnymi łańcuchami dostaw": {
+            "name": "Zarządzanie Globalnymi Łańcuchami Dostaw",
+            "A": 20,
+            "C": 20,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "wykład monograficzny": {
+            "name": "Wykład Monograficzny",
+            "A": 20,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "wykład fakultatywny": {
+            "name": "Wykład Fakultatywny",
+            "A": 20,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "seminarium dyplomowe": {
+            "name": "Seminarium Dyplomowe",
+            "A": 0,
+            "C": 0,
+            "L": 20,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          }
+        }
+      }
+    },
+    "morskie systemy transportowe i logistyczne": {
+      "name": "Morskie Systemy Transportowe i Logistyczne",
+      "semesters": {
+        "1": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "nauki humanistyczne": {
+            "name": "Nauki Humanistyczne",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "morskie prawo publiczne": {
+            "name": "Morskie Prawo Publiczne",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "wybrane działy matematyki stosowanej": {
+            "name": "Wybrane Działy Matematyki Stosowanej",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "metody stochastyczne w transporcie": {
+            "name": "Metody Stochastyczne w Transporcie",
+            "A": 15,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "mechanika stosowana": {
+            "name": "Mechanika Stosowana",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "systemy teleinformatyczne": {
+            "name": "Systemy Teleinformatyczne",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "komputerowe wspomaganie decyzji": {
+            "name": "Komputerowe Wspomaganie Decyzji",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "logistyka i zarządzanie łańcuchami dostaw": {
+            "name": "Logistyka i Zarządzanie Łańcuchami Dostaw",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "ochrona środowiska w transporcie": {
+            "name": "Ochrona Środowiska w Transporcie",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "bazy i hurtownie danych": {
+            "name": "Bazy i Hurtownie Danych",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "systemy informacji przestrzennej w transporcie morskim": {
+            "name": "Systemy Informacji Przestrzennej w Transporcie Morskim",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "komputerowe wspomaganie projektowania cad": {
+            "name": "Komputerowe Wspomaganie Projektowania CAD",
+            "A": 0,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "seminarium dyplomowe": {
+            "name": "Seminarium Dyplomowe",
+            "A": 0,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          }
+        },
+        "2": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "modelowanie procesów i systemów transportowo logistycznych": {
+            "name": "Modelowanie Procesów i Systemów Transportowo-Logistycznych",
+            "A": 30,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "niezawodność i bezpieczeństwo systemów transportowych i logistycznych": {
+            "name": "Niezawodność i Bezpieczeństwo Systemów Transportowych i Logistycznych",
+            "A": 30,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "zarządzanie w przedsiębiorstwach sektora tsl": {
+            "name": "Zarządzanie w Przedsiębiorstwach Sektora TSL",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "mobilność i zrównoważony transport": {
+            "name": "Mobilność i Zrównoważony Transport",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "transport w gospodarce globalnej": {
+            "name": "Transport w Gospodarce Globalnej",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "technologie przewozu i przeładunku w transporcie": {
+            "name": "Technologie Przewozu i Przeładunku w Transporcie",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "spedycja krajowa i międzynarodowa": {
+            "name": "Spedycja Krajowa i Międzynarodowa",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "projektowanie i wykonawstwo robót portowych": {
+            "name": "Projektowanie i Wykonawstwo Robót Portowych",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "zarządzanie flotą morską": {
+            "name": "Zarządzanie Flotą Morską",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "transport intermodalny": {
+            "name": "Transport Intermodalny",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "projektowanie terminali portowych": {
+            "name": "Projektowanie Terminali Portowych",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "wykład monograficzny": {
+            "name": "Wykład Monograficzny",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "wykład fakultatywny": {
+            "name": "Wykład Fakultatywny",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "seminarium dyplomowe": {
+            "name": "Seminarium Dyplomowe",
+            "A": 0,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          }
+        },
+        "3": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 40,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "cła i procedury celne": {
+            "name": "Cła i Procedury Celne",
+            "A": 20,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "otoczenie transportowe portów morskich": {
+            "name": "Otoczenie Transportowe Portów Morskich",
+            "A": 20,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "transport ładunków niebezpiecznych": {
+            "name": "Transport Ładunków Niebezpiecznych",
+            "A": 20,
+            "C": 20,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "ubezpieczenia morskie": {
+            "name": "Ubezpieczenia Morskie",
+            "A": 20,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "wykład monograficzny": {
+            "name": "Wykład Monograficzny",
+            "A": 40,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "wykład fakultatywny": {
+            "name": "Wykład Fakultatywny",
+            "A": 40,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "seminarium dyplomowe": {
+            "name": "Seminarium Dyplomowe",
+            "A": 0,
+            "C": 0,
+            "L": 20,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          }
+        }
+      }
+    },
+    "eksploatacja systemów transportowych": {
+      "name": "Eksploatacja Systemów Transportowych",
+      "semesters": {
+        "1": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "wychowanie fizyczne": {
+            "name": "Wychowanie Fizyczne",
+            "A": 0,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "nauki humanistyczne": {
+            "name": "Nauki Humanistyczne",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "bezpieczeństwo i higiena pracy": {
+            "name": "Bezpieczeństwo i Higiena Pracy",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "elementy prawa z prawem transportowym": {
+            "name": "Elementy Prawa z Prawem Transportowym",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "podstawy ekonomii": {
+            "name": "Podstawy Ekonomii",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "matematyka": {
+            "name": "Matematyka",
+            "A": 60,
+            "C": 60,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "fizyka": {
+            "name": "Fizyka",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "podstawy nautyki w transporcie": {
+            "name": "Podstawy Nautyki w Transporcie",
+            "A": 15,
+            "C": 0,
+            "L": 12,
+            "S": 3,
+            "forms": [
+              "wyklad",
+              "laboratorium",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "grafika inżynierska": {
+            "name": "Grafika Inżynierska",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          }
+        },
+        "2": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "wychowanie fizyczne": {
+            "name": "Wychowanie Fizyczne",
+            "A": 0,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "matematyka": {
+            "name": "Matematyka",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "fizyka": {
+            "name": "Fizyka",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "mechanika techniczna": {
+            "name": "Mechanika Techniczna",
+            "A": 15,
+            "C": 30,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "grafika inżynierska": {
+            "name": "Grafika Inżynierska",
+            "A": 0,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "elektrotechnika": {
+            "name": "Elektrotechnika",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "elementy elektroniki": {
+            "name": "Elementy Elektroniki",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "podstawy geodezji": {
+            "name": "Podstawy Geodezji",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "infrastruktura transportu": {
+            "name": "Infrastruktura Transportu",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          }
+        },
+        "3": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "wychowanie fizyczne": {
+            "name": "Wychowanie Fizyczne",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "informatyka": {
+            "name": "Informatyka",
+            "A": 30,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "materiałoznawstwo": {
+            "name": "Materiałoznawstwo",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "infrastruktura transportu": {
+            "name": "Infrastruktura Transportu",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "podstawy budowy i konstrukcji maszyn": {
+            "name": "Podstawy Budowy i Konstrukcji Maszyn",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "środki transportu": {
+            "name": "Środki Transportu",
+            "A": 30,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "organizacja i zarządzanie": {
+            "name": "Organizacja i Zarządzanie",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "systemy satelitarne w transporcie": {
+            "name": "Systemy Satelitarne w Transporcie",
+            "A": 15,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "systemy informacji przestrzennej w transporcie": {
+            "name": "Systemy Informacji Przestrzennej w Transporcie",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "technologia przewozu przeładunku i składowania": {
+            "name": "Technologia Przewozu Przeładunku i Składowania",
+            "A": 30,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          }
+        },
+        "4": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 60,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "wychowanie fizyczne": {
+            "name": "Wychowanie Fizyczne",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "podstawy statystyki": {
+            "name": "Podstawy Statystyki",
+            "A": 15,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "technologie informacyjne": {
+            "name": "Technologie Informacyjne",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "infrastruktura transportu": {
+            "name": "Infrastruktura Transportu",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "systemy informacji przestrzennej w transporcie": {
+            "name": "Systemy Informacji Przestrzennej w Transporcie",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "technologia przewozu przeładunku i składowania": {
+            "name": "Technologia Przewozu Przeładunku i Składowania",
+            "A": 30,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "podstawy automatyki": {
+            "name": "Podstawy Automatyki",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "podstawy eksploatacji technicznej": {
+            "name": "Podstawy Eksploatacji Technicznej",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "ekonomika transportu": {
+            "name": "Ekonomika Transportu",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "logistyka": {
+            "name": "Logistyka",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          }
+        },
+        "5": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 60,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "badania operacyjne": {
+            "name": "Badania Operacyjne",
+            "A": 15,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "technologia przewozu przeładunku i składowania": {
+            "name": "Technologia Przewozu Przeładunku i Składowania",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "systemy transportowe": {
+            "name": "Systemy Transportowe",
+            "A": 30,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "telematyka transportu": {
+            "name": "Telematyka Transportu",
+            "A": 30,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "podstawy inżynierii ruchu": {
+            "name": "Podstawy Inżynierii Ruchu",
+            "A": 15,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "eksploatacja obiektów transportu": {
+            "name": "Eksploatacja Obiektów Transportu",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "transport miejski i regionalny": {
+            "name": "Transport Miejski i Regionalny",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "środki transportu": {
+            "name": "Środki Transportu",
+            "A": 30,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "inteligentne systemy zarządzania w transporcie": {
+            "name": "Inteligentne Systemy Zarządzania w Transporcie",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "wykład fakultatywny": {
+            "name": "Wykład Fakultatywny",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "seminarium dyplomowe": {
+            "name": "Seminarium Dyplomowe",
+            "A": 0,
+            "C": 0,
+            "L": 5,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          }
+        },
+        "6": {
+          "podstawy inżynierii ruchu": {
+            "name": "Podstawy Inżynierii Ruchu",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "eksploatacja obiektów transportu": {
+            "name": "Eksploatacja Obiektów Transportu",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "niezawodność i bezpieczeństwo systemów transportowych": {
+            "name": "Niezawodność i Bezpieczeństwo Systemów Transportowych",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "ocena oddziaływania transportu na środowisko": {
+            "name": "Ocena Oddziaływania Transportu na Środowisko",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "transport w łańcuchach dostaw": {
+            "name": "Transport w Łańcuchach Dostaw",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "nowoczesne narzędzia w logistyce": {
+            "name": "Nowoczesne Narzędzia w Logistyce",
+            "A": 30,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "planowanie sieci transportowych i logistycznych": {
+            "name": "Planowanie Sieci Transportowych i Logistycznych",
+            "A": 30,
+            "C": 15,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "wykład monograficzny": {
+            "name": "Wykład Monograficzny",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "wykład fakultatywny": {
+            "name": "Wykład Fakultatywny",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "seminarium dyplomowe": {
+            "name": "Seminarium Dyplomowe",
+            "A": 0,
+            "C": 0,
+            "L": 10,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          }
+        },
+        "7": {
+          "ocena oddziaływania transportu na środowisko": {
+            "name": "Ocena Oddziaływania Transportu na Środowisko",
+            "A": 20,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "planowanie sieci transportowych i logistycznych": {
+            "name": "Planowanie Sieci Transportowych i Logistycznych",
+            "A": 10,
+            "C": 0,
+            "L": 20,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "organizacja i zarządzanie systemami transportowymi": {
+            "name": "Organizacja i Zarządzanie Systemami Transportowymi",
+            "A": 20,
+            "C": 20,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "wykład monograficzny": {
+            "name": "Wykład Monograficzny",
+            "A": 20,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "wykład fakultatywny": {
+            "name": "Wykład Fakultatywny",
+            "A": 20,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "seminarium dyplomowe": {
+            "name": "Seminarium Dyplomowe",
+            "A": 0,
+            "C": 0,
+            "L": 20,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          }
+        }
+      }
+    },
+    "transport morski 2": {
+      "name": "Transport Morski 2",
+      "semesters": {
+        "1": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "prawo morskie": {
+            "name": "Prawo Morskie",
+            "A": 20,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "ochrona środowiska morskiego": {
+            "name": "Ochrona Środowiska Morskiego",
+            "A": 10,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "ratownictwo morskie": {
+            "name": "Ratownictwo Morskie",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "matematyka": {
+            "name": "Matematyka",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "fizyka": {
+            "name": "Fizyka",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "nawigacja": {
+            "name": "Nawigacja",
+            "A": 30,
+            "C": 10,
+            "L": 20,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "astronawigacja": {
+            "name": "Astronawigacja",
+            "A": 5,
+            "C": 10,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "meteorologia i oceanografia": {
+            "name": "Meteorologia i Oceanografia",
+            "A": 25,
+            "C": 6,
+            "L": 10,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "łączność morska": {
+            "name": "Łączność Morska",
+            "A": 10,
+            "C": 0,
+            "L": 5,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "bezpieczeństwo nawigacji": {
+            "name": "Bezpieczeństwo Nawigacji",
+            "A": 45,
+            "C": 10,
+            "L": 0,
+            "S": 20,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "symulator"
+            ],
+            "single_form": null
+          }
+        },
+        "2": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "nawigacja": {
+            "name": "Nawigacja",
+            "A": 30,
+            "C": 45,
+            "L": 0,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "astronawigacja": {
+            "name": "Astronawigacja",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "ecdis": {
+            "name": "ECDIS",
+            "A": 10,
+            "C": 0,
+            "L": 10,
+            "S": 20,
+            "forms": [
+              "wyklad",
+              "laboratorium",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "urządzenia nawigacyjne": {
+            "name": "Urządzenia Nawigacyjne",
+            "A": 30,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "budowa i stateczność statku": {
+            "name": "Budowa i Stateczność Statku",
+            "A": 30,
+            "C": 0,
+            "L": 15,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "laboratorium",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "przewozy morskie": {
+            "name": "Przewozy Morskie",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "zarządzanie statkiem": {
+            "name": "Zarządzanie statkiem",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "bezpieczeństwo statku": {
+            "name": "Bezpieczeństwo Statku",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "wykład fakultatywny": {
+            "name": "Wykład Fakultatywny",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "wykład monograficzny": {
+            "name": "Wykład Monograficzny",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "seminarium dyplomowe": {
+            "name": "Seminarium Dyplomowe",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          }
+        },
+        "3": {
+          "nawigacja": {
+            "name": "Nawigacja",
+            "A": 15,
+            "C": 30,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "urządzenia nawigacyjne": {
+            "name": "Urządzenia Nawigacyjne",
+            "A": 40,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "manewrowanie statkiem": {
+            "name": "Manewrowanie Statkiem",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "budowa i stateczność statku": {
+            "name": "Budowa i Stateczność Statku",
+            "A": 30,
+            "C": 0,
+            "L": 15,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "laboratorium",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "przewozy morskie": {
+            "name": "Przewozy Morskie",
+            "A": 30,
+            "C": 5,
+            "L": 0,
+            "S": 10,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "wykład fakultatywny": {
+            "name": "Wykład Fakultatywny",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "wykład monograficzny": {
+            "name": "Wykład Monograficzny",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "seminarium dyplomowe": {
+            "name": "Seminarium Dyplomowe",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          }
+        },
+        "4": {
+          "nawigacja": {
+            "name": "Nawigacja",
+            "A": 0,
+            "C": 0,
+            "L": 0,
+            "S": 2,
+            "forms": [
+              "symulator"
+            ],
+            "single_form": "symulator"
+          },
+          "urządzenia nawigacyjne": {
+            "name": "Urządzenia Nawigacyjne",
+            "A": 0,
+            "C": 0,
+            "L": 0,
+            "S": 2,
+            "forms": [
+              "symulator"
+            ],
+            "single_form": "symulator"
+          },
+          "manewrowanie statkiem": {
+            "name": "Manewrowanie Statkiem",
+            "A": 0,
+            "C": 0,
+            "L": 0,
+            "S": 2,
+            "forms": [
+              "symulator"
+            ],
+            "single_form": "symulator"
+          },
+          "bezpieczeństwo nawigacji": {
+            "name": "Bezpieczeństwo Nawigacji",
+            "A": 0,
+            "C": 0,
+            "L": 0,
+            "S": 2,
+            "forms": [
+              "symulator"
+            ],
+            "single_form": "symulator"
+          },
+          "przewozy morskie": {
+            "name": "Przewozy Morskie",
+            "A": 0,
+            "C": 0,
+            "L": 0,
+            "S": 2,
+            "forms": [
+              "symulator"
+            ],
+            "single_form": "symulator"
+          },
+          "zarządzanie statkiem": {
+            "name": "Zarządzanie statkiem",
+            "A": 0,
+            "C": 0,
+            "L": 0,
+            "S": 2,
+            "forms": [
+              "symulator"
+            ],
+            "single_form": "symulator"
+          }
+        }
+      }
+    },
+    "maritime transport": {
+      "name": "Maritime Transport",
+      "semesters": {
+        "1": {
+          "english": {
+            "name": "English",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "law of the sea": {
+            "name": "Law of the Sea",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "protection of the marine environment": {
+            "name": "Protection of the Marine Environment",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "search and rescue": {
+            "name": "Search and Rescue",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "physical education": {
+            "name": "Physical Education",
+            "A": 0,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "maths": {
+            "name": "Maths",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "physics": {
+            "name": "Physics",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "navigation": {
+            "name": "Navigation",
+            "A": 30,
+            "C": 10,
+            "L": 20,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "celestial navigation": {
+            "name": "Celestial Navigation",
+            "A": 5,
+            "C": 10,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "maritime communications": {
+            "name": "Maritime Communications",
+            "A": 15,
+            "C": 0,
+            "L": 5,
+            "S": 10,
+            "forms": [
+              "wyklad",
+              "laboratorium",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "safety of navigation": {
+            "name": "Safety of Navigation",
+            "A": 45,
+            "C": 10,
+            "L": 0,
+            "S": 20,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "symulator"
+            ],
+            "single_form": null
+          }
+        },
+        "2": {
+          "english": {
+            "name": "English",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "physical education": {
+            "name": "Physical Education",
+            "A": 0,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "maths": {
+            "name": "Maths",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "physics": {
+            "name": "Physics",
+            "A": 30,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "navigation": {
+            "name": "Navigation",
+            "A": 15,
+            "C": 45,
+            "L": 0,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "celestial navigation": {
+            "name": "Celestial Navigation",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "ecdis": {
+            "name": "ECDIS",
+            "A": 5,
+            "C": 0,
+            "L": 0,
+            "S": 10,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "meteorology and oceanography": {
+            "name": "Meteorology and Oceanography",
+            "A": 30,
+            "C": 15,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "navigation equipment": {
+            "name": "Navigation Equipment",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "ship management": {
+            "name": "Ship Management",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "ship safety": {
+            "name": "Ship Safety",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "basic safety training in personal survival techniques": {
+            "name": "Basic Safety Training in Personal Survival Techniques",
+            "A": 14,
+            "C": 0,
+            "L": 6,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "basic safety training in elementary first aid": {
+            "name": "Basic Safety Training in Elementary First Aid",
+            "A": 6,
+            "C": 0,
+            "L": 6,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "basic safety training in fire prevention & fire fighting": {
+            "name": "Basic Safety Training in Fire Prevention & Fire Fighting",
+            "A": 7,
+            "C": 0,
+            "L": 10,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "basic safety training in personal safety & social responsibilities": {
+            "name": "Basic Safety Training in Personal Safety & Social Responsibilities",
+            "A": 18,
+            "C": 3,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "proficiency in security awareness": {
+            "name": "Proficiency in Security - awareness",
+            "A": 4,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          }
+        },
+        "3": {
+          "english": {
+            "name": "English",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "physical education": {
+            "name": "Physical Education",
+            "A": 0,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "navigation": {
+            "name": "Navigation",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "navigation equipment": {
+            "name": "Navigation Equipment",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 30,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "shiphandling": {
+            "name": "Shiphandling",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "ship construction and stability": {
+            "name": "Ship Construction and Stability",
+            "A": 30,
+            "C": 0,
+            "L": 15,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "laboratorium",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "carriage of goods": {
+            "name": "Carriage of Goods",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 30,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "optional lecture": {
+            "name": "Optional Lecture",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "graduation seminar": {
+            "name": "Graduation Seminar",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          }
+        },
+        "4": {
+          "physical education": {
+            "name": "Physical Education",
+            "A": 0,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "navigation": {
+            "name": "Navigation",
+            "A": 15,
+            "C": 30,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "navigation equipment": {
+            "name": "Navigation Equipment",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "ship construction and stability": {
+            "name": "Ship Construction and Stability",
+            "A": 30,
+            "C": 0,
+            "L": 15,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "laboratorium",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "carriage of goods": {
+            "name": "Carriage of Goods",
+            "A": 30,
+            "C": 5,
+            "L": 0,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "optional lecture": {
+            "name": "Optional Lecture",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "graduation seminar": {
+            "name": "Graduation Seminar",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "operational use of radar arpa": {
+            "name": "Operational Use of Radar ARPA",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "electronic chart display and information systems ecdis": {
+            "name": "Electronic Chart Display and Information Systems (ECDIS)",
+            "A": 10,
+            "C": 0,
+            "L": 0,
+            "S": 30,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          }
+        },
+        "7": {
+          "navigation": {
+            "name": "Navigation",
+            "A": 0,
+            "C": 0,
+            "L": 5,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "navigation equipment": {
+            "name": "Navigation Equipment",
+            "A": 0,
+            "C": 0,
+            "L": 5,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "safety of navigation": {
+            "name": "Safety of Navigation",
+            "A": 0,
+            "C": 0,
+            "L": 5,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "ship construction and stability": {
+            "name": "Ship Construction and Stability",
+            "A": 0,
+            "C": 0,
+            "L": 5,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "carriage of goods": {
+            "name": "Carriage of Goods",
+            "A": 0,
+            "C": 0,
+            "L": 5,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "ship management": {
+            "name": "Ship Management",
+            "A": 0,
+            "C": 0,
+            "L": 5,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "operational use of radar arpa": {
+            "name": "Operational Use of Radar ARPA",
+            "A": 0,
+            "C": 0,
+            "L": 40,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "certificate of training in medical first aid": {
+            "name": "Certificate of Training in Medical First Aid",
+            "A": 13,
+            "C": 7,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "certificate of training in advanced fire fighting": {
+            "name": "Certificate of Training in Advanced Fire Fighting",
+            "A": 17,
+            "C": 13,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "certificate of proficiency in survival and rescue boats other than fast rescue boats": {
+            "name": "Certificate of Proficiency in Survival and Rescue Boats Other Than Fast Rescue Boats",
+            "A": 15,
+            "C": 0,
+            "L": 8,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "certificate of proficiency for seafarers with designated security duties": {
+            "name": "Certificate of Proficiency for Seafarers with Designated Security Duties",
+            "A": 3,
+            "C": 2,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          }
+        }
+      }
+    },
+    "maritime transport 2": {
+      "name": "Maritime Transport 2",
+      "semesters": {
+        "1": {
+          "english": {
+            "name": "English",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "law of the sea": {
+            "name": "Law of the Sea",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "protection of the marine environment": {
+            "name": "Protection of the Marine Environment",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "search and rescue": {
+            "name": "Search and Rescue",
+            "A": 15,
+            "C": 8,
+            "L": 0,
+            "S": 7,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "maths": {
+            "name": "Maths",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "physics": {
+            "name": "Physics",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "navigation": {
+            "name": "Navigation",
+            "A": 30,
+            "C": 15,
+            "L": 0,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "astronavigation": {
+            "name": "Astronavigation",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "safety of navigation": {
+            "name": "Safety of Navigation",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 30,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "ship construction and stability": {
+            "name": "Ship Construction and Stability",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "laboratorium",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "carriage od googs": {
+            "name": "Carriage od Googs",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "ship management": {
+            "name": "Ship Management",
+            "A": 30,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "carriage od goods": {
+            "name": "Carriage od Goods",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          }
+        },
+        "2": {
+          "english": {
+            "name": "English",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "navigation": {
+            "name": "Navigation",
+            "A": 30,
+            "C": 15,
+            "L": 0,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "ecdis": {
+            "name": "ECDIS",
+            "A": 15,
+            "C": 10,
+            "L": 0,
+            "S": 30,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "navigation equipment": {
+            "name": "Navigation Equipment",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "ship handling": {
+            "name": "Ship Handling",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 30,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "ship construction and stability": {
+            "name": "Ship Construction and Stability",
+            "A": 30,
+            "C": 0,
+            "L": 15,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "laboratorium",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "carriage od googs": {
+            "name": "Carriage od Googs",
+            "A": 30,
+            "C": 15,
+            "L": 0,
+            "S": 30,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "ship safety": {
+            "name": "Ship Safety",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "optional lecture": {
+            "name": "Optional Lecture",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "graduation seminar": {
+            "name": "Graduation Seminar",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "hazmat": {
+            "name": "HAZMAT",
+            "A": 15,
+            "C": 0,
+            "L": 5,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "carriage od goods": {
+            "name": "Carriage od Goods",
+            "A": 30,
+            "C": 15,
+            "L": 0,
+            "S": 30,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "symulator"
+            ],
+            "single_form": null
+          }
+        },
+        "3": {
+          "economics of transport": {
+            "name": "Economics of Transport",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "information technology": {
+            "name": "Information Technology",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "meteorology and oceanography": {
+            "name": "Meteorology and Oceanography",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "engine room": {
+            "name": "Engine Room",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 10,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "optional lecture": {
+            "name": "Optional Lecture",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "graduation seminar": {
+            "name": "Graduation Seminar",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "arpa management level": {
+            "name": "ARPA - management Level",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 30,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "ships handling": {
+            "name": "Ships Handling",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 45,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "ism code": {
+            "name": "ISM Code",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          }
+        }
+      }
+    },
+    "technologie offshorowe": {
+      "name": "Technologie Offshorowe",
+      "semesters": {
+        "1": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "matematyka stosowana": {
+            "name": "Matematyka Stosowana",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "systemy teleinformatyczne": {
+            "name": "Systemy Teleinformatyczne",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "zarządzanie zasobami ludzkimi": {
+            "name": "Zarządzanie Zasobami Ludzkimi",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "metody opracowania danych": {
+            "name": "Metody Opracowania Danych",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "bazy i hurtownie danych": {
+            "name": "Bazy i Hurtownie Danych",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "psychologia i socjologia": {
+            "name": "Psychologia i Socjologia",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "elementy oceanografii i hydrografii": {
+            "name": "Elementy Oceanografii i Hydrografii",
+            "A": 30,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "urządzenia nawigacyjne": {
+            "name": "Urządzenia Nawigacyjne",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 30,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "podstawy oceny niezawodności i bezpieczeństwa systemów technicznych": {
+            "name": "Podstawy Oceny Niezawodności i Bezpieczeństwa Systemów Technicznych",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "ochrona środowiska morskiego": {
+            "name": "Ochrona Środowiska Morskiego",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "komputerowe wspomaganie decyzji": {
+            "name": "Komputerowe Wspomaganie Decyzji",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          }
+        },
+        "2": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "metody analizy danych nawigacyjnych": {
+            "name": "Metody Analizy Danych Nawigacyjnych",
+            "A": 30,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "systemy map elektronicznych": {
+            "name": "Systemy Map Elektronicznych",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 30,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "zarządzanie bezpieczeństwem w nawigacji": {
+            "name": "Zarządzanie Bezpieczeństwem w Nawigacji",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "zarządzanie systemami transportowymi": {
+            "name": "Zarządzanie Systemami Transportowymi",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "podstawy systemów dynamicznego pozycjonowania": {
+            "name": "Podstawy Systemów Dynamicznego Pozycjonowania",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "inżynieria ruchu morskiego": {
+            "name": "Inżynieria Ruchu Morskiego",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "nawigacyjne zabezpieczenie operacji offshore": {
+            "name": "Nawigacyjne Zabezpieczenie Operacji Offshore",
+            "A": 30,
+            "C": 15,
+            "L": 0,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "systemy referencyjne": {
+            "name": "Systemy Referencyjne",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "offshorowe technologie wydobycia i przetwarzania węglowodorów kopalnych": {
+            "name": "Offshorowe Technologie Wydobycia i Przetwarzania Węglowodorów Kopalnych",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "eksploracja podmorskich złóż węglowodorów": {
+            "name": "Eksploracja Podmorskich Złóż Węglowodorów",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 15,
+            "forms": [
+              "wyklad",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "budowa i konstrukcja kadłuba zbiornikowców": {
+            "name": "Budowa i Konstrukcja Kadłuba Zbiornikowców",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "stateczność jednostek offshorowych": {
+            "name": "Stateczność Jednostek Offshorowych",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "siłownie okrętowe": {
+            "name": "Siłownie Okrętowe",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "seminarium dyplomowe": {
+            "name": "Seminarium Dyplomowe",
+            "A": 0,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          }
+        },
+        "3": {
+          "przewozy morskie lchs": {
+            "name": "Przewozy Morskie - LCHS",
+            "A": 20,
+            "C": 20,
+            "L": 0,
+            "S": 40,
+            "forms": [
+              "wyklad",
+              "cwiczenia",
+              "symulator"
+            ],
+            "single_form": null
+          },
+          "geodezyjne podstawy pomiarów morskich": {
+            "name": "Geodezyjne Podstawy Pomiarów Morskich",
+            "A": 20,
+            "C": 0,
+            "L": 20,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "organizacja i zarzadzanie inwestycjami offshorowymi": {
+            "name": "Organizacja i Zarzadzanie Inwestycjami Offshorowymi",
+            "A": 20,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "zarządzanie bezpieczeństwem w morskim przemyśle wydobywczym ropy i gazu": {
+            "name": "Zarządzanie Bezpieczeństwem w Morskim Przemyśle Wydobywczym Ropy i Gazu",
+            "A": 10,
+            "C": 10,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "wykład monograficzny": {
+            "name": "Wykład Monograficzny",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "seminarium dyplomowe": {
+            "name": "Seminarium Dyplomowe",
+            "A": 0,
+            "C": 0,
+            "L": 10,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "organizacja i zarządzanie inwestycjami offshorowymi": {
+            "name": "Organizacja i Zarządzanie Inwestycjami Offshorowymi",
+            "A": 20,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          }
+        }
+      }
+    },
+    "logistyka w sektorze offshore": {
+      "name": "Logistyka w Sektorze Offshore",
+      "semesters": {
+        "1": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "nauki humanistyczne": {
+            "name": "Nauki Humanistyczne",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "morskie prawo publiczne": {
+            "name": "Morskie Prawo Publiczne",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "wybrane działy matematyki stosowanej": {
+            "name": "Wybrane Działy Matematyki Stosowanej",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "metody stochastyczne w transporcie": {
+            "name": "Metody Stochastyczne w Transporcie",
+            "A": 15,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "mechanika stosowana": {
+            "name": "Mechanika Stosowana",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "systemy teleinformatyczne": {
+            "name": "Systemy Teleinformatyczne",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "komputerowe wspomaganie decyzji": {
+            "name": "Komputerowe Wspomaganie Decyzji",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "logistyka i zarządzanie łańcuchami dostaw": {
+            "name": "Logistyka i Zarządzanie Łańcuchami Dostaw",
+            "A": 30,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "ochrona środowiska w transporcie": {
+            "name": "Ochrona Środowiska w Transporcie",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "bazy i hurtownie danych": {
+            "name": "Bazy i Hurtownie Danych",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "systemy informacji przestrzennej w transporcie morskim": {
+            "name": "Systemy Informacji Przestrzennej w Transporcie Morskim",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "komputerowe wspomaganie analizy i projektowania sieci transportowo logistycznych": {
+            "name": "Komputerowe Wspomaganie Analizy i Projektowania Sieci Transportowo-Logistycznych",
+            "A": 0,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          },
+          "seminarium dyplomowe": {
+            "name": "Seminarium Dyplomowe",
+            "A": 0,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          }
+        },
+        "2": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 30,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "modelowanie procesów i systemów transportowo logistycznych": {
+            "name": "Modelowanie Procesów i Systemów Transportowo-Logistycznych",
+            "A": 30,
+            "C": 0,
+            "L": 30,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "niezawodność i bezpieczeństwo systemów transportowych i logistycznych": {
+            "name": "Niezawodność i Bezpieczeństwo Systemów Transportowych i Logistycznych",
+            "A": 30,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "zarządzanie w przedsiębiorstwach sektora tsl": {
+            "name": "Zarządzanie w Przedsiębiorstwach Sektora TSL",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "geologia morza bałtyckiego": {
+            "name": "Geologia Morza Bałtyckiego",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "geodezyjne podstawy pomiarów morskich": {
+            "name": "Geodezyjne Podstawy Pomiarów Morskich",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "przesył energii elektrycznej": {
+            "name": "Przesył Energii Elektrycznej",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "technologie przewozu i przeładunku w transporcie": {
+            "name": "Technologie Przewozu i Przeładunku w Transporcie",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "spedycja krajowa i międzynarodowa": {
+            "name": "Spedycja Krajowa i Międzynarodowa",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "logistyka transportu ładunków nienormatywnych": {
+            "name": "Logistyka Transportu Ładunków Nienormatywnych",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "eksploatacja hydrotechnicznych obiektów sektora offshore": {
+            "name": "Eksploatacja Hydrotechnicznych Obiektów Sektora Offshore",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "budowle hydrotechniczne i akweny portowe": {
+            "name": "Budowle Hydrotechniczne i Akweny Portowe",
+            "A": 15,
+            "C": 15,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "projektowanie terminali portowych": {
+            "name": "Projektowanie Terminali Portowych",
+            "A": 15,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "wykład monograficzny": {
+            "name": "Wykład Monograficzny",
+            "A": 15,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "wykład fakultatywny": {
+            "name": "Wykład Fakultatywny",
+            "A": 30,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "seminarium dyplomowe": {
+            "name": "Seminarium Dyplomowe",
+            "A": 0,
+            "C": 0,
+            "L": 15,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          }
+        },
+        "3": {
+          "język angielski": {
+            "name": "Język Angielski",
+            "A": 0,
+            "C": 40,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "cwiczenia"
+            ],
+            "single_form": "cwiczenia"
+          },
+          "podstawy manewrowania": {
+            "name": "Podstawy Manewrowania",
+            "A": 10,
+            "C": 0,
+            "L": 10,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "laboratorium"
+            ],
+            "single_form": null
+          },
+          "górnictwo podmorskie i prace głębokowodne": {
+            "name": "Górnictwo Podmorskie i Prace Głębokowodne",
+            "A": 10,
+            "C": 10,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad",
+              "cwiczenia"
+            ],
+            "single_form": null
+          },
+          "organizacja i zarządzanie projektami offshorowymi": {
+            "name": "Organizacja i Zarządzanie Projektami Offshorowymi",
+            "A": 20,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "wykład monograficzny": {
+            "name": "Wykład Monograficzny",
+            "A": 40,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "wykład fakultatywny": {
+            "name": "Wykład Fakultatywny",
+            "A": 40,
+            "C": 0,
+            "L": 0,
+            "S": 0,
+            "forms": [
+              "wyklad"
+            ],
+            "single_form": "wyklad"
+          },
+          "seminarium dyplomowe": {
+            "name": "Seminarium Dyplomowe",
+            "A": 0,
+            "C": 0,
+            "L": 20,
+            "S": 0,
+            "forms": [
+              "laboratorium"
+            ],
+            "single_form": "laboratorium"
+          }
+        }
+      }
+    }
+  },
+  "global_single_forms": {
+    "ekonomia": "wyklad",
+    "psychologia i socjologia": "wyklad",
+    "bezpieczeństwo i higiena pracy": "wyklad",
+    "ochrona środowiska morskiego": "wyklad",
+    "ceremoniał morski": "cwiczenia",
+    "szkolenie w zakresie problematyki ochrony na statku": "wyklad",
+    "wykład monograficzny": "wyklad",
+    "prawo morskie": "wyklad",
+    "ekonomika transportu morskiego": "wyklad",
+    "wykład fakultatywny": "wyklad",
+    "nauki humanistyczne": "wyklad",
+    "elementy prawa z prawem transportowym": "wyklad",
+    "podstawy ekonomii": "wyklad",
+    "organizacja i zarządzanie": "wyklad",
+    "ekonomika transportu": "wyklad",
+    "ocena oddziaływania transportu na środowisko": "wyklad",
+    "morskie prawo publiczne": "wyklad",
+    "komputerowe wspomaganie projektowania cad": "laboratorium",
+    "transport intermodalny": "wyklad",
+    "cła i procedury celne": "wyklad",
+    "otoczenie transportowe portów morskich": "wyklad",
+    "ubezpieczenia morskie": "wyklad",
+    "inteligentne systemy zarządzania w transporcie": "wyklad",
+    "english": "cwiczenia",
+    "law of the sea": "wyklad",
+    "protection of the marine environment": "wyklad",
+    "physical education": "laboratorium",
+    "proficiency in security awareness": "wyklad",
+    "optional lecture": "wyklad",
+    "graduation seminar": "wyklad",
+    "economics of transport": "wyklad",
+    "ism code": "wyklad",
+    "zarządzanie zasobami ludzkimi": "wyklad",
+    "organizacja i zarzadzanie inwestycjami offshorowymi": "wyklad",
+    "organizacja i zarządzanie inwestycjami offshorowymi": "wyklad",
+    "komputerowe wspomaganie analizy i projektowania sieci transportowo logistycznych": "laboratorium",
+    "geologia morza bałtyckiego": "wyklad",
+    "organizacja i zarządzanie projektami offshorowymi": "wyklad"
+  }
+}

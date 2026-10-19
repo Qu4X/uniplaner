@@ -1,0 +1,104 @@
+[
+  {
+    "_comment": "Szablon wydarzenia. Ustaw 'enabled': true (lub usuń to pole), aby aktywować.",
+    "enabled": false,
+    "id": "szablon-inauguracja",
+    "date": "2026-10-01",
+    "time_start": "11:00",
+    "time_end": "14:00",
+    "title": "Uroczysta Inauguracja Roku Akademickiego (Szablon)",
+    "description": "Uroczyste rozpoczęcie roku akademickiego 2026/2027. Zgodnie z zarządzeniem Rektora obowiązują godziny wolne od zajęć.",
+    "location": "Aula Główna UMG",
+    "url": "https://umg.edu.pl",
+    "type": "academic",
+    "badge": "Rektorat",
+    "icon": "🎓",
+    "color": "#0d3b66",
+    "target": {
+      "mode": "all",
+      "degree": "all"
+    }
+  },
+  {
+    "_comment": "Flaneczki",
+    "enabled": true,
+    "id": "inauguracja-flanki",
+    "date": "2026-10-01",
+    "time_start": "21:00",
+    "time_end": "",
+    "title": "Rozpoczęcie sezonu!",
+    "description": "Uroczyste rozpoczęcie sezonu 2026/2027. Zgodnie z zarządzeniem flanekmajstra obowiązuje zaopatrzenie w napoje procentowe.",
+    "location": "Bulwar Nadmorski",
+    "url": "https://maps.app.goo.gl/CKJ4E4oBH213DcMd9",
+    "button_text": "Otwórz lokalizację w Google Maps",
+    "type": "flanki",
+    "badge": "Flanki",
+    "icon": "🍻",
+    "color": "#d97706",
+    "target": {
+      "mode": "all",
+      "degree": "all"
+    }
+  },
+  {
+    "_comment": "Inaguracja2026",
+    "enabled": true,
+    "id": "proba-generalna-inauguracja-2026",
+    "date": "2026-10-02",
+    "time_start": "14:00",
+    "time_end": "17:00",
+    "title": "Próba generalna przed Inauguracją Roku Akademickiego",
+    "description": "Próba generalna o godz. 15:00 dla studentów I roku studiów stacjonarnych wszystkich Wydziałów (obecność obowiązkowa). Od godz. 14:00 obowiązują godziny rektorskie.",
+    "location": "Nabrzeże Pomorskie (vis-à-vis Akwarium Gdyńskiego przy „Darze Młodzieży”)",
+    "url": "https://www.umg.edu.pl/aktualnosci/2026/godziny-rektorskie-dla-studentow-i-roku-studiow-stacjonarnych",
+    "type": "academic",
+    "badge": "Rektorat",
+    "icon": "📜",
+    "color": "#0d3b66",
+    "target": {
+      "mode": "stacjonarne",
+      "degree": 1
+    }
+  },
+  {
+    "_comment": "Inaguracjaroku2026",
+    "enabled": true,
+    "id": "inauguracja-2026",
+    "date": "2026-10-03",
+    "time_start": "11:00",
+    "time_end": "14:00",
+    "title": "Inauguracja Roku Akademickiego",
+    "description": "",
+    "location": "Nabrzeże Pomorskie, przy „Darze Młodzieży”",
+    "url": "https://www.umg.edu.pl/aktualnosci/2026/inauguracja-roku-akademickiego-20262027",
+    "type": "academic",
+    "badge": "Rektorat",
+    "icon": "📜",
+    "color": "#0d3b66",
+    "target": {
+      "mode": "stacjonarne",
+      "degree": 1
+    }
+  },
+  {
+    "_comment": "Turniej_poetycki",
+    "enabled": true,
+    "id": "turniej2026",
+    "date": "2026-10-29",
+    "time_start": "21:00",
+    "time_end": "",
+    "title": "Międzywydziałowy turniej poetycki",
+    "description": "Szykujcie rymy i przyśpiewki. Organizujemy TRZECIĄ EDYCJE WIELKIEGO **TURNIEJU** POETYCKIEGO. Obecny bilans to: Nawigacja 1:1 Mechanicy. Oczywiście nie zrezygnujemy tego dnia z organizacji flanek i dobrej zabawy",
+    "location": "Bulwar Nadmorski",
+    "url": "https://maps.app.goo.gl/CKJ4E4oBH213DcMd9",
+    "button_text": "Otwórz lokalizację w Google Maps",
+    "type": "flanki",
+    "badge": "Flanki",
+    "icon": "🍻",
+    "color": "#d97706",
+    "target": {
+      "mode": "stacjonarne",
+      "degree": 1
+    }
+  }
+]

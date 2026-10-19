@@ -195,6 +195,50 @@ class TestOrchestrator(unittest.TestCase):
         self.assertTrue(os.path.exists(p1_json))
         self.assertTrue(os.path.exists(p1_ics))
 
+        # Sprawdzenie zgodności plans.json z validate_plans_index
+        from core.validate import validate_plans_index
+        with open(os.path.join(dist_dir, "data", "plans.json"), "r", encoding="utf-8") as f:
+            plans_idx = json.load(f)
+        ok, errs = validate_plans_index(plans_idx)
+        self.assertTrue(ok, f"plans.json nie przeszedł walidacji: {errs}")
+
+        # 2. Przebieg z błędną walidacją (ujemny duration_minutes): stary plik p1_1.json musi zostać nienaruszony
+        rl_bad = RawLesson(
+            subject="Zepsuty Przedmiot", raw_subject="BAD", start_time="08:00", end_time="07:00",
+            duration_minutes=-60, form="lecture", teacher="Dr K", room="101", remote=False,
+            hideable=False, day_of_week="MON", start_date="2026-10-05", interval_weeks=1,
+            weeks=1, occurrences=[{"date": "2026-10-05", "number": 1, "of": 1}]
+        )
+        p1_v2 = PlanMetadata(id="p1", institution="umg", faculty="wn", name="Plan Pomyślny",
+                             study_mode="full_time", semester_number=1, version_token="v2")
+        bad_source = MockScheduleSource(plans=[p1_v2], schedules={"p1": {"1": [rl_bad]}})
+        orchestrator2 = BuildOrchestrator(
+            tenant_config={"id": "test_tenant", "academic_calendar": {}},
+            sources=[bad_source],
+            dist_dir=dist_dir
+        )
+        res2 = orchestrator2.run(force=False)
+        self.assertEqual(res2["failed_plans"], ["p1"])
+        with open(p1_json, "r", encoding="utf-8") as f:
+            saved_p1 = json.load(f)
+        self.assertEqual(saved_p1["lessons"][0]["subject"], "Matematyka")
+
+    def test_winter_plan_archiving_after_exam_session(self):
+        from core.build import is_winter_plan_archived
+        cal = {
+            "periods": [
+                {"type": "teaching", "name": "Semestr zimowy", "start": "2026-10-01", "end": "2027-01-31"},
+                {"type": "exam", "name": "Sesja zimowa", "start": "2027-02-01", "end": "2027-02-14"},
+                {"type": "retake", "name": "Sesja poprawkowa zimowa", "start": "2027-02-15", "end": "2027-02-21"}
+            ]
+        }
+        # Przed końcem sesji poprawkowej -> niezarchiwizowany
+        self.assertFalse(is_winter_plan_archived(1, cal, "2027-02-18"))
+        # Po końcu sesji poprawkowej -> zarchiwizowany
+        self.assertTrue(is_winter_plan_archived(1, cal, "2027-02-22"))
+        # Semestr letni (parzysty) -> niezarchiwizowany
+        self.assertFalse(is_winter_plan_archived(2, cal, "2027-02-22"))
+
 
 if __name__ == "__main__":
     unittest.main()

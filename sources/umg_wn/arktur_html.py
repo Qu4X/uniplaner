@@ -166,19 +166,22 @@ class UmgArkturHtmlSource:
     source_id = "umg_arktur_html"
 
     def __init__(self, data_dir: Optional[str] = None):
-        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        source_dir = os.path.dirname(os.path.abspath(__file__))
+        base_dir = os.path.dirname(os.path.dirname(source_dir))
+        self.source_dir = source_dir
         self.data_dir = data_dir or os.path.join(base_dir, "data")
         self.curriculum_catalog = self._load_json("wn_curriculum_forms.json")
         self.manual_config = self._load_json("forms_manual.json")
 
     def _load_json(self, filename: str) -> Dict[str, Any]:
-        p = os.path.join(self.data_dir, filename)
-        if os.path.exists(p):
-            try:
-                with open(p, "r", encoding="utf-8") as f:
-                    return json.load(f)
-            except Exception:
-                pass
+        for directory in (self.data_dir, self.source_dir):
+            p = os.path.join(directory, filename)
+            if os.path.exists(p):
+                try:
+                    with open(p, "r", encoding="utf-8") as f:
+                        return json.load(f)
+                except Exception:
+                    pass
         return {}
 
     def discover(self) -> List[PlanMetadata]:
@@ -189,7 +192,7 @@ class UmgArkturHtmlSource:
             pid = str(p.get("id"))
             name = p.get("nazwa", "")
 
-            # Pomiń niestacjonarne w scraperze HTML
+            # Pomiń niestacjonarne w adapterze źródła HTML
             if "niestacjonarne" in name.lower():
                 continue
 

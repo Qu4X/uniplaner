@@ -110,7 +110,3 @@ def generate_group_ics(
     if isinstance(output, bytes):
         return output.decode("utf-8")
     return output
-
-
-generate_calendar_ics = generate_group_ics
-

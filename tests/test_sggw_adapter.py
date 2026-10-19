@@ -34,7 +34,7 @@ class TestSggwAdapter(unittest.TestCase):
         self.assertEqual(room, "aud 7 b. 24")
 
     def test_discover_wmw_plans(self):
-        source = SggwExcelSource()
+        source = SggwExcelSource(download_on_discover=False)
         plans = source.discover()
         self.assertEqual(len(plans), 6)
         plan_ids = [p.id for p in plans]
@@ -44,7 +44,7 @@ class TestSggwAdapter(unittest.TestCase):
             self.assertEqual(p.institution, "SGGW")
             self.assertEqual(p.faculty, "WMW")
             self.assertEqual(p.study_mode, "full_time")
-            self.assertTrue(len(p.version_token) > 0)
+            self.assertEqual(len(p.version_token), 16)
 
     def test_fetch_schedule_from_fixture(self):
         if not os.path.exists(FIXTURE_PATH):

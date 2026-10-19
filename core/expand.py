@@ -57,14 +57,39 @@ def is_teaching_day(iso_str: str, calendar: Dict[str, Any]) -> bool:
     return True
 
 
-def get_semester_period(lesson_start_iso: str, calendar: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+def get_semester_period(
+    lesson_start_iso: str,
+    calendar: Dict[str, Any],
+    semester_num: Optional[int] = None
+) -> Optional[Dict[str, Any]]:
     if not calendar or not lesson_start_iso:
         return None
     teaching = [p for p in calendar.get("periods", []) if p.get("type") == "teaching"]
+    if not teaching:
+        return None
+
+    if isinstance(semester_num, int):
+        is_summer = (semester_num % 2 == 0)
+        for p in teaching:
+            name_lower = p.get("name", "").lower()
+            if ("letni" in name_lower) if is_summer else ("zimowy" in name_lower):
+                return p
+        return None
+
     for p in teaching:
         if p["start"] <= lesson_start_iso <= p["end"]:
             return p
-    return None
+
+    if lesson_start_iso <= "2027-02-21":
+        for p in teaching:
+            if "zimowy" in p.get("name", "").lower():
+                return p
+        return teaching[0]
+
+    for p in teaching:
+        if "letni" in p.get("name", "").lower():
+            return p
+    return teaching[1] if len(teaching) > 1 else teaching[0]
 
 
 def expand_occurrences(
@@ -73,13 +98,13 @@ def expand_occurrences(
     total_meetings: Optional[int] = None
 ) -> List[Occurrence]:
     """
-    Wyznacza jawną listę wystąpień (occurrences) dla lekcji.
-    Dla planów NST: jeśli lesson posiada już predefiniowane daty (np. zjazdowe),
+    Wyznacza jawną listę wystąpień spotkań (occurrences) dla bloku zajęć.
+    Dla planów NST: jeśli blok zajęć posiada już predefiniowane daty spotkań,
     zwraca je z nadanymi numerami spotkań.
     Dla planów stacjonarnych: realizuje pętlę tygodniową z uwzględnieniem
-    dni wolnych, przerw, zamian dni (daySwaps) i połówek semestru.
+    dni wolnych, przerw dydaktycznych, zamian dni (daySwaps) i połówek semestru.
     """
-    # 1. Sprawdź, czy lekcja ma już bezpośrednio podane daty (np. tryb NST)
+    # 1. Sprawdź, czy blok zajęć ma już bezpośrednio podane daty (np. tryb NST)
     def _get(key, default=None):
         if isinstance(lesson, dict):
             return lesson.get(key, default)
@@ -123,6 +148,7 @@ def expand_occurrences(
     target_total = total_meetings or _get("total_meetings") or _get("weeks") or 15
     interval = _get("interval_weeks", 1) or 1
     half_sem = _get("half_semester")
+    sem_num = _get("semester") or _get("semestr")
 
     # Obsługa połówek semestru z kalendarza tenanta
     half_boundaries = calendar.get("half_boundaries", {})
@@ -133,7 +159,7 @@ def expand_occurrences(
             start_date_str = start_date.strftime("%Y-%m-%d")
 
     day_swaps = calendar.get("daySwaps", {})
-    sem_period = get_semester_period(start_date_str, calendar)
+    sem_period = get_semester_period(start_date_str, calendar, semester_num=sem_num)
 
     start_monday = get_monday(start_date)
     current_monday = start_monday

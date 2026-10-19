@@ -1,6 +1,6 @@
 """
 Obliczanie różnic między wersjami planów zajęć.
-Wykrywa dodane, usunięte oraz zmodyfikowane lekcje pomiędzy dwoma zestawami GroupSchedule.
+Wykrywa dodane, usunięte oraz zmodyfikowane bloki zajęć (spotkania) pomiędzy dwoma zestawami GroupSchedule.
 """
 from typing import Dict, List, Any, Optional
 from core.contracts import GroupSchedule, Lesson

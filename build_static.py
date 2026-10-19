@@ -36,10 +36,16 @@ CALENDARS_DIR = os.path.join(DIST_DIR, "calendars")
 
 
 def _get_data_path(filename: str) -> str:
-    """Returns path to reference data file, checking data/ first then falling back to BASE_DIR."""
-    p = os.path.join(SRC_DATA_DIR, filename)
-    if os.path.exists(p):
-        return p
+    """Returns path to reference data file, checking data/, tenants/umg_wn/, sources/umg_wn/, then BASE_DIR."""
+    candidates = [
+        os.path.join(SRC_DATA_DIR, filename),
+        os.path.join(BASE_DIR, "tenants", "umg_wn", filename),
+        os.path.join(BASE_DIR, "sources", "umg_wn", filename),
+        os.path.join(BASE_DIR, filename),
+    ]
+    for p in candidates:
+        if os.path.exists(p):
+            return p
     return os.path.join(BASE_DIR, filename)
 
 
@@ -221,121 +227,7 @@ def load_forms_manual(path: Optional[str] = None) -> Dict[str, Any]:
     return {}
 
 
-def normalize_form_key(text: str) -> str:
-    """Normalizuje nazwę przedmiotu lub kierunku do dopasowania w katalogu."""
-    if not text:
-        return ""
-    text = text.strip().lower()
-    return re.sub(r'[\s\-_.,/()]+', ' ', text).strip()
-
-
-def classify_lesson_form(
-    lesson: LessonDict,
-    plan_name: str,
-    curriculum_catalog: Optional[Dict[str, Any]] = None,
-    manual_config: Optional[Dict[str, Any]] = None,
-    total_groups: Optional[int] = None
-) -> str:
-    """
-    Klasyfikuje formę zajęć do jednej z czterech kategorii:
-    'wyklad', 'cwiczenia', 'laboratorium', 'symulator'.
-    Kaskada: manualne nadpisania -> sala -> kolor Arktura -> pełny rocznik -> siatka godzinowa WN -> fallback.
-    """
-    manual = manual_config or {}
-    catalog = curriculum_catalog or {}
-
-    przedmiot = lesson.get("przedmiot", "")
-    raw_przedmiot = lesson.get("raw_przedmiot", "")
-    sala = (lesson.get("sala") or "").strip()
-    colspan = lesson.get("colspan", 1)
-    arktur_kolor = lesson.get("arktur_kolor", "default")
-    norm_sub = normalize_form_key(przedmiot)
-    norm_raw = normalize_form_key(raw_przedmiot)
-
-    # 1. Manualne nadpisania po nazwie przedmiotu (np. WF -> cwiczenia, BHP -> wyklad)
-    sub_overrides = manual.get("override_by_subject", {})
-    if norm_sub in sub_overrides:
-        return sub_overrides[norm_sub]
-    if norm_raw in sub_overrides:
-        return sub_overrides[norm_raw]
-
-    # 2. Weryfikacja sali (np. 306,400 -> laboratorium, 306 -> symulator, Aula/C136 -> wyklad, basen -> cwiczenia)
-    room_lower = sala.lower()
-    room_overrides = manual.get("override_by_room", {})
-    if room_lower in room_overrides:
-        return room_overrides[room_lower]
-
-    for pattern, form in manual.get("room_regex", []):
-        if re.search(pattern, room_lower, re.IGNORECASE):
-            return form
-
-    # 3. Aula, audytorium lub kolor magenta (laboratoria specjalistyczne w Arkturze)
-    if room_lower in ("aula", "audytorium"):
-        return "wyklad"
-
-    if arktur_kolor == "magenta":
-        return "laboratorium"
-
-    # 4. Sprawdzenie, czy zajęcia łączą cały rocznik / dużą grupę wykładową
-    # Standardowe ćwiczenia łączą maksymalnie 2 grupy dziekańskie (colspan 1 lub 2).
-    # Wykłady łączą cały rocznik (colspan >= 4 lub colspan >= total_groups).
-    threshold = 4 if not total_groups else min(4, total_groups)
-    is_cohort_wide = colspan >= threshold
-
-    # 5. Sprawdzenie w oficjalnej siatce godzinowej WN
-    m_sem = re.search(r'\bsem\.?\s*(\d+)\b', plan_name, re.IGNORECASE)
-    sem_str = m_sem.group(1) if m_sem else None
-
-    norm_plan = normalize_form_key(plan_name)
-    matched_major_data = None
-    for m_key, m_val in catalog.get("majors", {}).items():
-        if m_key in norm_plan:
-            matched_major_data = m_val
-            break
-
-    curriculum_entry = None
-    if matched_major_data and sem_str and sem_str in matched_major_data.get("semesters", {}):
-        sem_subs = matched_major_data["semesters"][sem_str]
-        curriculum_entry = sem_subs.get(norm_sub) or sem_subs.get(norm_raw)
-
-    if curriculum_entry:
-        if curriculum_entry.get("single_form"):
-            return curriculum_entry["single_form"]
-        if is_cohort_wide and curriculum_entry.get("A", 0) > 0:
-            return "wyklad"
-        # Dla podgrup ćwiczeniowych/laboratoryjnych
-        forms = curriculum_entry.get("forms", [])
-        if "symulator" in forms and "cwiczenia" not in forms and "laboratorium" not in forms:
-            return "symulator"
-        if "cwiczenia" in forms and "laboratorium" in forms:
-            # a) Pracownia laboratoryjna / komputerowa / sala wielokrotna
-            if any(re.search(p, room_lower) for p in [r'\blab\b', r'\bprac\b', r'\bmw\b', r'h\d+', r'\d+a\b']) or "," in sala:
-                return "laboratorium"
-            # b) Większa podgrupa (ćwiczenia tablicowe często łączą >= 2 grupy)
-            if colspan > 1:
-                return "cwiczenia"
-            # c) Stosunek godzin w siatce
-            if curriculum_entry.get("C", 0) >= curriculum_entry.get("L", 0):
-                return "cwiczenia"
-            return "laboratorium"
-
-        if "cwiczenia" in forms:
-            return "cwiczenia"
-        if "laboratorium" in forms:
-            return "laboratorium"
-        if "symulator" in forms:
-            return "symulator"
-
-    if norm_sub in catalog.get("global_single_forms", {}):
-        return catalog["global_single_forms"][norm_sub]
-    if norm_raw in catalog.get("global_single_forms", {}):
-        return catalog["global_single_forms"][norm_raw]
-
-    if is_cohort_wide:
-        return "wyklad"
-
-    # 6. Domyślny fallback dla sal standardowych
-    return "cwiczenia"
+from sources.umg_wn.arktur_html import normalize_form_key, classify_lesson_form
 
 
 def build(limit=None, plan_ids=None, filter_query=None):
@@ -586,20 +478,7 @@ def build(limit=None, plan_ids=None, filter_query=None):
     return total_groups_processed
 
 
-def _is_same_cycle(
-    entry: dict,
-    co_ile: int,
-    od_tyg: int,
-    polowa_sem: Optional[int],
-    data_start: str
-) -> bool:
-    """Helper to verify if schedule entry belongs to the identical academic cycle/half."""
-    return (
-        entry.get("co_ile", 1) == co_ile
-        and entry.get("od_tyg", 1) == od_tyg
-        and entry.get("polowa_sem") == polowa_sem
-        and entry.get("data_start", "") == data_start
-    )
+from core.cross_ref import _is_same_cycle
 
 
 def build_cross_reference_indexes(plans_metadata=None, schedules_dir=SCHEDULES_DIR, output_path=None):

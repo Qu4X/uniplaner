@@ -11,7 +11,6 @@ VALID_FORMS = {
     "simulator",
     "project",
     "seminar",
-    "clinic",
     "elective",
     "other"
 }
@@ -37,7 +36,7 @@ def validate_occurrence(occ: Dict[str, Any], path: str = "occurrence") -> None:
 
 
 def validate_lesson(lesson: Dict[str, Any], path: str = "lesson") -> Dict[str, Any]:
-    """Waliduje lekcję i uzupełnia bezpieczne wartości domyślne."""
+    """Waliduje blok zajęć (spotkań) i uzupełnia bezpieczne wartości domyślne."""
     if not isinstance(lesson, dict):
         raise ValidationError(f"{path} musi być słownikiem")
 
@@ -138,7 +137,4 @@ def validate_plans_index(index_data: Dict[str, Any]) -> Tuple[bool, List[str]]:
                 errors.append(f"plans[{idx}].study_mode musi być full_time lub part_time: {p.get('study_mode')}")
 
     return len(errors) == 0, errors
-
-
-validate_schedule = validate_group_schedule
 

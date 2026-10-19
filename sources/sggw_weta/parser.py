@@ -30,32 +30,53 @@ DAY_NAME_MAP = {
 }
 
 
+def _normalize_time_24h(raw_time: str) -> str:
+    clean = raw_time.replace(".", ":").strip()
+    h_str, m_str = clean.split(":")
+    h = int(h_str)
+    if 1 <= h <= 6:
+        h += 12
+    return f"{h:02d}:{m_str}"
+
+
+def _time_to_min(t: str) -> int:
+    h, m = map(int, t.split(":"))
+    return h * 60 + m
+
+
 def parse_time_bounds(text: str, default_start: str, default_end: str) -> Tuple[str, str]:
     """
-    Wyznacza godziny rozpoczęcia i zakończenia zajęć.
+    Wyznacza godziny rozpoczęcia i zakończenia zajęć (w formacie 24h HH:MM).
     Jeśli w tekście podano jawne 'od XX:YY do AA:BB' lub 'od XX:YY' / 'do AA:BB', ma to priorytet.
     """
-    start_time = default_start
-    end_time = default_end
+    start_time = _normalize_time_24h(default_start)
+    end_time = _normalize_time_24h(default_end)
 
     # Format: od HH:MM do HH:MM lub HH:MM - HH:MM
     range_match = re.search(r'(?:od\s*)?(\d{1,2}[:.]\d{2})\s*(?:do|-)\s*(\d{1,2}[:.]\d{2})', text, re.IGNORECASE)
     if range_match:
-        s = range_match.group(1).replace(".", ":")
-        e = range_match.group(2).replace(".", ":")
-        return (f"{int(s.split(':')[0]):02d}:{s.split(':')[1]}", f"{int(e.split(':')[0]):02d}:{e.split(':')[1]}")
+        s = _normalize_time_24h(range_match.group(1))
+        e = _normalize_time_24h(range_match.group(2))
+        if _time_to_min(e) > _time_to_min(s):
+            return (s, e)
 
     # Format: tylko "od HH:MM"
     from_match = re.search(r'\bod\s*(\d{1,2}[:.]\d{2})', text, re.IGNORECASE)
     if from_match:
-        s = from_match.group(1).replace(".", ":")
-        start_time = f"{int(s.split(':')[0]):02d}:{s.split(':')[1]}"
+        cand_s = _normalize_time_24h(from_match.group(1))
+        if _time_to_min(cand_s) < _time_to_min(end_time):
+            start_time = cand_s
 
     # Format: tylko "do HH:MM"
     to_match = re.search(r'\bdo\s*(\d{1,2}[:.]\d{2})', text, re.IGNORECASE)
     if to_match:
-        e = to_match.group(1).replace(".", ":")
-        end_time = f"{int(e.split(':')[0]):02d}:{e.split(':')[1]}"
+        cand_e = _normalize_time_24h(to_match.group(1))
+        if _time_to_min(cand_e) > _time_to_min(start_time):
+            end_time = cand_e
+
+    if _time_to_min(end_time) <= _time_to_min(start_time):
+        end_min = _time_to_min(start_time) + 90
+        end_time = f"{end_min // 60:02d}:{end_min % 60:02d}"
 
     return (start_time, end_time)
 
@@ -335,20 +356,21 @@ def parse_sggw_rotations_excel(wb_or_sheet: Any) -> Dict[str, Dict[str, Dict[Any
                 for g in all_groups:
                     slot_key = "wyklad_zzs"
                     result[g][day_code][slot_key] = {
-                        "przedmiot": "Wykłady ZZS",
-                        "raw_przedmiot": "Wykłady ZZS",
-                        "prowadzacy": "",
-                        "godziny": "08:00 - 14:30",
-                        "sala": "CMT",
+                        "subject": "Wykłady ZZS",
+                        "raw_subject": "Wykłady ZZS",
+                        "teacher": "",
+                        "hours": "08:00 - 14:30",
+                        "room": "CMT",
                         "height": 26,
                         "colspan": 1,
-                        "data_start": d1_r7.isoformat(),
-                        "tygodnie": 1,
-                        "co_ile": 1,
-                        "od_tyg": 1,
-                        "polowa_sem": None,
-                        "forma": "wyklad",
-                        "uwagi": ""
+                        "start_date": d1_r7.isoformat(),
+                        "weeks": 1,
+                        "interval_weeks": 1,
+                        "start_week": 1,
+                        "half_semester": None,
+                        "form": "wyklad",
+                        "notes": "",
+                        "groups": list(all_groups)
                     }
             cur += timedelta(days=1)
 
@@ -388,24 +410,26 @@ def parse_sggw_rotations_excel(wb_or_sheet: Any) -> Dict[str, Dict[str, Dict[Any
                 target_groups.add(sub)
                 target_groups.add(main)
 
+            sorted_groups = sorted(list(target_groups))
             for d_date, day_code in week_days:
                 slot_key = f"staz_{r}_{col}"
                 subject_name = f"Staż - {clinic_name}"
                 lesson_entry = {
-                    "przedmiot": subject_name,
-                    "raw_przedmiot": clinic_name,
-                    "prowadzacy": "",
-                    "godziny": "08:00 - 14:00",
-                    "sala": clinic_name,
+                    "subject": subject_name,
+                    "raw_subject": clinic_name,
+                    "teacher": "",
+                    "hours": "08:00 - 14:00",
+                    "room": clinic_name,
                     "height": 24,
                     "colspan": 1,
-                    "data_start": d1.isoformat(),
-                    "tygodnie": 1,
-                    "co_ile": 1,
-                    "od_tyg": 1,
-                    "polowa_sem": None,
-                    "forma": "staz",
-                    "uwagi": notes
+                    "start_date": d1.isoformat(),
+                    "weeks": 1,
+                    "interval_weeks": 1,
+                    "start_week": 1,
+                    "half_semester": None,
+                    "form": "staz",
+                    "notes": notes,
+                    "groups": sorted_groups
                 }
                 for g in target_groups:
                     result[g][day_code][slot_key] = lesson_entry
@@ -448,10 +472,8 @@ def parse_sggw_excel(wb_or_path: Union[str, openpyxl.Workbook]) -> Dict[str, Dic
             v_str = str(v).strip()
             m = re.search(r'(\d{1,2}[:.]\d{2})\s*[-–]\s*(\d{1,2}[:.]\d{2})', v_str)
             if m:
-                s = m.group(1).replace(".", ":")
-                e = m.group(2).replace(".", ":")
-                sh = f"{int(s.split(':')[0]):02d}:{s.split(':')[1]}"
-                eh = f"{int(e.split(':')[0]):02d}:{e.split(':')[1]}"
+                sh = _normalize_time_24h(m.group(1))
+                eh = _normalize_time_24h(m.group(2))
                 time_columns[col] = (sh, eh)
 
     if not time_columns:
@@ -523,7 +545,7 @@ def parse_sggw_excel(wb_or_path: Union[str, openpyxl.Workbook]) -> Dict[str, Dic
             def_end = time_columns.get(end_col, ("09:00", "10:00"))[1]
 
             actual_start, actual_end = parse_time_bounds(content, def_start, def_end)
-            godziny_str = f"{actual_start} - {actual_end}"
+            hours_str = f"{actual_start} - {actual_end}"
 
             # Slot bazowy liczony jako minuty od 07:00 / 5
             try:
@@ -538,7 +560,7 @@ def parse_sggw_excel(wb_or_path: Union[str, openpyxl.Workbook]) -> Dict[str, Dic
 
             # Wyodrębnienie grup, przedmiotu i sali
             target_groups = extract_groups_from_text(content, all_groups)
-            forma = classify_sggw_form(content)
+            form_code = classify_sggw_form(content)
             subject, room, notes = extract_room_and_subject(content)
 
             # Sprawdzenie czy komórka łączy dwa przedmioty w 1. i 2. połowie semestru
@@ -558,82 +580,85 @@ def parse_sggw_excel(wb_or_path: Union[str, openpyxl.Workbook]) -> Dict[str, Dic
                 s2, _, _ = extract_room_and_subject(part2_raw + " " + extra_raw)
 
                 lessons_to_add.append({
-                    "przedmiot": s1,
-                    "raw_przedmiot": s1,
-                    "prowadzacy": "",
-                    "godziny": godziny_str,
-                    "sala": room or "brak sali",
+                    "subject": s1,
+                    "raw_subject": s1,
+                    "teacher": "",
+                    "hours": hours_str,
+                    "room": room or "brak sali",
                     "height": height,
                     "colspan": 1,
-                    "data_start": "2026-10-01",
-                    "tygodnie": 7,
-                    "co_ile": 1,
-                    "od_tyg": 1,
-                    "polowa_sem": 1,
-                    "forma": forma,
-                    "uwagi": notes
+                    "start_date": "2026-10-01",
+                    "weeks": 7,
+                    "interval_weeks": 1,
+                    "start_week": 1,
+                    "half_semester": 1,
+                    "form": form_code,
+                    "notes": notes,
+                    "groups": list(target_groups)
                 })
                 lessons_to_add.append({
-                    "przedmiot": s2,
-                    "raw_przedmiot": s2,
-                    "prowadzacy": "",
-                    "godziny": godziny_str,
-                    "sala": room or "brak sali",
+                    "subject": s2,
+                    "raw_subject": s2,
+                    "teacher": "",
+                    "hours": hours_str,
+                    "room": room or "brak sali",
                     "height": height,
                     "colspan": 1,
-                    "data_start": "2026-11-23",
-                    "tygodnie": 8,
-                    "co_ile": 1,
-                    "od_tyg": 1,
-                    "polowa_sem": 2,
-                    "forma": forma,
-                    "uwagi": notes
+                    "start_date": "2026-11-23",
+                    "weeks": 8,
+                    "interval_weeks": 1,
+                    "start_week": 1,
+                    "half_semester": 2,
+                    "form": form_code,
+                    "notes": notes,
+                    "groups": list(target_groups)
                 })
             else:
                 # Tygodnie i cykle
                 weeks = 15
-                co_ile = 1
-                od_tyg = 1
-                polowa_sem = None
-                data_start = "2026-10-01"
+                interval_weeks = 1
+                start_week = 1
+                half_semester = None
+                start_date = "2026-10-01"
 
-                m_range_tyg = re.search(r'1\s*-\s*(\d+)\s*tydz', content, re.IGNORECASE)
-                m_od_tyg = re.search(r'od\s*(\d+)\s*tygodnia', content, re.IGNORECASE)
+                m_week_range = re.search(r'1\s*-\s*(\d+)\s*tydz', content, re.IGNORECASE)
+                m_from_week = re.search(r'od\s*(\d+)\s*tygodnia', content, re.IGNORECASE)
 
-                if m_range_tyg:
-                    weeks = int(m_range_tyg.group(1))
-                    data_start = "2026-10-01"
-                elif m_od_tyg:
-                    od_tyg = int(m_od_tyg.group(1))
-                    weeks = max(1, 15 - od_tyg + 1)
+                if m_week_range:
+                    weeks = int(m_week_range.group(1))
+                    start_date = "2026-10-01"
+                elif m_from_week:
+                    start_week = int(m_from_week.group(1))
+                    weeks = max(1, 15 - start_week + 1)
                     # Obliczenie daty startu: poniedziałek 1. tygodnia to 2026-10-05
                     base_mon = datetime(2026, 10, 5)
-                    start_dt = base_mon + timedelta(days=(od_tyg - 1) * 7)
-                    data_start = start_dt.strftime("%Y-%m-%d")
+                    start_dt = base_mon + timedelta(days=(start_week - 1) * 7)
+                    start_date = start_dt.strftime("%Y-%m-%d")
                 elif re.search(r'1[.\s]*poł(?:\.|owa)?\s*sem', content, re.IGNORECASE):
                     weeks = 7
-                    polowa_sem = 1
-                    data_start = "2026-10-01"
+                    half_semester = 1
+                    start_date = "2026-10-01"
                 elif re.search(r'2[.\s]*poł(?:\.|owa)?\s*sem', content, re.IGNORECASE):
                     weeks = 8
-                    polowa_sem = 2
-                    data_start = "2026-11-23"
+                    half_semester = 2
+                    start_date = "2026-11-23"
 
                 lessons_to_add.append({
-                    "przedmiot": subject,
-                    "raw_przedmiot": subject,
-                    "prowadzacy": "",
-                    "godziny": godziny_str,
-                    "sala": room or "brak sali",
+                    "subject": subject,
+                    "raw_subject": subject,
+                    "teacher": "",
+                    "hours": hours_str,
+                    "room": room or "brak sali",
                     "height": height,
                     "colspan": 1,
-                    "data_start": data_start,
-                    "tygodnie": weeks,
-                    "co_ile": co_ile,
-                    "od_tyg": od_tyg,
-                    "polowa_sem": polowa_sem,
-                    "forma": forma,
-                    "uwagi": notes
+                    "start_date": start_date,
+                    "weeks": weeks,
+                    "interval_weeks": interval_weeks,
+                    "start_week": start_week,
+                    "half_semester": half_semester,
+                    "form": form_code,
+                    "notes": notes,
+                    "groups": list(target_groups)
                 })
 
             # Zapisanie do każdej zainteresowanej grupy
@@ -645,7 +670,7 @@ def parse_sggw_excel(wb_or_path: Union[str, openpyxl.Workbook]) -> Dict[str, Dic
                         day_slots[base_slot] = l_dict
                     else:
                         existing = day_slots[base_slot]
-                        if isinstance(existing, dict) and "przedmiot" in existing:
+                        if isinstance(existing, dict) and "subject" in existing:
                             day_slots[base_slot] = {0: existing, 1: l_dict}
                         elif isinstance(existing, dict):
                             existing[len(existing)] = l_dict
