@@ -5,9 +5,17 @@ const STATIC_ASSETS = [
   './index.html',
   './style.css',
   './app.js',
+  './js/state.js',
+  './js/tenant-config.js',
   './js/schedule-engine.js',
   './js/cross-reference.js',
   './js/events-service.js',
+  './js/timeline.js',
+  './js/render.js',
+  './js/modules/events.js',
+  './js/modules/voting.js',
+  './js/modules/lesson-hiding.js',
+  './js/modules/changelog.js',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
@@ -21,8 +29,11 @@ const STATIC_ASSETS = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
+    caches.open(CACHE_NAME).then(async (cache) => {
+      await cache.addAll(STATIC_ASSETS);
+      try {
+        await cache.add('./data/tenant_config.json');
+      } catch (_) {}
     }).then(() => self.skipWaiting())
   );
 });

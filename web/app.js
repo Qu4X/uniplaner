@@ -118,6 +118,14 @@ let ACADEMIC_CALENDAR = {
   ]
 };
 
+const _AppState = (typeof AppState !== "undefined")
+  ? AppState
+  : (typeof require !== "undefined" ? require("./js/state.js") : null);
+
+const _TenantConfig = (typeof TenantConfig !== "undefined")
+  ? TenantConfig
+  : (typeof require !== "undefined" ? require("./js/tenant-config.js") : null);
+
 const _ScheduleEngine = (typeof ScheduleEngine !== "undefined")
   ? ScheduleEngine
   : (typeof require !== "undefined" ? require("./js/schedule-engine.js") : null);
@@ -132,6 +140,10 @@ const _LessonHiding = (typeof LessonHiding !== "undefined")
   ? LessonHiding
   : (typeof require !== "undefined" ? require("./js/modules/lesson-hiding.js") : null);
 
+const _ChangelogModule = (typeof ChangelogModule !== "undefined")
+  ? ChangelogModule
+  : (typeof require !== "undefined" ? require("./js/modules/changelog.js") : null);
+
 const _Timeline = (typeof Timeline !== "undefined")
   ? Timeline
   : (typeof require !== "undefined" ? require("./js/timeline.js") : null);
@@ -144,13 +156,39 @@ const _VotingModule = (typeof VotingModule !== "undefined")
   ? VotingModule
   : (typeof require !== "undefined" ? require("./js/modules/voting.js") : null);
 
-const savedDaysView = typeof localStorage !== "undefined"
-  ? (localStorage.getItem("umg_days_view") || (localStorage.getItem("umg_show_weekends") === "true" ? "all" : "workdays"))
-  : "workdays";
+function _getStorage(key, legacyKey = null) {
+  if (_AppState && typeof _AppState.getStorageItem === "function") {
+    return _AppState.getStorageItem(key, legacyKey, _AppState.getTenantId(state));
+  }
+  return typeof localStorage !== "undefined" ? localStorage.getItem(legacyKey || key) : null;
+}
 
-const savedStudyMode = typeof localStorage !== "undefined"
-  ? (localStorage.getItem("umg_study_mode") || "stacjonarne")
-  : "stacjonarne";
+function _setStorage(key, val, legacyKey = null) {
+  if (_AppState && typeof _AppState.setStorageItem === "function") {
+    _AppState.setStorageItem(key, val, legacyKey, _AppState.getTenantId(state));
+    return;
+  }
+  if (typeof localStorage !== "undefined") {
+    localStorage.setItem(legacyKey || key, String(val));
+  }
+}
+
+function _removeStorage(key, legacyKey = null) {
+  if (_AppState && typeof _AppState.removeStorageItem === "function") {
+    _AppState.removeStorageItem(key, legacyKey, _AppState.getTenantId(state));
+    return;
+  }
+  if (typeof localStorage !== "undefined") {
+    localStorage.removeItem(legacyKey || key);
+  }
+}
+
+function isFeatureEnabled(featurePath) {
+  if (_TenantConfig && typeof _TenantConfig.isFeatureEnabled === "function") {
+    return _TenantConfig.isFeatureEnabled(state && state.tenantConfig, featurePath);
+  }
+  return true;
+}
 
 function getTodayCode(respectMode = false) {
   const days = ["ND", "PON", "WT", "ŚR", "CZW", "PT", "SOB"];
@@ -162,25 +200,25 @@ function getTodayCode(respectMode = false) {
   return code;
 }
 
-// Application State
-const state = {
+// Application State (shared with AppState module)
+const state = _AppState && _AppState.state ? _AppState.state : {
+  tenantId: "umg_wn",
+  tenantConfig: null,
   plansData: null,
-  studyMode: savedStudyMode, // "stacjonarne" | "niestacjonarne"
+  studyMode: "stacjonarne",
   selectedPlanId: null,
   selectedGroup: null,
   scheduleData: null,
   crossRefData: null,
-  weekOffset: 0, // 0 = current week, 1 = next week, etc.
-  daysView: savedDaysView, // "workdays" | "active_only" | "all"
+  weekOffset: 0,
+  daysView: "workdays",
   selectedDayTab: "ALL",
   dismissedDuplicatePlans: new Set(),
   dismissedModificationPlans: new Set(),
   hiddenLessonSlots: new Set(),
   previewHiddenLessons: false,
   dismissedHiddenLessonsBanner: false,
-  theme: typeof localStorage !== "undefined" && localStorage.getItem("umg_theme")
-    ? localStorage.getItem("umg_theme")
-    : (typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+  theme: "light"
 };
 state.selectedDayTab = typeof window !== "undefined" && window.innerWidth >= 900 ? "ALL" : getTodayCode(true);
 
@@ -265,36 +303,29 @@ const elements = typeof document !== "undefined" ? {
 
 // Initialize App
 if (typeof document !== "undefined") {
-  document.addEventListener("DOMContentLoaded", () => {
-    loadTenantConfig();
+  document.addEventListener("DOMContentLoaded", async () => {
+    await loadTenantConfig();
     initTheme();
     setupThemeListener();
     setupEventListeners();
     initPwaInstall();
-    initCrossRefUI();
+    if (isFeatureEnabled("cross_reference")) {
+      initCrossRefUI();
+    }
     loadAcademicCalendarConfig();
-    loadEventsData();
+    if (isFeatureEnabled("events")) {
+      loadEventsData();
+    }
     updateDayTabsUI();
     loadPlans();
   });
 }
 
 async function loadTenantConfig() {
-  try {
-    const res = await fetch("data/tenant_config.json");
-    if (res.ok) {
-      const config = await res.json();
-      state.tenantConfig = config;
-      const brandName = config.short_name || config.name;
-      if (brandName) {
-        document.title = brandName;
-        const brandH1 = document.querySelector(".brand-titles h1");
-        if (brandH1) brandH1.textContent = brandName;
-      }
-    }
-  } catch (e) {
-    // Defaults fallback
+  if (_TenantConfig && typeof _TenantConfig.load === "function") {
+    return await _TenantConfig.load("data/tenant_config.json", state, elements);
   }
+  return null;
 }
 
 function initCrossRefUI() {
@@ -341,6 +372,7 @@ async function loadAcademicCalendarConfig() {
 }
 
 async function loadEventsData() {
+  if (!isFeatureEnabled("events")) return;
   if (_EventsService && typeof _EventsService.loadEvents === "function") {
     try {
       await _EventsService.loadEvents("data/events.json");
@@ -360,7 +392,8 @@ function initTheme() {
   }
   const themeColorMeta = document.querySelector('meta[name="theme-color"]');
   if (themeColorMeta) {
-    themeColorMeta.setAttribute("content", state.theme === "dark" ? "#0b1828" : "#0d233a");
+    const lightThemeColor = (state.tenantConfig && state.tenantConfig.theme_color) || "#0d233a";
+    themeColorMeta.setAttribute("content", state.theme === "dark" ? "#0b1828" : lightThemeColor);
   }
   if (elements.themeToggle) {
     const isDark = state.theme === "dark";
@@ -378,7 +411,7 @@ function setupThemeListener() {
   if (typeof window !== "undefined" && window.matchMedia) {
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const handler = (e) => {
-      const saved = typeof localStorage !== "undefined" ? localStorage.getItem("umg_theme") : null;
+      const saved = _getStorage("theme", "umg_theme");
       if (!saved) {
         state.theme = e.matches ? "dark" : "light";
         initTheme();
@@ -395,9 +428,7 @@ function setupThemeListener() {
 
 function toggleTheme() {
   state.theme = state.theme === "dark" ? "light" : "dark";
-  if (typeof localStorage !== "undefined") {
-    localStorage.setItem("umg_theme", state.theme);
-  }
+  _setStorage("theme", state.theme, "umg_theme");
   initTheme();
 }
 
@@ -440,7 +471,7 @@ function setupEventListeners() {
     elements.daysViewSelect.value = state.daysView;
     elements.daysViewSelect.addEventListener("change", (e) => {
       state.daysView = e.target.value;
-      localStorage.setItem("umg_days_view", state.daysView);
+      _setStorage("days_view", state.daysView, "umg_days_view");
       if (state.daysView === "workdays" && (state.selectedDayTab === "SOB" || state.selectedDayTab === "ND")) {
         state.selectedDayTab = "PON";
       }
@@ -817,6 +848,31 @@ function closeSidebar() {
   if (elements.sidebarBackdrop) elements.sidebarBackdrop.classList.add("hidden");
 }
 
+function normalizePlansData(raw) {
+  if (!raw || typeof raw !== "object") return { plans: {} };
+  if (Array.isArray(raw.plans)) {
+    const map = {};
+    for (const entry of raw.plans) {
+      if (!entry || !entry.id) continue;
+      map[String(entry.id)] = {
+        ...entry,
+        name: entry.name || entry.id,
+        clean_name: entry.clean_name || entry.name || entry.id,
+        version: entry.version || entry.version_token || null,
+        mode: entry.mode || (entry.study_mode === "part_time" ? "niestacjonarne" : "stacjonarne"),
+        groups: Array.isArray(entry.groups) ? entry.groups : []
+      };
+    }
+    return {
+      ...raw,
+      last_updated: raw.last_updated || (raw.generated_at ? String(raw.generated_at).slice(0, 16).replace("T", " ") : ""),
+      plans_list: raw.plans,
+      plans: map
+    };
+  }
+  return raw;
+}
+
 // Load metadata: plans and groups
 async function loadPlans() {
   try {
@@ -826,15 +882,16 @@ async function loadPlans() {
     const response = await fetch("data/plans.json");
     if (!response.ok) throw new Error("Błąd wczytywania plans.json");
 
-    state.plansData = await response.json();
+    const rawPlansData = await response.json();
+    state.plansData = normalizePlansData(rawPlansData);
 
     if (state.plansData.last_updated) {
       elements.lastUpdated.textContent = `Aktualizacja: ${state.plansData.last_updated}`;
     }
 
-    // Restore saved selections from localStorage
-    const savedPlan = localStorage.getItem("umg_selected_plan");
-    const savedGroup = localStorage.getItem("umg_selected_group");
+    // Restore saved selections from tenant-scoped localStorage (with legacy migration)
+    const savedPlan = _getStorage("selected_plan", "umg_selected_plan");
+    const savedGroup = _getStorage("selected_group", "umg_selected_group");
 
     if (savedPlan && state.plansData.plans[savedPlan]) {
       const planObj = state.plansData.plans[savedPlan];
@@ -857,7 +914,7 @@ async function loadPlans() {
     updateDayTabsUI();
 
     // Load global events in background and re-render if schedule is active
-    if (_EventsService && typeof _EventsService.loadEvents === "function") {
+    if (isFeatureEnabled("events") && _EventsService && typeof _EventsService.loadEvents === "function") {
       _EventsService.loadEvents().then(() => {
         if (state.scheduleData) {
           renderSchedule();
@@ -866,7 +923,9 @@ async function loadPlans() {
     }
 
     // Check for feature updates and display "Co nowego?" modal if applicable
-    checkChangelogNotification();
+    if (isFeatureEnabled("changelog")) {
+      checkChangelogNotification();
+    }
   } catch (err) {
     console.error(err);
     elements.loadingState.innerHTML = `<p style="color: #ef4444;">Nie udało się wczytać listy planów. Uruchom build_static.py.</p>`;
@@ -1094,13 +1153,13 @@ function getPlanModificationInfo(planId) {
 
 function onStudyModeChange(newMode) {
   state.studyMode = newMode;
-  localStorage.setItem("umg_study_mode", newMode);
+  _setStorage("study_mode", newMode, "umg_study_mode");
 
   // W trybie niestacjonarnym domyślnie sugerujemy "Tylko dni z zajęciami"
   if (newMode === "niestacjonarne" && state.daysView === "workdays") {
     state.daysView = "active_only";
     if (elements.daysViewSelect) elements.daysViewSelect.value = "active_only";
-    localStorage.setItem("umg_days_view", "active_only");
+    _setStorage("days_view", "active_only", "umg_days_view");
   }
 
   populatePlanSelect();
@@ -1109,6 +1168,9 @@ function onStudyModeChange(newMode) {
 }
 
 function onPlanChange(planId, preferredGroup = null) {
+  if (state.plansData && Array.isArray(state.plansData.plans)) {
+    state.plansData = normalizePlansData(state.plansData);
+  }
   state.selectedPlanId = planId;
   state.selectedGroup = null;
   if (elements.planSelect && elements.planSelect.value !== (planId || "")) {
@@ -1120,13 +1182,13 @@ function onPlanChange(planId, preferredGroup = null) {
     elements.groupSelect.disabled = true;
     elements.groupSelect.innerHTML = '<option value="">Najpierw wybierz kierunek...</option>';
     elements.headerActiveGroup.textContent = "Wybierz grupę";
-    localStorage.removeItem("umg_selected_plan");
-    localStorage.removeItem("umg_selected_group");
+    _removeStorage("selected_plan", "umg_selected_plan");
+    _removeStorage("selected_group", "umg_selected_group");
     showEmptyState();
     return;
   }
 
-  localStorage.setItem("umg_selected_plan", planId);
+  _setStorage("selected_plan", planId, "umg_selected_plan");
   const plan = state.plansData.plans[planId];
 
   // Update plan publication metadata in sidebar
@@ -1178,7 +1240,7 @@ function onPlanChange(planId, preferredGroup = null) {
 
 function selectGroup(groupName) {
   state.selectedGroup = groupName;
-  localStorage.setItem("umg_selected_group", groupName);
+  _setStorage("selected_group", groupName, "umg_selected_group");
   elements.groupSelect.value = groupName;
 
   // Update header badge with Major + Semester + Group (e.g. "TM Sem 1 • GR.01")
@@ -1198,6 +1260,7 @@ function getSafeGroupName(group) {
 // --- Hidden Lesson Slots Management (Delegated to LessonHiding module) ---
 
 function isHideableLesson(lesson) {
+  if (!isFeatureEnabled("lesson_hiding")) return false;
   return _LessonHiding ? _LessonHiding.isHideableLesson(lesson) : false;
 }
 
@@ -1206,15 +1269,18 @@ function getLessonSlotKey(lesson, day = null) {
 }
 
 function getHiddenSlotsStorageKey(planId, group) {
-  return _LessonHiding ? _LessonHiding.getHiddenSlotsStorageKey(planId, group) : "";
+  const tid = _AppState ? _AppState.getTenantId(state) : "umg_wn";
+  return _LessonHiding ? _LessonHiding.getHiddenSlotsStorageKey(planId, group, tid) : "";
 }
 
 function loadHiddenLessonSlots(planId, group) {
-  return _LessonHiding ? _LessonHiding.loadHiddenLessonSlots(planId, group) : new Set();
+  const tid = _AppState ? _AppState.getTenantId(state) : "umg_wn";
+  return _LessonHiding ? _LessonHiding.loadHiddenLessonSlots(planId, group, tid) : new Set();
 }
 
 function saveHiddenLessonSlots(planId, group, slotsSet) {
-  if (_LessonHiding) _LessonHiding.saveHiddenLessonSlots(planId, group, slotsSet);
+  const tid = _AppState ? _AppState.getTenantId(state) : "umg_wn";
+  if (_LessonHiding) _LessonHiding.saveHiddenLessonSlots(planId, group, slotsSet, tid);
 }
 
 function toggleLessonSlotHidden(lesson, day = null, forceState = null) {
@@ -1279,7 +1345,31 @@ async function loadSchedule() {
     const response = await fetch(filename);
     if (!response.ok) throw new Error("Brak pliku planu dla tej grupy");
 
-    state.scheduleData = await response.json();
+    let loadedSchedule = await response.json();
+
+    // Optional Voting overlay (when tenant_config.features.voting.enabled is true)
+    if (isFeatureEnabled("voting") && _VotingModule && state.tenantConfig && state.tenantConfig.supabase_url) {
+      try {
+        const tid = _AppState ? _AppState.getTenantId(state) : "umg_wn";
+        const proposals = await _VotingModule.fetchProposals({
+          tenantId: tid,
+          planId: state.selectedPlanId,
+          groupName: state.selectedGroup,
+          client: {
+            supabaseUrl: state.tenantConfig.supabase_url,
+            supabaseAnonKey: state.tenantConfig.supabase_anon_key
+          }
+        });
+        state.proposals = proposals;
+        const planMeta = state.plansData && state.plansData.plans && state.plansData.plans[state.selectedPlanId];
+        const verToken = (planMeta && (planMeta.version_token || planMeta.version)) || null;
+        loadedSchedule = _VotingModule.applyProposalOverlay(loadedSchedule, proposals, verToken);
+      } catch (voteErr) {
+        console.warn("[Voting] Could not apply proposal overlay:", voteErr);
+      }
+    }
+
+    state.scheduleData = loadedSchedule;
     elements.loadingState.classList.add("hidden");
 
     // Load hidden slots scoped to planId + group
@@ -2159,95 +2249,37 @@ function copyCalendarUrl() {
 }
 
 // ==========================================================================
-// Changelog / What's New Notification Engine
+// Changelog / What's New Notification Engine (Delegated to ChangelogModule)
 // ==========================================================================
-const CHANGELOG_STORAGE_KEY = "last_seen_changelog_version";
-let currentPendingChangelogVersion = null;
-
-function extractMajorMinor(ver) {
-  if (!ver) return "";
-  const match = String(ver).trim().match(/^v?(\d+\.\d+)/);
-  return match ? match[1] : String(ver).trim();
-}
 
 function shouldShowChangelog(latestVersion, lastSeenVersion) {
-  if (!latestVersion) return false;
-  if (!lastSeenVersion) return true;
-  return extractMajorMinor(latestVersion) !== extractMajorMinor(lastSeenVersion);
+  return _ChangelogModule
+    ? _ChangelogModule.shouldShowChangelog(latestVersion, lastSeenVersion)
+    : false;
 }
 
 function openChangelogModal(changelogEntry) {
-  if (!elements.changelogModal || !changelogEntry) return;
-
-  currentPendingChangelogVersion = changelogEntry.version || null;
-
-  if (elements.changelogVersionBadge) {
-    elements.changelogVersionBadge.textContent = changelogEntry.version
-      ? `Wersja ${changelogEntry.version}`
-      : "Aktualizacja";
-  }
-
-  if (elements.changelogDate) {
-    elements.changelogDate.textContent = changelogEntry.date || "";
-  }
-
-  if (elements.changelogFeaturesList) {
-    const features = Array.isArray(changelogEntry.features) ? changelogEntry.features : [];
-    elements.changelogFeaturesList.innerHTML = features
-      .map(feat => `<li>${escapeHtml(feat)}</li>`)
-      .join("");
-  }
-
-  if (typeof elements.changelogModal.showModal === "function") {
-    elements.changelogModal.showModal();
-  } else {
-    elements.changelogModal.classList.remove("hidden");
+  if (_ChangelogModule) {
+    _ChangelogModule.openChangelogModal(changelogEntry, elements, escapeHtml);
   }
 }
 
 function closeChangelogModal() {
-  if (!elements.changelogModal) return;
-
-  if (currentPendingChangelogVersion) {
-    try {
-      localStorage.setItem(CHANGELOG_STORAGE_KEY, currentPendingChangelogVersion);
-    } catch (e) {
-      console.warn("Could not save seen changelog version to localStorage:", e);
-    }
-    currentPendingChangelogVersion = null;
-  }
-
-  if (typeof elements.changelogModal.close === "function") {
-    elements.changelogModal.close();
-  } else {
-    elements.changelogModal.classList.add("hidden");
+  if (_ChangelogModule) {
+    const tid = _AppState ? _AppState.getTenantId(state) : "umg_wn";
+    _ChangelogModule.closeChangelogModal(elements, tid);
   }
 }
 
 async function checkChangelogNotification() {
-  try {
-    const response = await fetch("changelog.json");
-    if (!response.ok) return;
-
-    const changelogs = await response.json();
-    if (!Array.isArray(changelogs) || changelogs.length === 0) return;
-
-    const latest = changelogs[0];
-    if (!latest || !latest.version) return;
-
-    let lastSeen = null;
-    try {
-      lastSeen = localStorage.getItem(CHANGELOG_STORAGE_KEY);
-    } catch (e) {
-      // LocalStorage might be disabled or unavailable
-    }
-
-    if (shouldShowChangelog(latest.version, lastSeen)) {
-      openChangelogModal(latest);
-    }
-  } catch (err) {
-    // Fail silently without disturbing app execution
-    console.debug("Changelog check skipped or failed:", err);
+  if (_ChangelogModule) {
+    const tid = _AppState ? _AppState.getTenantId(state) : "umg_wn";
+    await _ChangelogModule.checkChangelogNotification({
+      elements,
+      escapeHtmlFn: escapeHtml,
+      tenantId: tid,
+      enabled: isFeatureEnabled("changelog")
+    });
   }
 }
 

@@ -56,15 +56,38 @@
     return `${baseDay}__${p}__${g}__${s}__${w}__${d}`;
   }
 
-  function getHiddenSlotsStorageKey(planId, group) {
+  function _resolveTenantId(tenantId = null, appState = null) {
+    if (tenantId) return tenantId;
+    const s = appState || (typeof window !== "undefined" && window.AppState ? window.AppState.get() : null);
+    if (s && s.tenantConfig && s.tenantConfig.id) return s.tenantConfig.id;
+    if (s && s.tenantId) return s.tenantId;
+    return "umg_wn";
+  }
+
+  function getHiddenSlotsStorageKey(planId, group, tenantId = null) {
+    const tid = _resolveTenantId(tenantId);
+    const safeGroup = getSafeGroupName(group);
+    return `${tid}_hidden_slots_${planId}_${safeGroup}`;
+  }
+
+  function getLegacyHiddenSlotsStorageKey(planId, group) {
     const safeGroup = getSafeGroupName(group);
     return `planwn_hidden_slots_${planId}_${safeGroup}`;
   }
 
-  function loadHiddenLessonSlots(planId, group) {
+  function loadHiddenLessonSlots(planId, group, tenantId = null) {
     if (!planId || !group || typeof localStorage === "undefined") return new Set();
+    const tid = _resolveTenantId(tenantId);
+    const scopedKey = getHiddenSlotsStorageKey(planId, group, tid);
+    const legacyKey = getLegacyHiddenSlotsStorageKey(planId, group);
     try {
-      const raw = localStorage.getItem(getHiddenSlotsStorageKey(planId, group));
+      let raw = localStorage.getItem(scopedKey);
+      if (!raw && tid === "umg_wn") {
+        raw = localStorage.getItem(legacyKey);
+        if (raw) {
+          localStorage.setItem(scopedKey, raw);
+        }
+      }
       if (!raw) return new Set();
       const arr = JSON.parse(raw);
       return Array.isArray(arr) ? new Set(arr) : new Set();
@@ -74,14 +97,23 @@
     }
   }
 
-  function saveHiddenLessonSlots(planId, group, slotsSet) {
+  function saveHiddenLessonSlots(planId, group, slotsSet, tenantId = null) {
     if (!planId || !group || typeof localStorage === "undefined") return;
+    const tid = _resolveTenantId(tenantId);
+    const scopedKey = getHiddenSlotsStorageKey(planId, group, tid);
+    const legacyKey = getLegacyHiddenSlotsStorageKey(planId, group);
     try {
-      const key = getHiddenSlotsStorageKey(planId, group);
       if (!slotsSet || slotsSet.size === 0) {
-        localStorage.removeItem(key);
+        localStorage.removeItem(scopedKey);
+        if (tid === "umg_wn") {
+          localStorage.removeItem(legacyKey);
+        }
       } else {
-        localStorage.setItem(key, JSON.stringify(Array.from(slotsSet)));
+        const serialized = JSON.stringify(Array.from(slotsSet));
+        localStorage.setItem(scopedKey, serialized);
+        if (tid === "umg_wn") {
+          localStorage.setItem(legacyKey, serialized);
+        }
       }
     } catch (e) {
       console.error("Błąd zapisu ukrytych slotów:", e);
@@ -91,6 +123,7 @@
   function toggleLessonSlotHidden(lesson, day = null, forceState = null, appState = null) {
     if (!lesson || !isHideableLesson(lesson)) return false;
     const targetState = appState || (typeof window !== "undefined" && window.AppState ? window.AppState.get() : {});
+    const tid = _resolveTenantId(null, targetState);
     const slotKey = getLessonSlotKey(lesson, day);
     if (!targetState.hiddenLessonSlots) {
       targetState.hiddenLessonSlots = new Set();
@@ -101,22 +134,60 @@
     } else {
       targetState.hiddenLessonSlots.delete(slotKey);
     }
-    saveHiddenLessonSlots(targetState.selectedPlanId, targetState.selectedGroup, targetState.hiddenLessonSlots);
+    saveHiddenLessonSlots(targetState.selectedPlanId, targetState.selectedGroup, targetState.hiddenLessonSlots, tid);
     return shouldHide;
   }
 
   function restoreAllHiddenLessonSlots(planId, group, appState = null, onRefresh = null) {
     const targetState = appState || (typeof window !== "undefined" && window.AppState ? window.AppState.get() : {});
+    const tid = _resolveTenantId(null, targetState);
     if (targetState.hiddenLessonSlots) {
       targetState.hiddenLessonSlots.clear();
     } else {
       targetState.hiddenLessonSlots = new Set();
     }
     targetState.previewHiddenLessons = false;
-    saveHiddenLessonSlots(planId, group, targetState.hiddenLessonSlots);
+    saveHiddenLessonSlots(planId, group, targetState.hiddenLessonSlots, tid);
     if (typeof onRefresh === "function") {
       onRefresh();
     }
+  }
+
+  function getElectiveLessons(scheduleData) {
+    if (!scheduleData) return [];
+    if (Array.isArray(scheduleData.lessons)) {
+      return scheduleData.lessons.filter((l) => l && (l.form === "elective" || l.hideable === true));
+    }
+    const result = [];
+    for (const [day, daySlots] of Object.entries(scheduleData)) {
+      if (!daySlots || typeof daySlots !== "object") continue;
+      for (const lesson of Object.values(daySlots)) {
+        if (lesson && isHideableLesson(lesson)) {
+          result.push({ ...lesson, sourceDay: day });
+        }
+      }
+    }
+    return result;
+  }
+
+  function applyBulkElectivesSelection(scheduleData, visibleSlotKeysSet, appState = null) {
+    const targetState = appState || (typeof window !== "undefined" && window.AppState ? window.AppState.get() : {});
+    const tid = _resolveTenantId(null, targetState);
+    const electives = getElectiveLessons(scheduleData);
+    const visibleSet = visibleSlotKeysSet instanceof Set ? visibleSlotKeysSet : new Set(visibleSlotKeysSet || []);
+    if (!targetState.hiddenLessonSlots) {
+      targetState.hiddenLessonSlots = new Set();
+    }
+    for (const lesson of electives) {
+      const key = getLessonSlotKey(lesson, lesson.day_of_week || lesson.sourceDay || "PON");
+      if (visibleSet.has(key)) {
+        targetState.hiddenLessonSlots.delete(key);
+      } else {
+        targetState.hiddenLessonSlots.add(key);
+      }
+    }
+    saveHiddenLessonSlots(targetState.selectedPlanId, targetState.selectedGroup, targetState.hiddenLessonSlots, tid);
+    return targetState.hiddenLessonSlots;
   }
 
   function formatHiddenCount(count) {
@@ -134,10 +205,13 @@
     getLessonSlotKey,
     getSafeGroupName,
     getHiddenSlotsStorageKey,
+    getLegacyHiddenSlotsStorageKey,
     loadHiddenLessonSlots,
     saveHiddenLessonSlots,
     toggleLessonSlotHidden,
     restoreAllHiddenLessonSlots,
+    getElectiveLessons,
+    applyBulkElectivesSelection,
     formatHiddenCount
   };
 });

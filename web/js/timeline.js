@@ -12,7 +12,16 @@
 })(typeof self !== "undefined" ? self : this, function () {
   "use strict";
 
+  const _engineModule =
+    typeof module === "object" && module.exports
+      ? require("./schedule-engine.js")
+      : typeof window !== "undefined" && window.ScheduleEngine
+      ? window.ScheduleEngine
+      : null;
+  const _defaultEngine = _engineModule ? _engineModule.create({}) : null;
+
   function formatDateISO(date) {
+    if (_defaultEngine) return _defaultEngine.formatDateISO(date);
     if (!date) return "";
     const d = new Date(date);
     const y = d.getFullYear();
@@ -22,6 +31,7 @@
   }
 
   function getMonday(d) {
+    if (_defaultEngine) return _defaultEngine.getMonday(d);
     const target = new Date(d);
     const day = target.getDay();
     const diff = target.getDate() - day + (day === 0 ? -6 : 1);

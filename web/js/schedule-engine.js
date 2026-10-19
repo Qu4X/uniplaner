@@ -94,11 +94,21 @@ function create(academicCalendar, options = {}) {
     }
 
     try {
-      const [year, month, day] = lesson.data_start.split("-").map(Number);
-      const startDate = new Date(year, month - 1, day);
+      let [year, month, day] = lesson.data_start.split("-").map(Number);
+      let startDate = new Date(year, month - 1, day);
       if (isNaN(startDate.getTime())) {
         return { active: true, meetingNum: 1, total: lesson.tygodnie || 15 };
       }
+
+      const halfSem = lesson.half_semester || lesson.polowa_sem;
+      if (halfSem === 2 && cal.half_boundaries && cal.half_boundaries.half_2_start) {
+        const [hy, hm, hd] = cal.half_boundaries.half_2_start.split("-").map(Number);
+        const h2Date = new Date(hy, hm - 1, hd);
+        if (!isNaN(h2Date.getTime()) && startDate < h2Date) {
+          startDate = h2Date;
+        }
+      }
+
       const startMonday = getMonday(startDate);
       const totalWeeks = lesson.tygodnie || 15;
 

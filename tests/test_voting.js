@@ -207,6 +207,9 @@ global.localStorage = {
   assert.strictEqual(l2SingleOverride.day_of_week, "THU");
   assert.strictEqual(l2SingleOverride.start_time, "10:00");
   assert.strictEqual(l2SingleOverride.room, "Lab 4");
+  assert.strictEqual(l2SingleOverride.occurrences[0].number, 1);
+  assert.strictEqual(l2SingleOverride.occurrences[0].of, 1);
+  assert.strictEqual(l2SingleOverride.occurrences[0].status, "scheduled");
 
   // p3_expired should NOT be applied because token "old-tok" != "tok1"
   assert.notStrictEqual(l2Original.day_of_week, "FRI", "Wygasła propozycja z poprzedniej wersji nie powinna być aplikowana");

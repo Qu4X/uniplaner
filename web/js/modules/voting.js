@@ -24,6 +24,16 @@
     });
   }
 
+  function _resolveClient(opts = {}) {
+    const src = opts.client || opts;
+    const supabaseUrl = src.supabaseUrl;
+    const supabaseAnonKey = src.supabaseAnonKey;
+    const doFetch =
+      src.customFetch ||
+      (typeof fetch !== "undefined" ? fetch.bind(typeof window !== "undefined" ? window : global) : null);
+    return { supabaseUrl, supabaseAnonKey, doFetch };
+  }
+
   const VotingModule = {
     getVoterToken(tenantId = "default") {
       const storageKey = `${tenantId}_voter_token`;
@@ -42,10 +52,10 @@
       return generateUUID();
     },
 
-    async fetchProposals({ tenantId, planId, groupName, supabaseUrl, supabaseAnonKey, customFetch }) {
-      if (!supabaseUrl || !supabaseAnonKey) return [];
-      const doFetch = customFetch || (typeof fetch !== "undefined" ? fetch.bind(typeof window !== "undefined" ? window : global) : null);
-      if (!doFetch) return [];
+    async fetchProposals(opts = {}) {
+      const { tenantId, planId, groupName } = opts;
+      const { supabaseUrl, supabaseAnonKey, doFetch } = _resolveClient(opts);
+      if (!supabaseUrl || !supabaseAnonKey || !doFetch) return [];
 
       const queryParams = new URLSearchParams({
         tenant_id: `eq.${tenantId}`,
@@ -74,12 +84,12 @@
       }
     },
 
-    async fetchUserVotes({ proposalIds, voterToken, supabaseUrl, supabaseAnonKey, customFetch }) {
-      if (!supabaseUrl || !supabaseAnonKey || !voterToken || !proposalIds || !proposalIds.length) {
+    async fetchUserVotes(opts = {}) {
+      const { proposalIds, voterToken } = opts;
+      const { supabaseUrl, supabaseAnonKey, doFetch } = _resolveClient(opts);
+      if (!supabaseUrl || !supabaseAnonKey || !voterToken || !proposalIds || !proposalIds.length || !doFetch) {
         return new Set();
       }
-      const doFetch = customFetch || (typeof fetch !== "undefined" ? fetch.bind(typeof window !== "undefined" ? window : global) : null);
-      if (!doFetch) return new Set();
 
       const queryParams = new URLSearchParams({
         voter_token: `eq.${voterToken}`,
@@ -105,11 +115,11 @@
       }
     },
 
-    async submitProposal(proposalData, { supabaseUrl, supabaseAnonKey, customFetch }) {
+    async submitProposal(proposalData, clientOpts = {}) {
+      const { supabaseUrl, supabaseAnonKey, doFetch } = _resolveClient(clientOpts);
       if (!supabaseUrl || !supabaseAnonKey) {
         throw new Error("Brak konfiguracji Supabase");
       }
-      const doFetch = customFetch || (typeof fetch !== "undefined" ? fetch.bind(typeof window !== "undefined" ? window : global) : null);
       if (!doFetch) throw new Error("Brak funkcji fetch");
 
       // Anon payload constraint (RLS check: status='pending' and votes_count=0)
@@ -155,9 +165,10 @@
       return Array.isArray(resData) ? resData[0] : resData;
     },
 
-    async castVote({ proposalId, voterToken, supabaseUrl, supabaseAnonKey, customFetch }) {
+    async castVote(opts = {}) {
+      const { proposalId, voterToken } = opts;
+      const { supabaseUrl, supabaseAnonKey, doFetch } = _resolveClient(opts);
       if (!supabaseUrl || !supabaseAnonKey) throw new Error("Brak konfiguracji Supabase");
-      const doFetch = customFetch || (typeof fetch !== "undefined" ? fetch.bind(typeof window !== "undefined" ? window : global) : null);
       if (!doFetch) throw new Error("Brak funkcji fetch");
 
       const url = `${supabaseUrl}/rest/v1/votes`;
@@ -182,9 +193,10 @@
       return true;
     },
 
-    async retractVote({ proposalId, voterToken, supabaseUrl, supabaseAnonKey, customFetch }) {
+    async retractVote(opts = {}) {
+      const { proposalId, voterToken } = opts;
+      const { supabaseUrl, supabaseAnonKey, doFetch } = _resolveClient(opts);
       if (!supabaseUrl || !supabaseAnonKey) throw new Error("Brak konfiguracji Supabase");
-      const doFetch = customFetch || (typeof fetch !== "undefined" ? fetch.bind(typeof window !== "undefined" ? window : global) : null);
       if (!doFetch) throw new Error("Brak funkcji fetch");
 
       const queryParams = new URLSearchParams({
@@ -263,7 +275,7 @@
               // Usuwamy to wystąpienie z oryginalnej lekcji
               lesson.occurrences.splice(occIdx, 1);
 
-              // Tworzymy lekcję jednorazową z nowym dniem/godziną
+              // Tworzymy blok zajęć jednorazowych z nowym dniem/godziną (zgodny z Contract v1)
               const singleLesson = {
                 ...JSON.parse(JSON.stringify(lesson)),
                 id: `${lesson.id}_override_${prop.target_date}`,
@@ -277,7 +289,9 @@
                     start_time: prop.new_start_time,
                     end_time: prop.new_end_time,
                     room: prop.new_room || lesson.room,
-                    meeting_number: 1
+                    number: 1,
+                    of: 1,
+                    status: "scheduled"
                   }
                 ],
                 _proposalOverlay: {

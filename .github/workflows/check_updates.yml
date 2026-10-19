@@ -1,0 +1,54 @@
+name: Check Schedule Updates (Multi-Tenant)
+
+on:
+  # Run every 2 hours between 06:00 and 20:00 UTC
+  schedule:
+    - cron: '0 6-20/2 * * *'
+  workflow_dispatch:
+    inputs:
+      tenant:
+        description: 'Tenant ID to check (umg_wn or sggw_weta)'
+        required: false
+        default: 'umg_wn'
+
+permissions:
+  contents: read
+
+jobs:
+  check-updates:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        tenant: [umg_wn, sggw_weta]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Modular & Regression Tests
+        run: |
+          python tests/test_backend.py
+          python -m unittest discover -s tests -p "test_*.py"
+          npm test
+
+      - name: Check for schedule updates (${{ matrix.tenant }})
+        id: check
+        continue-on-error: true
+        run: |
+          python -m core.build --tenant ${{ matrix.tenant }} --output dist_${{ matrix.tenant }} --check-only
