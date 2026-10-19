@@ -128,6 +128,18 @@ const _EventsService = (typeof EventsService !== "undefined")
   ? EventsService
   : (typeof require !== "undefined" ? require("./js/events-service.js") : null);
 
+const _LessonHiding = (typeof LessonHiding !== "undefined")
+  ? LessonHiding
+  : (typeof require !== "undefined" ? require("./js/modules/lesson-hiding.js") : null);
+
+const _Timeline = (typeof Timeline !== "undefined")
+  ? Timeline
+  : (typeof require !== "undefined" ? require("./js/timeline.js") : null);
+
+const _ScheduleRender = (typeof ScheduleRender !== "undefined")
+  ? ScheduleRender
+  : (typeof require !== "undefined" ? require("./js/render.js") : null);
+
 const savedDaysView = typeof localStorage !== "undefined"
   ? (localStorage.getItem("umg_days_view") || (localStorage.getItem("umg_show_weekends") === "true" ? "all" : "workdays"))
   : "workdays";
@@ -1160,98 +1172,40 @@ function getSafeGroupName(group) {
   return group ? String(group).replace(/[^\w-]/g, '_') : '';
 }
 
-// --- Hidden Lesson Slots Management ---
+// --- Hidden Lesson Slots Management (Delegated to LessonHiding module) ---
 
-// Określa, czy dany kafelek zajęć podlega ukrywaniu (dotyczy wyłącznie symulatorów z manewrowania statkiem)
 function isHideableLesson(lesson) {
-  if (!lesson) return false;
-  const p = (lesson.przedmiot || "").toLowerCase();
-  const rawP = (lesson.raw_przedmiot || "").toLowerCase();
-  const room = (lesson.sala || "").toLowerCase();
-
-  const isManeuvering = p.includes("manewrowani") || rawP.includes("manewrowani") || rawP === "ms" || p.includes("sym-man") || rawP.includes("sym-man");
-  if (!isManeuvering) return false;
-
-  // Wykluczamy tradycyjny wykład ogólny w auli (nie jest podgrupą symulatorową)
-  if (room.includes("aula") || room.includes("audytorium")) {
-    return false;
-  }
-
-  return true;
+  return _LessonHiding ? _LessonHiding.isHideableLesson(lesson) : false;
 }
 
 function getLessonSlotKey(lesson, day = null) {
-  if (!lesson) return "";
-  const baseDay = day || lesson.sourceDay || lesson.day || "PON";
-  const p = (lesson.przedmiot || "").trim();
-  const g = (lesson.godziny || "").trim();
-  const s = (lesson.sala || "").trim();
-  const w = (lesson.prowadzacy || "").trim();
-  const d = (lesson.data_start || "").trim();
-  return `${baseDay}__${p}__${g}__${s}__${w}__${d}`;
+  return _LessonHiding ? _LessonHiding.getLessonSlotKey(lesson, day) : "";
 }
 
 function getHiddenSlotsStorageKey(planId, group) {
-  const safeGroup = getSafeGroupName(group);
-  return `planwn_hidden_slots_${planId}_${safeGroup}`;
+  return _LessonHiding ? _LessonHiding.getHiddenSlotsStorageKey(planId, group) : "";
 }
 
 function loadHiddenLessonSlots(planId, group) {
-  if (!planId || !group || typeof localStorage === "undefined") return new Set();
-  try {
-    const raw = localStorage.getItem(getHiddenSlotsStorageKey(planId, group));
-    if (!raw) return new Set();
-    const arr = JSON.parse(raw);
-    return Array.isArray(arr) ? new Set(arr) : new Set();
-  } catch (e) {
-    console.error("Błąd odczytu ukrytych slotów:", e);
-    return new Set();
-  }
+  return _LessonHiding ? _LessonHiding.loadHiddenLessonSlots(planId, group) : new Set();
 }
 
 function saveHiddenLessonSlots(planId, group, slotsSet) {
-  if (!planId || !group || typeof localStorage === "undefined") return;
-  try {
-    const key = getHiddenSlotsStorageKey(planId, group);
-    if (!slotsSet || slotsSet.size === 0) {
-      localStorage.removeItem(key);
-    } else {
-      localStorage.setItem(key, JSON.stringify(Array.from(slotsSet)));
-    }
-  } catch (e) {
-    console.error("Błąd zapisu ukrytych slotów:", e);
-  }
+  if (_LessonHiding) _LessonHiding.saveHiddenLessonSlots(planId, group, slotsSet);
 }
 
 function toggleLessonSlotHidden(lesson, day = null, forceState = null) {
-  if (!lesson || !isHideableLesson(lesson)) return false;
-  const slotKey = getLessonSlotKey(lesson, day);
-  if (!state.hiddenLessonSlots) {
-    state.hiddenLessonSlots = new Set();
-  }
-  const shouldHide = forceState !== null ? forceState : !state.hiddenLessonSlots.has(slotKey);
-  if (shouldHide) {
-    state.hiddenLessonSlots.add(slotKey);
-  } else {
-    state.hiddenLessonSlots.delete(slotKey);
-  }
-  saveHiddenLessonSlots(state.selectedPlanId, state.selectedGroup, state.hiddenLessonSlots);
-  return shouldHide;
+  return _LessonHiding ? _LessonHiding.toggleLessonSlotHidden(lesson, day, forceState, state) : false;
 }
 
 function restoreAllHiddenLessonSlots(planId = state.selectedPlanId, group = state.selectedGroup) {
-  if (state.hiddenLessonSlots) {
-    state.hiddenLessonSlots.clear();
-  } else {
-    state.hiddenLessonSlots = new Set();
-  }
-  state.previewHiddenLessons = false;
-  saveHiddenLessonSlots(planId, group, state.hiddenLessonSlots);
-  if (typeof updateHiddenLessonsBannerUI === "function") {
-    updateHiddenLessonsBannerUI();
-  }
-  if (typeof renderSchedule === "function" && state.scheduleData) {
-    renderSchedule();
+  if (_LessonHiding) {
+    _LessonHiding.restoreAllHiddenLessonSlots(planId, group, state, () => {
+      updateHiddenLessonsBannerUI();
+      if (typeof renderSchedule === "function" && state.scheduleData) {
+        renderSchedule();
+      }
+    });
   }
 }
 
@@ -1266,13 +1220,7 @@ function togglePreviewHiddenLessons() {
 }
 
 function formatHiddenCount(count) {
-  if (count === 1) return "1 ukryty termin zajęć";
-  const mod10 = count % 10;
-  const mod100 = count % 100;
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) {
-    return `${count} ukryte terminy zajęć`;
-  }
-  return `${count} ukrytych terminów zajęć`;
+  return _LessonHiding ? _LessonHiding.formatHiddenCount(count) : `${count} ukrytych`;
 }
 
 function updateHiddenLessonsBannerUI() {
@@ -1327,28 +1275,17 @@ async function loadSchedule() {
   }
 }
 
-// Date and week helpers
+// Date and week helpers (Delegated to Timeline module)
 function formatDateISO(date) {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
+  return _Timeline ? _Timeline.formatDateISO(date) : "";
 }
 
 function getMonday(d) {
-  d = new Date(d);
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  d.setDate(diff);
-  d.setHours(0, 0, 0, 0);
-  return d;
+  return _Timeline ? _Timeline.getMonday(d) : new Date(d);
 }
 
 function getWeekMonday(offsetWeeks = 0) {
-  const now = new Date();
-  const baseMonday = getMonday(now);
-  baseMonday.setDate(baseMonday.getDate() + offsetWeeks * 7);
-  return baseMonday;
+  return _Timeline ? _Timeline.getWeekMonday(offsetWeeks) : new Date();
 }
 
 function withViewTransition(callback) {
@@ -1374,108 +1311,17 @@ function changeWeek(direction) {
 
 // Automatically resolve initial week offset to the first week with classes
 function resolveInitialWeekOffset(scheduleData) {
-  if (!scheduleData) return;
-
-  let earliestMonday = null;
-  let latestMonday = null;
-
-  for (const daySlots of Object.values(scheduleData)) {
-    for (const lesson of Object.values(daySlots)) {
-      if (lesson.data_start) {
-        const [y, m, d] = lesson.data_start.split("-").map(Number);
-        const startDate = new Date(y, m - 1, d);
-        const mon = getMonday(startDate);
-        const totalWeeks = lesson.tygodnie || 15;
-        const endMon = new Date(mon);
-        endMon.setDate(mon.getDate() + (totalWeeks - 1) * 7);
-
-        if (!earliestMonday || mon < earliestMonday) {
-          earliestMonday = mon;
-        }
-        if (!latestMonday || endMon > latestMonday) {
-          latestMonday = endMon;
-        }
-      }
-    }
-  }
-
-  if (!earliestMonday) return;
-
-  const nowMonday = getMonday(new Date());
-
-  // If today is before the first scheduled classes, jump to the first week
-  if (nowMonday < earliestMonday) {
-    const diffWeeks = Math.round((earliestMonday.getTime() - nowMonday.getTime()) / (7 * 24 * 60 * 60 * 1000));
-    state.weekOffset = diffWeeks;
-  } else if (latestMonday && nowMonday > latestMonday) {
-    // If today is past the semester, show the last active week
-    const diffWeeks = Math.round((latestMonday.getTime() - nowMonday.getTime()) / (7 * 24 * 60 * 60 * 1000));
-    state.weekOffset = diffWeeks;
-  } else {
-    // Current date is within the semester
-    state.weekOffset = 0;
+  if (_Timeline) {
+    const diff = _Timeline.resolveInitialWeekOffset(scheduleData);
+    state.weekOffset = diff;
+    return diff;
   }
 }
 
 // Calculate semester week or special periods based on UMG academic calendar
 function getAcademicInfoForWeek(targetMonday) {
-  const targetSunday = new Date(targetMonday);
-  targetSunday.setDate(targetMonday.getDate() + 6);
-
-  const monISO = formatDateISO(targetMonday);
-  const sunISO = formatDateISO(targetSunday);
-
-  let periodName = "";
-  let periodType = "";
-  let weekNum = null;
-
-  // Check special periods (teaching, breaks, exams)
-  for (const period of ACADEMIC_CALENDAR.periods) {
-    if (period.start <= sunISO && period.end >= monISO) {
-      periodName = period.name;
-      periodType = period.type;
-
-      if (period.type === "teaching") {
-        const [sy, sm, sd] = period.start.split("-").map(Number);
-        const semStartMon = getMonday(new Date(sy, sm - 1, sd));
-        const diffWeeks = Math.floor((targetMonday.getTime() - semStartMon.getTime()) / (7 * 24 * 60 * 60 * 1000));
-        const w = diffWeeks + 1;
-        if (w >= 1 && w <= 16) {
-          weekNum = w;
-        }
-      }
-      break;
-    }
-  }
-
-  const isNst = state.studyMode === "niestacjonarne";
-
-  // Scan 7 days of the week for day swaps and holidays
-  const daySwaps = [];
-  const holidays = [];
-
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(targetMonday);
-    d.setDate(targetMonday.getDate() + i);
-    const dISO = formatDateISO(d);
-
-    if (!isNst && ACADEMIC_CALENDAR.daySwaps[dISO]) {
-      daySwaps.push({ date: dISO, ...ACADEMIC_CALENDAR.daySwaps[dISO] });
-    }
-    if (ACADEMIC_CALENDAR.holidays[dISO]) {
-      const dayFormatted = `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}`;
-      const dayName = DNI_PELNE[DNI_TYGODNIA[i]] || "";
-      holidays.push(`${dayFormatted} (${dayName}): ${ACADEMIC_CALENDAR.holidays[dISO]}`);
-    }
-  }
-
-  return {
-    periodName,
-    periodType,
-    weekNum,
-    daySwaps,
-    holidays
-  };
+  const isNst = Boolean(state && state.studyMode === "niestacjonarne");
+  return _Timeline ? _Timeline.getAcademicInfoForWeek(targetMonday, ACADEMIC_CALENDAR, { isNst }) : { periodName: "", periodType: "", weekNum: null, daySwaps: [], holidays: [] };
 }
 
 function updateCalendarNotice(academicInfo) {
@@ -2038,80 +1884,12 @@ function renderSchedule() {
 }
 
 function renderLessonCard(lesson, targetMonday = null, day = null) {
-  const safeTitle = escapeHtml(lesson.przedmiot || "Zajęcia");
-  const safeTime = escapeHtml(lesson.godziny || "");
-  const rawRoom = (lesson.sala || "").trim();
-  const safeRoom = escapeHtml(rawRoom || "OL");
-  const rawTeacher = (lesson.prowadzacy || "").trim();
-  const safeTeacher = escapeHtml(rawTeacher);
-
-  const baseDay = day || lesson.sourceDay || lesson.day || "PON";
-  const slotKey = getLessonSlotKey(lesson, baseDay);
-  const isHidden = Boolean(lesson._isHidden);
-  const isHiddenClass = isHidden ? " is-hidden-lesson" : "";
-
-  const canHide = isHideableLesson(lesson);
-  const isSlotInSet = Boolean(state.hiddenLessonSlots && state.hiddenLessonSlots.has(slotKey));
-  const hideBtnIcon = (isHidden || isSlotInSet) ? "#icon-visibility" : "#icon-visibility_off";
-  const hideBtnTitle = (isHidden || isSlotInSet) ? "Przywróć ten termin zajęć" : "Ukryj ten termin zajęć";
-  const hideBtnAria = (isHidden || isSlotInSet) ? "Przywróć zajęcia" : "Ukryj zajęcia";
-
-  const hideBtnHtml = canHide ? `
-    <button type="button" class="btn-hide-lesson" data-slot-key="${escapeHtml(slotKey)}" data-day="${escapeHtml(baseDay)}" title="${hideBtnTitle}" aria-label="${hideBtnAria}">
-      <svg class="icon" aria-hidden="true"><use href="${hideBtnIcon}"></use></svg>
-    </button>
-  ` : "";
-
-  const hiddenBadge = isHidden
-    ? `<span class="hidden-lesson-badge" title="Ten termin zajęć jest ukryty w Twoim widoku">Ukryty</span>`
-    : "";
-
-  const targetMon = targetMonday || getWeekMonday(state.weekOffset);
-  const prog = getLessonProgress(lesson, lesson.sourceDay || "PON", targetMon, lesson.lessonDate || null);
-
-  const isPhysicalRoom = rawRoom && rawRoom.toUpperCase() !== "OL";
-  const roomHtml = isPhysicalRoom
-    ? `<button class="lesson-room-btn" data-room="${escapeHtml(rawRoom)}" title="Sprawdź plan i dostępność sali ${safeRoom}">${safeRoom}</button>`
-    : `<span class="lesson-room-badge">${safeRoom}</span>`;
-
-  const teacherHtml = rawTeacher && rawTeacher !== "Brak danych prowadzącego"
-    ? `<button class="lesson-teacher-btn" data-teacher="${escapeHtml(rawTeacher)}" title="Zobacz pełny plan wykładowcy ${safeTeacher}">${safeTeacher}</button>`
-    : `<span class="lesson-teacher">${safeTeacher || "Brak danych prowadzącego"}</span>`;
-
-  const weeksHtml = prog
-    ? `<span class="lesson-weeks ${prog.isFinal ? 'final-week' : ''}" title="${escapeHtml(prog.title || 'Spotkanie')}">${escapeHtml(prog.text)}</span>`
-    : "";
-
-  let badgeHtml = "";
-  if (lesson.co_ile === 2) {
-    badgeHtml += `<span class="lesson-cycle-badge" title="Zajęcia odbywają się co 2 tygodnie">co 2 tyg.</span>`;
-  }
-  if (lesson.polowa_sem === 1) {
-    badgeHtml += `<span class="lesson-sem-badge" title="Zajęcia w 1. połowie semestru">1. poł. sem.</span>`;
-  } else if (lesson.polowa_sem === 2) {
-    badgeHtml += `<span class="lesson-sem-badge" title="Zajęcia w 2. połowie semestru">2. poł. sem.</span>`;
-  }
-
-  const formClass = lesson.forma ? ` form-${escapeHtml(lesson.forma)}` : "";
-
-  return `
-    <div class="lesson-card${formClass}${isHiddenClass}" data-slot-key="${escapeHtml(slotKey)}" data-day="${escapeHtml(baseDay)}">
-      <div class="lesson-header-row">
-        <div class="lesson-title">${safeTitle}</div>
-        ${(canHide || hiddenBadge) ? `
-        <div class="lesson-card-actions">
-          ${hiddenBadge}
-          ${hideBtnHtml}
-        </div>` : ""}
-      </div>
-      <div class="lesson-time">${safeTime}</div>
-      <div class="lesson-room-wrapper">${roomHtml}${badgeHtml}</div>
-      <div class="lesson-footer">
-        ${teacherHtml}
-        ${weeksHtml}
-      </div>
-    </div>
-  `;
+  return _ScheduleRender ? _ScheduleRender.renderLessonCard(lesson, targetMonday, day, {
+    getLessonProgress,
+    isHideableLesson,
+    getLessonSlotKey,
+    hiddenLessonSlots: state.hiddenLessonSlots
+  }) : "";
 }
 
 function showEmptyState() {
@@ -2122,17 +1900,7 @@ function showEmptyState() {
 }
 
 function escapeHtml(str) {
-  if (typeof document !== "undefined") {
-    const div = document.createElement("div");
-    div.textContent = str;
-    return div.innerHTML;
-  }
-  return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+  return _ScheduleRender ? _ScheduleRender.escapeHtml(str) : String(str || "");
 }
 
 function setupDialogBackdropDismiss(dialogEl, closeFn) {
