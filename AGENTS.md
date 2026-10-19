@@ -5,22 +5,29 @@ Przeczytaj przed pierwszą zmianą w kodzie.
 
 ---
 
-## Architektura (skrót)
+## Architektura modułowa (multi-tenant)
+
+Projekt ma budowę modułową i multi-tenantową. **W `core/` oraz `web/` obowiązuje całkowity zakaz zaszywania logiki specyficznej dla konkretnej uczelni** — wszystko, co dotyczy danej uczelni/wydziału, należy do `sources/<tenant>/` (adaptery pobierania/parsowania) oraz `tenants/<tenant>/` (konfiguracja, motyw, kalendarz akademicki).
 
 ```
-scrapper.py               Fasada scrapera HTML (arktur_client + arktur_parser)
-nst_client.py             Pobieranie planów studiów niestacjonarnych (PDF) z arktur
-nst_parser.py             Parser siatki PDF planów niestacjonarnych (pdfplumber)
-build_static.py           Punkt wejścia buildu — generuje pliki JSON i ICS do dist/
-data/academic_calendar.json Jedyne źródło prawdy o dniach wolnych, zamianach i przerwach
-data/subjects_manual.json Aliasy i konfiguracja klasyfikacji form przedmiotów
-web/app.js                Główny kontroler frontendu PWA (vanilla JS)
+core/                     Rdzeń niezależny od uczelni (Contract v1, expand, validate, ics, diff, cross_ref, build, writer)
+sources/base.py           Protokół ScheduleSource (discover_plans, fetch_schedule) + modele RawLesson / PlanMetadata
+sources/umg_wn/           Adaptery źródłowe UMG Wydział Nawigacyjny (Arktur HTML + NST PDF)
+sources/sggw_weta/        Adapter źródłowy SGGW Wydział Medycyny Weterynaryjnej (SharePoint XLSX)
+sources/_template/        Szablon startowy dla nowego adaptera uczelni
+tenants/umg_wn/           Konfiguracja tenanta UMG WN (config.json, theme.css, kalendarz)
+tenants/sggw_weta/        Konfiguracja tenanta SGGW WETA (config.json, theme.css, kalendarz)
+scrapper.py               Fasada parsera HTML UMG (arktur_client + arktur_parser)
+nst_client.py / nst_parser.py Pobieranie i parser siatki PDF planów niestacjonarnych UMG
+build_static.py           Punkt wejścia buildu UMG (kompatybilny wstecznie)
+web/app.js                Kontroler frontendu PWA (vanilla JS)
 web/js/schedule-engine.js Czysty silnik domenowy kalendarza i spotkań
+web/js/timeline.js        Oś czasu i obliczenia dat/pozycji bloków
+web/js/render.js          Renderowanie kart spotkań i siatki
 web/js/cross-reference.js Silnik i UI wyszukiwarki sal, wykładowców i przedmiotów
-tests/test_backend.py     Regresja Pythona (backend, parser HTML/PDF, ICS)
-tests/test_calendar.js    TDD logiki spotkań i UI w JS
-tests/test_cross_reference.js TDD modali sal, wykładowców i przedmiotów w JS
-tests/test_schedule_engine.js TDD czystego silnika harmonogramu w JS
+web/js/modules/           Moduły opcjonalne sterowane z tenant_config.features (events.js, lesson-hiding.js, voting.js)
+docs/specs/               Specyfikacje Kontraktu v1, konfiguracji tenanta, głosowania i przewodnik adaptera
+tests/                    Testy regresyjne Python (test_backend.py + test_*.py) oraz JS (test_*.js)
 ```
 
 Pełna architektura i słownik → [`CONTEXT.md`](CONTEXT.md)
@@ -30,11 +37,12 @@ Pełna architektura i słownik → [`CONTEXT.md`](CONTEXT.md)
 ## Testy — uruchom przed i po każdej zmianie
 
 ```powershell
-.venv\Scripts\python.exe tests/test_backend.py   # Windows Python
-npm test                                        # JS frontend (wszystkie 4 zestawy testów)
+.venv\Scripts\python.exe tests/test_backend.py                        # Regresja backendu
+.venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py" # Testy modułowe Python (core + sources)
+npm test                                                              # JS frontend (wszystkie zestawy testów)
 ```
 
-Oba muszą przejść. Jeśli jeden czerwony — napraw przed commitem.
+Wszystkie muszą przejść. Jeśli którykolwiek czerwony — napraw przed commitem.
 
 ---
 
@@ -120,7 +128,7 @@ i twardy cap 200 iteracji — nie usuwaj tych zabezpieczeń.
 ## Nowe zależności — zawsze zapytaj użytkownika
 
 Nie dodawaj pakietów do `requirements.txt` bez zgody właściciela.
-Projekt bazuje na minimalnym zestawie: `requests`, `beautifulsoup4`, `icalendar`, `pdfplumber`.
+Projekt bazuje na minimalnym zestawie: `requests`, `beautifulsoup4`, `icalendar`, `pdfplumber`, `openpyxl`.
 
 Jeśli nowa zależność jest potrzebna: zaproponuj ją i poczekaj na odpowiedź.
 
