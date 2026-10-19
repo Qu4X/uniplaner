@@ -97,9 +97,7 @@ def setup_dist_directories():
     js_src_dir = os.path.join(WEB_DIR, "js")
     js_dst_dir = os.path.join(DIST_DIR, "js")
     if os.path.exists(js_src_dir):
-        os.makedirs(js_dst_dir, exist_ok=True)
-        for js_file in os.listdir(js_src_dir):
-            shutil.copy2(os.path.join(js_src_dir, js_file), os.path.join(js_dst_dir, js_file))
+        shutil.copytree(js_src_dir, js_dst_dir, dirs_exist_ok=True)
         logger.info("Copied web/js/ -> dist/js/")
 
     # Copy academic_calendar.json to dist/data/
