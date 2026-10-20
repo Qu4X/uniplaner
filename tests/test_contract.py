@@ -168,16 +168,16 @@ class TestContractV1(unittest.TestCase):
         self.assertFalse(features["voting"].get("enabled"))
         self.assertTrue(features.get("changelog"))
 
-    def test_validate_sggw_weta_tenant_config(self):
+    def test_validate_sggw_wmw_tenant_config(self):
         import json
         import os
-        config_path = os.path.join(os.path.dirname(__file__), "..", "tenants", "sggw", "weta", "config.json")
-        self.assertTrue(os.path.exists(config_path), "Brak pliku tenants/sggw/weta/config.json")
+        config_path = os.path.join(os.path.dirname(__file__), "..", "tenants", "sggw", "wmw", "config.json")
+        self.assertTrue(os.path.exists(config_path), "Brak pliku tenants/sggw/wmw/config.json")
 
         with open(config_path, "r", encoding="utf-8") as f:
             cfg = json.load(f)
 
-        self.assertEqual(cfg.get("id"), "sggw_weta")
+        self.assertEqual(cfg.get("id"), "sggw_wmw")
         self.assertEqual(cfg.get("institution"), "SGGW")
         self.assertEqual(cfg.get("faculty"), "WMW")
         self.assertEqual(cfg.get("locale"), "pl")
