@@ -28,7 +28,7 @@ def check(name, condition, detail=""):
     return condition
 
 
-from sources.umg_wn.arktur_parser import _wspolny_parser_html
+from sources.umg.wn.arktur_parser import _wspolny_parser_html
 from core.ics import generuj_ics
 
 # ── 1. Parser smoke-test ──────────────────────────────────────────────────────
@@ -232,7 +232,7 @@ check("Friday class does NOT occur on swapped Fri 2026-11-13", not any("20261113
 
 # ── 14. Cell AJAX Key Resolution (Hermetization S4) ──────────────────────────
 print("\n-- 14. Cell AJAX Key Resolution (Hermetization S4) ------------------")
-from sources.umg_wn.arktur_parser import _resolve_cell_ajax_key
+from sources.umg.wn.arktur_parser import _resolve_cell_ajax_key
 
 inputs_full = {
     "id_pzz_PN_39_0": "101",
@@ -274,7 +274,7 @@ with tempfile.TemporaryDirectory() as valid_tmp:
 
 # ── 16. Typed schedule models (S3 Data Clumps) ────────────────────────────────
 print("\n-- 16. Typed schedule models (S3) -----------------------------------")
-from sources.umg_wn.arktur_parser import LessonDict
+from sources.umg.wn.arktur_parser import LessonDict
 from core.contracts import RoomScheduleEntry
 
 lesson_typed: LessonDict = {
@@ -321,7 +321,7 @@ check("generate_ics returns valid RFC 5545", "BEGIN:VCALENDAR" in ics_direct and
 
 # ── 18. Deep modules arktur_client and arktur_parser (S2) ------------
 print("\n-- 18. Deep modules arktur_client and arktur_parser (S2) ------------")
-from sources.umg_wn import arktur_client, arktur_parser
+from sources.umg.wn import arktur_client, arktur_parser
 
 check("arktur_client exports pobierz_liste_planow", callable(arktur_client.pobierz_liste_planow))
 check("arktur_client exports pobierz_surowy_plan", callable(arktur_client.pobierz_surowy_plan))
@@ -334,7 +334,7 @@ check("arktur_parser alias matches _wspolny_parser_html", arktur_parser.parsuj_p
 
 # ── 19. Clean plan titles and version extraction ---------------------
 print("\n-- 19. Clean plan titles and version extraction ---------------------")
-from sources.umg_wn.arktur_html import parse_plan_title
+from sources.umg.wn.arktur_html import parse_plan_title
 
 p1 = parse_plan_title("[TM Sem 1] Transport Morski pierwszego stopnia sem. 1 [2026-09-14 17:55] wer. 2")
 check("Clean name removes prefix and degree", p1["clean_name"] == "Transport Morski sem. 1")
@@ -420,7 +420,7 @@ check("Default cell parsed as default", color_by_sub.get("CWICZENIA") == "defaul
 
 # ── 22. Lesson form classification (classify_lesson_form) ─────────────────────
 print("\n-- 22. Lesson form classification (classify_lesson_form) -------------")
-from sources.umg_wn.arktur_html import classify_lesson_form, load_curriculum_forms, load_forms_manual
+from sources.umg.wn.arktur_html import classify_lesson_form, load_curriculum_forms, load_forms_manual
 
 curr_cat = load_curriculum_forms()
 forms_cfg = load_forms_manual()
@@ -504,7 +504,7 @@ for g in neg_groups:
 
 # ── 24. Natural sorting of plans (get_plan_sort_key) ──────────────────────────
 print("\n-- 24. Natural sorting of plans (get_plan_sort_key) -------------------")
-from sources.umg_wn.arktur_html import get_plan_sort_key, classify_lesson_form as clf
+from sources.umg.wn.arktur_html import get_plan_sort_key, classify_lesson_form as clf
 
 plans_to_sort = {
     "557": {"name": "Transport Morski pierwszego stopnia sem. 1"},
@@ -524,7 +524,7 @@ check("Plans sorted alphabetically by major and ascending by semester",
 print("\n-- 25. Regressions: symulator branch + group regex strip ---------------")
 
 sym_lesson = {"przedmiot": "Symulator Ratunkowy", "raw_przedmiot": "SRat", "sala": "Symulator", "colspan": 1, "arktur_kolor": "default"}
-from sources.umg_wn.arktur_html import classify_lesson_form as clf
+from sources.umg.wn.arktur_html import classify_lesson_form as clf
 _sym_catalog = {
     "majors": {
         "transport i logistyka": {
@@ -567,8 +567,8 @@ check("'A1\\t' with strip() matches II-degree group regex",
 
 # ── 26. Niestacjonarne (NST) client & parser tests ───────────────────────────
 print("\n-- 26. Niestacjonarne (NST) client & parser --------------------------")
-from sources.umg_wn.nst_client import fetch_nst_plans_list, pobierz_liste_planow_nst
-from sources.umg_wn.nst_parser import normalize_iso_date, _parse_single_table, parse_pdf_schedule, extract_stream_runs, _extract_lesson_details
+from sources.umg.wn.nst_client import fetch_nst_plans_list, pobierz_liste_planow_nst
+from sources.umg.wn.nst_parser import normalize_iso_date, _parse_single_table, parse_pdf_schedule, extract_stream_runs, _extract_lesson_details
 from core.ics import generate_nst_ics, generuj_ics_nst
 
 # 26a. Canonical English exports and backward compatibility aliases
@@ -738,8 +738,8 @@ if ok_result:
 # ── 27. Plany w trakcie modyfikacji przez uczelnię ([modyfikowany]) ───────────
 print("\n-- 27. Plany w trakcie modyfikacji przez uczelnię --------------------")
 from unittest.mock import patch, MagicMock
-from sources.umg_wn.arktur_client import pobierz_liste_planow, pobierz_plany_w_modyfikacji
-from sources.umg_wn.arktur_html import parse_plan_title
+from sources.umg.wn.arktur_client import pobierz_liste_planow, pobierz_plany_w_modyfikacji
+from sources.umg.wn.arktur_html import parse_plan_title
 
 raw_mod_title = "[TM Sem 1] Transport Morski pierwszego stopnia sem. 1 [modyfikowany] [2026-09-28 08:25] wer. 3"
 p_title = parse_plan_title(raw_mod_title)
@@ -764,7 +764,7 @@ mock_resp = MagicMock()
 mock_resp.text = html_with_mod
 mock_resp.raise_for_status = MagicMock()
 
-with patch("sources.umg_wn.arktur_client.requests.get", return_value=mock_resp):
+with patch("sources.umg.wn.arktur_client.requests.get", return_value=mock_resp):
     active_plans = pobierz_liste_planow()
     mod_plans = pobierz_plany_w_modyfikacji()
 

@@ -42,7 +42,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add tenants/umg_wn/events.json
+          git add tenants/umg/wn/events.json
           git commit -m "feat(events): add event from issue #${{ github.event.issue.number }}"
           git push
 

@@ -3,8 +3,8 @@ tests/test_sggw_adapter.py — Testy jednostkowe dla adaptera SGGW WMW (Faza 8).
 """
 import os
 import unittest
-from sources.sggw_weta.adapter import SggwExcelSource
-from sources.sggw_weta.parser import (
+from sources.sggw.weta.adapter import SggwExcelSource
+from sources.sggw.weta.parser import (
     extract_groups_from_text,
     parse_time_bounds,
     extract_room_and_subject

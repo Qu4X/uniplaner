@@ -1,4 +1,4 @@
-# Skrypty testowe i zrzuty
+# Skrypty testowe i zrzuty lokalne
 /test_scrapper.py
 /scrapper_test.py
 /test_*.py
@@ -8,11 +8,33 @@
 # Środowisko wirtualne
 .venv/
 venv/
+ENV/
+env/
 
-# Pliki systemowe PyCharma i cache Pythona
-.idea/
+# Pakiety i logi Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Cache Pythona i narzędzi testowych
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Środowiska IDE i edytorów
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Artefakty kompilacji i dystrybucji tenanta
 dist/
 dist_*/
 icons/
@@ -20,4 +42,9 @@ temp/
 scratch/
 .scratch/
 cache_nst_pdf/
-architecture-review-*.html
+architecture-review-*.html
+
+# Logi i pliki systemowe
+*.log
+.DS_Store
+Thumbs.db

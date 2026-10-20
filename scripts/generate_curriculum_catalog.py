@@ -20,7 +20,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("generate_curriculum_catalog")
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUTPUT_FILE = os.path.join(BASE_DIR, "sources", "umg_wn", "forms", "wn_curriculum_forms.json")
+OUTPUT_FILE = os.path.join(BASE_DIR, "sources", "umg", "wn", "forms", "wn_curriculum_forms.json")
 
 YEARS = [2021, 2022, 2023, 2024, 2025]
 MAJOR_IDS = range(1, 10)

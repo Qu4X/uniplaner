@@ -12,7 +12,7 @@ import sys
 import unicodedata
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-EVENTS_JSON_PATH = os.path.join(REPO_ROOT, "tenants", "umg_wn", "events.json")
+EVENTS_JSON_PATH = os.path.join(REPO_ROOT, "tenants", "umg", "wn", "events.json")
 
 
 def slugify(text: str) -> str:
