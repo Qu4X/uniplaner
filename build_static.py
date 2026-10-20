@@ -20,7 +20,7 @@ def build(
     force: bool = False
 ) -> int:
     res = build_tenant(
-        "umg_wn",
+        "umg/wn",
         dist_dir=dist_dir,
         force=force,
         plan_filter=plan_ids,

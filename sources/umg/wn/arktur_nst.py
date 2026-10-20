@@ -10,8 +10,8 @@ from typing import List, Dict, Optional, Any
 from datetime import datetime
 
 from sources.base import ScheduleSource, PlanMetadata, RawLesson
-from sources.umg_wn.nst_client import fetch_nst_plans_list, download_pdf_file
-from sources.umg_wn.nst_parser import parse_pdf_schedule
+from sources.umg.wn.nst_client import fetch_nst_plans_list, download_pdf_file
+from sources.umg.wn.nst_parser import parse_pdf_schedule
 
 logger = logging.getLogger("umg_arktur_nst")
 
@@ -20,7 +20,7 @@ class UmgArkturNstSource:
     source_id = "umg_arktur_nst"
 
     def __init__(self, cache_dir: Optional[str] = None):
-        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
         self.cache_dir = cache_dir or os.path.join(base_dir, "cache", "nst")
         os.makedirs(self.cache_dir, exist_ok=True)
         self._plans_cache: Dict[str, Dict[str, str]] = {}

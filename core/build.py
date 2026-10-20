@@ -5,6 +5,7 @@ Zapewnia multi-tenantowość, detekcję zmian, zasadę fail-safe (last known goo
 import os
 import sys
 import json
+import re
 import logging
 from typing import Dict, List, Optional, Any
 from datetime import datetime, timezone
@@ -319,9 +320,30 @@ class BuildOrchestrator:
         }
 
 
+def resolve_tenant_dir(tenant_id: str, repo_root: Optional[str] = None) -> str:
+    base = repo_root or _REPO_ROOT
+    clean_id = tenant_id.replace(":", "/").strip("/")
+    parts = clean_id.split("/")
+    hierarchical = os.path.join(base, "tenants", *parts)
+    if os.path.exists(hierarchical):
+        return hierarchical
+
+    if "_" in tenant_id:
+        u_parts = tenant_id.split("_", 1)
+        u_hierarchical = os.path.join(base, "tenants", *u_parts)
+        if os.path.exists(u_hierarchical):
+            return u_hierarchical
+
+    flat = os.path.join(base, "tenants", tenant_id)
+    if os.path.exists(flat):
+        return flat
+
+    raise FileNotFoundError(f"Brak pliku konfiguracji tenanta dla: {tenant_id}")
+
+
 def load_tenant_config(tenant_id: str, repo_root: Optional[str] = None) -> Dict[str, Any]:
     base = repo_root or _REPO_ROOT
-    tenant_dir = os.path.join(base, "tenants", tenant_id)
+    tenant_dir = resolve_tenant_dir(tenant_id, repo_root=base)
     config_file = os.path.join(tenant_dir, "config.json")
     if not os.path.exists(config_file):
         raise FileNotFoundError(f"Brak pliku konfiguracji tenanta: {config_file}")
@@ -415,7 +437,7 @@ def build_tenant(
                 shutil.copy2(s, d)
 
     # Dołączenie motywu tenanta (theme.css)
-    tenant_dir = os.path.join(base, "tenants", tenant_id)
+    tenant_dir = resolve_tenant_dir(tenant_id, repo_root=base)
     theme_file = os.path.join(tenant_dir, "theme.css")
     if os.path.exists(theme_file):
         with open(theme_file, "r", encoding="utf-8") as tf:
@@ -424,6 +446,85 @@ def build_tenant(
         if os.path.exists(target_style):
             with open(target_style, "a", encoding="utf-8") as sf:
                 sf.write("\n/* Tenant Theme Overrides */\n" + theme_css)
+
+    # Modularne ikony tenanta i branding
+    tenant_icon = os.path.join(tenant_dir, "icon.png")
+    if os.path.exists(tenant_icon):
+        for target_name in ["icon.png", "apple-touch-icon.png", "favicon.png", "icon-192.png", "icon-512.png"]:
+            shutil.copy2(tenant_icon, os.path.join(target_dist, target_name))
+
+        index_html_path = os.path.join(target_dist, "index.html")
+        if os.path.exists(index_html_path):
+            with open(index_html_path, "r", encoding="utf-8") as hf:
+                html_text = hf.read()
+            html_text = re.sub(
+                r'<link rel="icon"\s+href="[^"]+">',
+                '<link rel="icon" type="image/png" href="icon.png">',
+                html_text
+            )
+            html_text = html_text.replace('src="planwn.svg"', 'src="icon.png"')
+            with open(index_html_path, "w", encoding="utf-8") as hf:
+                hf.write(html_text)
+
+    # Dynamiczny manifest.json per-tenant
+    manifest_data = {
+        "name": config.get("name", "Plan Zajęć"),
+        "short_name": config.get("short_name", "Plan"),
+        "start_url": "./",
+        "scope": "./",
+        "display": "standalone",
+        "background_color": config.get("theme_color", "#ffffff"),
+        "theme_color": config.get("theme_color", "#0d233a"),
+        "description": config.get("name", "Plan Zajęć"),
+        "icons": [
+            {
+                "src": "icon.png" if os.path.exists(tenant_icon) else "icon-192.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "any"
+            },
+            {
+                "src": "icon.png" if os.path.exists(tenant_icon) else "icon-512.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "any"
+            }
+        ]
+    }
+    with open(os.path.join(target_dist, "manifest.json"), "w", encoding="utf-8") as mf:
+        json.dump(manifest_data, mf, ensure_ascii=False, indent=2)
+
+    # Scalanie changeloga: globalny web/changelog.json + lokalny tenant changelog.json
+    tenant_changelog = os.path.join(tenant_dir, "changelog.json")
+    global_changelog = os.path.join(base, "web", "changelog.json")
+    all_changelogs = []
+    if os.path.exists(global_changelog):
+        try:
+            with open(global_changelog, "r", encoding="utf-8") as gf:
+                g_data = json.load(gf)
+                if isinstance(g_data, list):
+                    all_changelogs.extend(g_data)
+        except Exception as e:
+            logger.warning(f"Błąd wczytywania globalnego changeloga: {e}")
+
+    if os.path.exists(tenant_changelog):
+        try:
+            with open(tenant_changelog, "r", encoding="utf-8") as tf:
+                t_data = json.load(tf)
+                if isinstance(t_data, list):
+                    faculty_tag = config.get("faculty", "Wydział")
+                    for entry in t_data:
+                        t_copy = dict(entry)
+                        if "title" in t_copy and not t_copy["title"].startswith(f"[{faculty_tag}]"):
+                            t_copy["title"] = f"[{faculty_tag}] {t_copy['title']}"
+                        all_changelogs.append(t_copy)
+        except Exception as e:
+            logger.warning(f"Błąd wczytywania changeloga tenanta: {e}")
+
+    if all_changelogs:
+        all_changelogs.sort(key=lambda x: str(x.get("date", "")), reverse=True)
+        with open(os.path.join(target_dist, "changelog.json"), "w", encoding="utf-8") as cf:
+            json.dump(all_changelogs, cf, ensure_ascii=False, indent=2)
 
     data_dir = os.path.join(target_dist, "data")
     os.makedirs(data_dir, exist_ok=True)
@@ -447,6 +548,7 @@ def build_tenant(
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
     import argparse
     parser = argparse.ArgumentParser(description="Multi-tenant Static Build Orchestrator")
     parser.add_argument("--tenant", type=str, default="umg_wn", help="Tenant ID (umg_wn, sggw_weta)")

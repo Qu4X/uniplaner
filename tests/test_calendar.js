@@ -2,7 +2,7 @@ const assert = require("assert");
 const path = require("path");
 const ROOT_DIR = path.resolve(__dirname, "..");
 const ScheduleEngine = require(path.join(ROOT_DIR, "web/js/schedule-engine.js"));
-const academicCalendar = require(path.join(ROOT_DIR, "tenants/umg_wn/academic_calendar.json"));
+const academicCalendar = require(path.join(ROOT_DIR, "tenants/umg/wn/academic_calendar.json"));
 
 // Domain engine instance
 const engine = ScheduleEngine.create(academicCalendar);

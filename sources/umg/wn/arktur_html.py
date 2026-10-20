@@ -10,8 +10,8 @@ import logging
 from typing import List, Dict, Optional, Any
 
 from sources.base import ScheduleSource, PlanMetadata, RawLesson
-from sources.umg_wn.arktur_client import pobierz_liste_planow, pobierz_surowy_plan
-from sources.umg_wn.arktur_parser import przetworz_plan_na_grafike, _wspolny_parser_html, LessonDict
+from sources.umg.wn.arktur_client import pobierz_liste_planow, pobierz_surowy_plan
+from sources.umg.wn.arktur_parser import przetworz_plan_na_grafike, _wspolny_parser_html, LessonDict
 
 logger = logging.getLogger("umg_arktur_html")
 

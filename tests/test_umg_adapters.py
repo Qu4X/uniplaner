@@ -3,8 +3,8 @@ Testy jednostkowe adapterów UMG (arktur_html i arktur_nst) z fixture'ami.
 """
 import unittest
 import os
-from sources.umg_wn.arktur_html import UmgArkturHtmlSource, is_hideable_simulator_lesson
-from sources.umg_wn.arktur_nst import UmgArkturNstSource
+from sources.umg.wn.arktur_html import UmgArkturHtmlSource, is_hideable_simulator_lesson
+from sources.umg.wn.arktur_nst import UmgArkturNstSource
 
 
 class TestUmgAdapters(unittest.TestCase):
@@ -76,7 +76,7 @@ class TestUmgAdapters(unittest.TestCase):
                 ]
             }
         }
-        with patch("sources.umg_wn.arktur_nst.parse_pdf_schedule", return_value=mock_parsed):
+        with patch("sources.umg.wn.arktur_nst.parse_pdf_schedule", return_value=mock_parsed):
             with patch("os.path.exists", return_value=True):
                 res = source.fetch_schedule("nst_1", pdf_path="dummy.pdf")
                 self.assertIn("GR.01", res)

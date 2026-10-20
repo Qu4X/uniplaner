@@ -143,8 +143,8 @@ class TestContractV1(unittest.TestCase):
     def test_validate_umg_wn_tenant_config(self):
         import json
         import os
-        config_path = os.path.join(os.path.dirname(__file__), "..", "tenants", "umg_wn", "config.json")
-        self.assertTrue(os.path.exists(config_path), "Brak pliku tenants/umg_wn/config.json")
+        config_path = os.path.join(os.path.dirname(__file__), "..", "tenants", "umg", "wn", "config.json")
+        self.assertTrue(os.path.exists(config_path), "Brak pliku tenants/umg/wn/config.json")
 
         with open(config_path, "r", encoding="utf-8") as f:
             cfg = json.load(f)
@@ -171,8 +171,8 @@ class TestContractV1(unittest.TestCase):
     def test_validate_sggw_weta_tenant_config(self):
         import json
         import os
-        config_path = os.path.join(os.path.dirname(__file__), "..", "tenants", "sggw_weta", "config.json")
-        self.assertTrue(os.path.exists(config_path), "Brak pliku tenants/sggw_weta/config.json")
+        config_path = os.path.join(os.path.dirname(__file__), "..", "tenants", "sggw", "weta", "config.json")
+        self.assertTrue(os.path.exists(config_path), "Brak pliku tenants/sggw/weta/config.json")
 
         with open(config_path, "r", encoding="utf-8") as f:
             cfg = json.load(f)

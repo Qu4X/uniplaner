@@ -80,23 +80,24 @@
 
   function applyBrandingToDOM(config, elements = {}) {
     if (typeof document === "undefined" || !config) return;
-    const brandName = config.short_name || config.name;
-    if (brandName) {
-      document.title = brandName;
-      if (typeof document.querySelector === "function") {
-        const brandH1 = document.querySelector(".brand-titles h1");
-        if (brandH1) brandH1.textContent = brandName;
-      }
+    const headerTitle = config.faculty ? `Plan zajęć ${config.faculty}` : (config.short_name || config.name || "Plan zajęć");
+    document.title = headerTitle;
+    if (typeof document.querySelector === "function") {
+      const brandH1 = document.querySelector(".brand-titles h1");
+      if (brandH1) brandH1.textContent = headerTitle;
     }
 
-    if (config.icon && typeof document.querySelector === "function" && String(config.icon).length <= 4) {
-      const svgIconUri = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${encodeURIComponent(config.icon)}</text></svg>`;
-      const favicon = document.querySelector('link[rel="icon"]');
-      if (favicon) {
-        favicon.setAttribute("href", svgIconUri);
-      }
-      if (config.id && config.id !== "umg_wn") {
-        const brandLogo = document.querySelector(".brand-logo");
+    if (typeof document.querySelector === "function") {
+      const brandLogo = document.querySelector(".brand-logo");
+      const currentSrc = brandLogo ? (brandLogo.getAttribute("src") || "") : "";
+      const hasCustomFileLogo = currentSrc.includes("icon.png") || currentSrc.includes("logo.svg");
+
+      if (!hasCustomFileLogo && config.icon && String(config.icon).length <= 4) {
+        const svgIconUri = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${encodeURIComponent(config.icon)}</text></svg>`;
+        const favicon = document.querySelector('link[rel="icon"]');
+        if (favicon && !favicon.getAttribute("href").includes("icon.png")) {
+          favicon.setAttribute("href", svgIconUri);
+        }
         if (brandLogo) {
           brandLogo.setAttribute("src", svgIconUri);
         }

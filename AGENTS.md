@@ -12,11 +12,11 @@ Projekt ma budowę modułową i multi-tenantową. **W `core/` oraz `web/` obowi�
 ```
 core/                     Rdzeń niezależny od uczelni (Contract v1, expand, validate, ics, diff, cross_ref, build, writer)
 sources/base.py           Protokół ScheduleSource (discover_plans, fetch_schedule) + modele RawLesson / PlanMetadata
-sources/umg_wn/           Adaptery źródłowe UMG Wydział Nawigacyjny (Arktur HTML + NST PDF)
-sources/sggw_weta/        Adapter źródłowy SGGW Wydział Medycyny Weterynaryjnej (SharePoint XLSX)
+sources/umg/wn/           Adaptery źródłowe UMG Wydział Nawigacyjny (Arktur HTML + NST PDF)
+sources/sggw/weta/        Adapter źródłowy SGGW Wydział Medycyny Weterynaryjnej (SharePoint XLSX)
 sources/_template/        Szablon startowy dla nowego adaptera uczelni
-tenants/umg_wn/           Konfiguracja tenanta UMG WN (config.json, theme.css, kalendarz)
-tenants/sggw_weta/        Konfiguracja tenanta SGGW WETA (config.json, theme.css, kalendarz)
+tenants/umg/wn/           Konfiguracja tenanta UMG WN (config.json, theme.css, kalendarz, ikony)
+tenants/sggw/weta/        Konfiguracja tenanta SGGW WETA (config.json, theme.css, kalendarz, ikony)
 
 
 build_static.py           Punkt wejścia buildu UMG (kompatybilny wstecznie z core.build)
@@ -113,7 +113,7 @@ sprawdź czy drugie zachowuje się tak samo dla tego samego tygodnia.
 
 ## Strefy chronione — nie refaktoruj bez wyraźnej instrukcji
 
-### `_wspolny_parser_html` w `sources/umg_wn/arktur_parser.py`
+### `_wspolny_parser_html` w `sources/umg/wn/arktur_parser.py`
 
 ~200 linii logiki parsowania HTML ze strony arktur.umg.edu.pl.
 Parsuje komórki `<td id="td_...">`, chunki zajęć, kolory fontów, dane AJAX.

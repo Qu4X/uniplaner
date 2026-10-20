@@ -18,11 +18,27 @@
 }
 
 [data-theme="dark"] {
-  --brand-navy: #0f2912;
+  --bg-app: #0d1710;
+  --bg-card: #132417;
+  --bg-card-subtle: #193120;
+  --text-primary: #f1f5f9;
+  --text-secondary: #c2d6c6;
+  --text-muted: #85a38a;
+
+  --brand-navy: #0a170d;
   --brand-primary: #2e7d32;
   --brand-primary-hover: #388e3c;
   --brand-accent: #66bb6a;
   --brand-light: #1b3820;
+
+  --border-subtle: #1e3a24;
+  --border-strong: #2c5434;
+
+  --badge-bg: #193120;
+  --badge-text: #c2d6c6;
+  --badge-room-bg: #1c3d25;
+  --badge-room-text: #a5d6a7;
+
   --primary-color: #2e7d32;
   --primary-hover: #388e3c;
   --primary-light: #1b3820;

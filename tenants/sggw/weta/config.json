@@ -13,7 +13,7 @@
   "locale": "pl",
   "tally_form_id": null,
   "source_adapters": [
-    "sources.sggw_weta.adapter.SggwExcelSource"
+    "sources.sggw.weta.adapter.SggwExcelSource"
   ],
   "forms": {
     "lecture":   { "label": "Wykład",             "abbr": "W",    "badge_color": "#2563eb" },

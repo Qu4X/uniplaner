@@ -5,7 +5,7 @@ console.log("\n🧪 Running ScheduleEngine Unit Tests (Contract v1)...\n");
 const path = require("path");
 const ROOT_DIR = path.resolve(__dirname, "..");
 const ScheduleEngine = require(path.join(ROOT_DIR, "web/js/schedule-engine.js"));
-const academicCalendar = require(path.join(ROOT_DIR, "tenants/umg_wn/academic_calendar.json"));
+const academicCalendar = require(path.join(ROOT_DIR, "tenants/umg/wn/academic_calendar.json"));
 
 // --- Test 1: Module exports and constants ---
 console.log("-- Test 1: Eksportowane stałe i fabryka (oraz brak legacy getLessonMeetingInfo)");

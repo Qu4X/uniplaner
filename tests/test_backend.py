@@ -8,7 +8,7 @@ import sys
 
 # Ensure repository root is in sys.path
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-os.environ["ACADEMIC_CALENDAR_PATH"] = os.path.join(REPO_ROOT, "tenants", "umg_wn", "academic_calendar.json")
+os.environ["ACADEMIC_CALENDAR_PATH"] = os.path.join(REPO_ROOT, "tenants", "umg", "wn", "academic_calendar.json")
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
@@ -781,7 +781,7 @@ if mod_plans:
 
 # ── 28. Walidacja schematu bazy wydarzeń (tenants/umg_wn/events.json) ─────────
 print("\n-- 28. Walidacja schematu bazy wydarzeń (tenants/umg_wn/events.json) --")
-events_json_path = os.path.join(REPO_ROOT, "tenants", "umg_wn", "events.json")
+events_json_path = os.path.join(REPO_ROOT, "tenants", "umg", "wn", "events.json")
 check("Plik tenants/umg_wn/events.json istnieje", os.path.exists(events_json_path))
 
 events_data = None

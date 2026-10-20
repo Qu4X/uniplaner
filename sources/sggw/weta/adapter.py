@@ -6,8 +6,8 @@ import hashlib
 import logging
 from typing import List, Dict, Optional, Any
 from sources.base import ScheduleSource, PlanMetadata, RawLesson
-from sources.sggw_weta.client import DEFAULT_WMW_PLANS, download_plan_file
-from sources.sggw_weta.parser import parse_sggw_excel
+from sources.sggw.weta.client import DEFAULT_WMW_PLANS, download_plan_file
+from sources.sggw.weta.parser import parse_sggw_excel
 
 logger = logging.getLogger("sggw_adapter")
 
@@ -43,8 +43,8 @@ def _calc_duration_minutes(start_time: str, end_time: str) -> int:
 def _load_plans_from_tenant_config() -> Optional[Dict[str, Any]]:
     try:
         import json
-        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        cfg_path = os.path.join(base_dir, "tenants", "sggw_weta", "config.json")
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        cfg_path = os.path.join(base_dir, "tenants", "sggw", "weta", "config.json")
         if os.path.exists(cfg_path):
             with open(cfg_path, "r", encoding="utf-8") as f:
                 cfg = json.load(f)
