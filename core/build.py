@@ -226,7 +226,8 @@ class BuildOrchestrator:
                     if not is_valid:
                         raise ValueError(f"Błąd walidacji {plan.id}_{grp}: {val_errors}")
 
-                    ics_data = generate_group_ics(group_schedule, grp)
+                    ics_domain = self.tenant_config.get("source_label") or "schedule.local"
+                    ics_data = generate_group_ics(group_schedule, grp, institution_domain=ics_domain)
                     staged_schedules[grp] = group_schedule
                     staged_ics[grp] = ics_data
 
@@ -332,23 +333,55 @@ def load_tenant_config(tenant_id: str, repo_root: Optional[str] = None) -> Dict[
         with open(cal_file, "r", encoding="utf-8") as f:
             config["academic_calendar"] = json.load(f)
 
-    catalog_file = os.path.join(base, "sources", tenant_id, "subjects", "wn_subjects_catalog.json")
-    if os.path.exists(catalog_file) and "curriculum_catalog_path" not in config:
-        config["curriculum_catalog_path"] = catalog_file
+    catalog_path = config.get("curriculum_catalog_path")
+    if catalog_path:
+        full_catalog = os.path.join(base, catalog_path) if not os.path.isabs(catalog_path) else catalog_path
+        if os.path.exists(full_catalog):
+            config["curriculum_catalog_path"] = full_catalog
+        else:
+            logger.warning(f"Zdefiniowany katalog przedmiotów nie istnieje: {full_catalog}")
 
     return config
 
 
-def get_tenant_sources(tenant_id: str) -> List[ScheduleSource]:
-    if tenant_id == "umg_wn":
-        from sources.umg_wn.arktur_html import UmgArkturHtmlSource
-        from sources.umg_wn.arktur_nst import UmgArkturNstSource
-        return [UmgArkturHtmlSource(), UmgArkturNstSource()]
-    elif tenant_id == "sggw_weta":
-        from sources.sggw_weta.adapter import SggwExcelSource
-        return [SggwExcelSource()]
-    else:
-        raise ValueError(f"Nieznany tenant: {tenant_id}")
+def get_tenant_sources(tenant_id: str, tenant_config: Optional[Dict[str, Any]] = None) -> List[ScheduleSource]:
+    config = tenant_config
+    if config is None:
+        try:
+            config = load_tenant_config(tenant_id)
+        except Exception:
+            config = {}
+
+    adapters = config.get("source_adapters") or config.get("adapters")
+    if adapters:
+        import importlib
+        sources_list: List[ScheduleSource] = []
+        for adapter_path in adapters:
+            if ":" in adapter_path:
+                mod_name, cls_name = adapter_path.split(":", 1)
+            else:
+                parts = adapter_path.rsplit(".", 1)
+                mod_name, cls_name = parts[0], parts[1]
+            mod = importlib.import_module(mod_name)
+            cls = getattr(mod, cls_name)
+            sources_list.append(cls())
+        return sources_list
+
+    # Dynamiczny fallback do sources.<tenant_id>.adapter
+    import importlib
+    try:
+        mod = importlib.import_module(f"sources.{tenant_id}.adapter")
+        sources_list = []
+        for attr_name in dir(mod):
+            attr = getattr(mod, attr_name)
+            if isinstance(attr, type) and issubclass(attr, ScheduleSource) and attr is not ScheduleSource:
+                sources_list.append(attr())
+        if sources_list:
+            return sources_list
+    except ModuleNotFoundError:
+        pass
+
+    raise ValueError(f"Nieznany tenant lub brak zdefiniowanych źródeł (source_adapters) dla: {tenant_id}")
 
 
 def build_tenant(
@@ -362,7 +395,7 @@ def build_tenant(
     base = _REPO_ROOT
     target_dist = dist_dir or os.path.join(base, "dist")
     config = load_tenant_config(tenant_id, repo_root=base)
-    sources = get_tenant_sources(tenant_id)
+    sources = get_tenant_sources(tenant_id, tenant_config=config)
 
     try:
         from scripts.sync_version import sync_version
@@ -427,7 +460,7 @@ if __name__ == "__main__":
     plans_list = [p.strip() for p in args.plan.split(",")] if args.plan else None
     if args.check_only:
         config = load_tenant_config(args.tenant)
-        sources = get_tenant_sources(args.tenant)
+        sources = get_tenant_sources(args.tenant, tenant_config=config)
         orchestrator = BuildOrchestrator(tenant_config=config, sources=sources, dist_dir=args.out)
         changed = orchestrator.check_only(sources=sources)
         logger.info(f"Check-only result for {args.tenant}: {len(changed)} changed plans: {[p.id for p in changed]}")

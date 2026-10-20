@@ -74,11 +74,6 @@
   const _defaultEngine = _engineModule ? _engineModule.create({}) : null;
 
   function loadDefaultCalendar() {
-    if (typeof module === "object" && module.exports) {
-      try {
-        return require("../../tenants/umg_wn/academic_calendar.json");
-      } catch (_) {}
-    }
     return { daySwaps: {}, holidays: {}, periods: [] };
   }
 

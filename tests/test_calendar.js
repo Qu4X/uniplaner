@@ -10,7 +10,10 @@ const getMonday = (...args) => engine.getMonday(...args);
 const getRoomOccupancyAt = (...args) => engine.getRoomOccupancyAt(...args);
 const isTeachingDay = (...args) => engine.isTeachingDay(...args);
 
-const { getSafeGroupName, parsePlanInfo, getAcademicInfoForWeek, updateCalendarNotice, renderSchedule, renderLessonCard, shouldShowChangelog, openChangelogModal, closeChangelogModal, checkChangelogNotification, comparePlans, getPlanSortKey, populatePlanSelect, onStudyModeChange, getDuplicatePlanInfo, getPlanModificationInfo, updateDayTabsUI, initTheme, toggleTheme, setupThemeListener, withViewTransition, openAboutModal, closeAboutModal, openEventsModal, closeEventsModal, formatEventFullDate, renderEventsModalList, _EventsService, state, elements, getLessonProgress } = require(path.join(ROOT_DIR, "web/app.js"));
+const { getSafeGroupName, parsePlanInfo, getAcademicInfoForWeek, updateCalendarNotice, renderSchedule, renderLessonCard, shouldShowChangelog, openChangelogModal, closeChangelogModal, checkChangelogNotification, comparePlans, getPlanSortKey, populatePlanSelect, onStudyModeChange, getDuplicatePlanInfo, getPlanModificationInfo, updateDayTabsUI, initTheme, toggleTheme, setupThemeListener, withViewTransition, openAboutModal, closeAboutModal, openEventsModal, closeEventsModal, formatEventFullDate, renderEventsModalList, _EventsService, setAcademicCalendar, state, elements, getLessonProgress } = require(path.join(ROOT_DIR, "web/app.js"));
+if (typeof setAcademicCalendar === "function") {
+  setAcademicCalendar(academicCalendar);
+}
 
 console.log("\n🧪 Running Calendar Engine TDD Tests (Contract v1)...\n");
 
@@ -1322,26 +1325,30 @@ const sampleSimLesson1 = {
   godziny: "14:30 - 16:45",
   sala: "102",
   prowadzacy: "Hejmlich Andrzej",
-  data_start: "2026-10-15"
+  data_start: "2026-10-15",
+  hideable: true
 };
 const sampleSimLesson2 = {
   przedmiot: "Manewrowanie Statkiem",
   godziny: "08:30 - 10:45",
   sala: "102",
   prowadzacy: "Hejmlich Andrzej",
-  data_start: "2026-11-09"
+  data_start: "2026-11-09",
+  hideable: true
 };
 const normalLesson1 = {
   przedmiot: "Język Angielski",
   godziny: "11:00 - 12:30",
   sala: "P1",
-  prowadzacy: "Denc Maciej"
+  prowadzacy: "Denc Maciej",
+  hideable: false
 };
 const normalLesson2 = {
   przedmiot: "Manewrowanie Statkiem",
   godziny: "14:30 - 16:00",
   sala: "Aula",
-  prowadzacy: "Abramowicz-Gerigk Teresa"
+  prowadzacy: "Abramowicz-Gerigk Teresa",
+  hideable: false
 };
 
 // Weryfikacja reguły: tylko symulatory z manewrowania są ukrywalne

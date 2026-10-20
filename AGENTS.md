@@ -17,15 +17,17 @@ sources/sggw_weta/        Adapter źródłowy SGGW Wydział Medycyny Weterynaryj
 sources/_template/        Szablon startowy dla nowego adaptera uczelni
 tenants/umg_wn/           Konfiguracja tenanta UMG WN (config.json, theme.css, kalendarz)
 tenants/sggw_weta/        Konfiguracja tenanta SGGW WETA (config.json, theme.css, kalendarz)
-scrapper.py               Fasada parsera HTML UMG (arktur_client + arktur_parser)
-nst_client.py / nst_parser.py Pobieranie i parser siatki PDF planów niestacjonarnych UMG
-build_static.py           Punkt wejścia buildu UMG (kompatybilny wstecznie)
+
+
+build_static.py           Punkt wejścia buildu UMG (kompatybilny wstecznie z core.build)
 web/app.js                Kontroler frontendu PWA (vanilla JS)
+web/js/state.js           Centralny stan reaktywny frontendu
+web/js/tenant-config.js   Wczytywanie konfiguracji i branding tenanta
 web/js/schedule-engine.js Czysty silnik domenowy kalendarza i spotkań
 web/js/timeline.js        Oś czasu i obliczenia dat/pozycji bloków
 web/js/render.js          Renderowanie kart spotkań i siatki
-web/js/cross-reference.js Silnik i UI wyszukiwarki sal, wykładowców i przedmiotów
-web/js/modules/           Moduły opcjonalne sterowane z tenant_config.features (events.js, lesson-hiding.js, voting.js)
+
+web/js/modules/           Moduły funkcjonalne (cross-reference.js, events.js, lesson-hiding.js, voting.js, changelog.js)
 docs/specs/               Specyfikacje Kontraktu v1, konfiguracji tenanta, głosowania i przewodnik adaptera
 tests/                    Testy regresyjne Python (test_backend.py + test_*.py) oraz JS (test_*.js)
 ```
@@ -111,15 +113,15 @@ sprawdź czy drugie zachowuje się tak samo dla tego samego tygodnia.
 
 ## Strefy chronione — nie refaktoruj bez wyraźnej instrukcji
 
-### `_wspolny_parser_html` w `scrapper.py`
+### `_wspolny_parser_html` w `sources/umg_wn/arktur_parser.py`
 
 ~200 linii logiki parsowania HTML ze strony arktur.umg.edu.pl.
 Parsuje komórki `<td id="td_...">`, chunki zajęć, kolory fontów, dane AJAX.
 Wrażliwa na zmiany struktury HTML uczelni. Poprawki błędów: OK. Refaktor strukturalny: zapytaj.
 
-### `getLessonMeetingInfo` w `web/js/schedule-engine.js`
+### Wyliczanie wystąpień spotkań (`core/expand.py`)
 
-Liczy spotkania z uwzględnieniem daySwaps, holidays i przerw.
+Zgodnie z ADR-0002 obliczenia wystąpień spotkań (`occurrences`) zostały przeniesione z runtime do buildu (`core/expand.py`). Liczy spotkania z uwzględnieniem daySwaps, holidays i przerw.
 Ma pokrycie TDD w `tests/test_calendar.js` i `tests/test_schedule_engine.js`. Pętla zawiera guard na `"Inny"` (nieznany dzień)
 i twardy cap 200 iteracji — nie usuwaj tych zabezpieczeń.
 

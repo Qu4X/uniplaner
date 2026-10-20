@@ -19,14 +19,14 @@ global.localStorage = {
   }
 };
 
-// Test 1: isHideableLesson — Contract v1 hideable flag & legacy UMG simulator fallback
-console.log("-- Test 1: isHideableLesson (Contract v1 hideable + legacy UMG fallback)");
+// Test 1: isHideableLesson — Contract v1 hideable flag
+console.log("-- Test 1: isHideableLesson (Contract v1 hideable flag)");
 {
   assert.strictEqual(LessonHiding.isHideableLesson({ id: "l1", subject: "Dobrostan zwierząt", hideable: true }), true);
   assert.strictEqual(LessonHiding.isHideableLesson({ id: "l2", subject: "Anatomia", hideable: false }), false);
-  assert.strictEqual(LessonHiding.isHideableLesson({ przedmiot: "Manewrowanie Statkiem", sala: "102" }), true);
-  assert.strictEqual(LessonHiding.isHideableLesson({ przedmiot: "Manewrowanie Statkiem", sala: "Aula" }), false);
-  console.log("✅ [PASS] isHideableLesson prawidłowo rozpoznaje zajęcia ukrywalne.");
+  assert.strictEqual(LessonHiding.isHideableLesson({ id: "l3", subject: "Inne" }), false);
+  assert.strictEqual(LessonHiding.isHideableLesson(null), false);
+  console.log("✅ [PASS] isHideableLesson prawidłowo rozpoznaje zajęcia ukrywalne na podstawie flagi hideable.");
 }
 
 // Test 2: getLessonSlotKey — Contract v1 deterministic ID vs legacy composite key

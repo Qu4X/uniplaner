@@ -8,6 +8,7 @@ import sys
 
 # Ensure repository root is in sys.path
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.environ["ACADEMIC_CALENDAR_PATH"] = os.path.join(REPO_ROOT, "tenants", "umg_wn", "academic_calendar.json")
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 

@@ -13,16 +13,15 @@ from icalendar import Calendar, Event
 logger = logging.getLogger(__name__)
 
 _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-_TENANT_CAL_PATH = os.path.join(_REPO_ROOT, "tenants", "umg_wn", "academic_calendar.json")
-ACADEMIC_CALENDAR_PATH = _TENANT_CAL_PATH
+ACADEMIC_CALENDAR_PATH = os.environ.get("ACADEMIC_CALENDAR_PATH")
 
 WEEKDAY_TO_CODE = {0: "PON", 1: "WT", 2: "ŚR", 3: "CZW", 4: "PT", 5: "SOB", 6: "ND"}
 
 
 def load_academic_calendar(path: Optional[str] = None) -> Dict[str, Any]:
-    """Wczytuje konfigurację kalendarza akademickiego z academic_calendar.json"""
-    target_path = path or ACADEMIC_CALENDAR_PATH
-    if os.path.exists(target_path):
+    """Wczytuje konfigurację kalendarza akademickiego z pliku JSON."""
+    target_path = path or ACADEMIC_CALENDAR_PATH or os.environ.get("ACADEMIC_CALENDAR_PATH")
+    if target_path and os.path.exists(target_path):
         try:
             with open(target_path, "r", encoding="utf-8") as f:
                 return json.load(f)
@@ -47,7 +46,7 @@ def format_location(room: Optional[str], remote: bool = False) -> str:
 def generate_group_ics(
     schedule: Dict[str, Any],
     plan_name: str = "",
-    institution_domain: str = "umg.edu.pl"
+    institution_domain: str = "schedule.local"
 ) -> str:
     """
     Tworzy ciąg znaków .ics na podstawie zwalidowanego słownika GroupSchedule (kontrakt v1).
@@ -58,7 +57,7 @@ def generate_group_ics(
     lessons = schedule.get("lessons", [])
 
     cal = Calendar()
-    cal.add("prodid", f"-//Plan Zajec//{group_name}//{institution_domain}//")
+    cal.add("prodid", f"-//Plan App//{group_name}//{institution_domain}//")
     cal.add("version", "2.0")
     cal.add("x-wr-calname", f"Plan {group_name}")
     cal.add("x-wr-timezone", "Europe/Warsaw")
@@ -166,13 +165,18 @@ def _get_semester_period(lesson_start_iso: str, cal_config: Optional[Dict[str, A
     return None
 
 
-def generuj_ics(dane_planu: Dict[str, Any], nazwa_grupy: str, academic_calendar: Optional[Dict[str, Any]] = None) -> str:
+def generuj_ics(
+    dane_planu: Dict[str, Any],
+    nazwa_grupy: str,
+    academic_calendar: Optional[Dict[str, Any]] = None,
+    institution_domain: str = "schedule.local"
+) -> str:
     """
     Generuje ciąg tekstowy iCalendar (.ics) zgodny z RFC 5545 na podstawie spłaszczonej siatki planu
     lub słownika GroupSchedule (Kontrakt v1).
     """
     if isinstance(dane_planu, dict) and "lessons" in dane_planu and isinstance(dane_planu.get("lessons"), list):
-        return generate_group_ics(dane_planu, plan_name=nazwa_grupy)
+        return generate_group_ics(dane_planu, plan_name=nazwa_grupy, institution_domain=institution_domain)
 
     if academic_calendar is None:
         academic_calendar = load_academic_calendar()
@@ -180,7 +184,7 @@ def generuj_ics(dane_planu: Dict[str, Any], nazwa_grupy: str, academic_calendar:
     day_swaps = academic_calendar.get("daySwaps", {}) if academic_calendar else {}
 
     cal = Calendar()
-    cal.add('prodid', f'-//UMG Navigator//{nazwa_grupy}//')
+    cal.add('prodid', f'-//Plan App//{nazwa_grupy}//{institution_domain}//')
     cal.add('version', '2.0')
     cal.add('x-wr-calname', f'Plan {nazwa_grupy}')
     cal.add('x-wr-timezone', 'Europe/Warsaw')
@@ -251,7 +255,7 @@ def generuj_ics(dane_planu: Dict[str, Any], nazwa_grupy: str, academic_calendar:
 
                             clean_subj = re.sub(r'[^a-zA-Z0-9_-]', '_', info.get('raw_przedmiot') or info['przedmiot'])
                             uid = (f"{nazwa_grupy}_{event_start.strftime('%Y%m%dT%H%M%S')}"
-                                   f"_{clean_subj}@umg.edu.pl")
+                                   f"_{clean_subj}@{institution_domain}")
                             event.add('uid', uid)
                             event.add('dtstamp', datetime.now(timezone.utc))
 
@@ -292,15 +296,19 @@ def generuj_ics(dane_planu: Dict[str, Any], nazwa_grupy: str, academic_calendar:
     return output
 
 
-def generate_nst_ics(nst_group_schedule: Dict[str, List[Dict[str, Any]]], group_name: str) -> str:
+def generate_nst_ics(
+    nst_group_schedule: Dict[str, List[Dict[str, Any]]],
+    group_name: str,
+    institution_domain: str = "schedule.local"
+) -> str:
     """
     Generates an iCal (.ics) calendar for part-time (NST) studies group
     based on explicit session calendar dates.
     """
     cal = Calendar()
-    cal.add('prodid', '-//Plan Zajec WN UMG (Niestacjonarne)//umg.edu.pl//')
+    cal.add('prodid', f'-//Plan App (NST)//{group_name}//{institution_domain}//')
     cal.add('version', '2.0')
-    cal.add('x-wr-calname', f"Plan WN (NST) - {group_name}")
+    cal.add('x-wr-calname', f"Plan NST - {group_name}")
     cal.add('x-wr-timezone', 'Europe/Warsaw')
 
     for date_iso, lessons in nst_group_schedule.items():
@@ -331,7 +339,7 @@ def generate_nst_ics(nst_group_schedule: Dict[str, List[Dict[str, Any]]], group_
                 event.add('dtend', dt_end)
 
                 clean_subj = re.sub(r'[^\w]', '', subj)[:20]
-                uid = f"nst_{group_name}_{date_iso}_{sh:02d}{sm:02d}_{clean_subj}@umg.edu.pl"
+                uid = f"nst_{group_name}_{date_iso}_{sh:02d}{sm:02d}_{clean_subj}@{institution_domain}"
                 event.add('uid', uid)
                 event.add('dtstamp', datetime.now(timezone.utc))
 

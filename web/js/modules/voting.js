@@ -241,11 +241,26 @@
         return true;
       });
 
+      const DAY_INDEX = { MON: 0, TUE: 1, WED: 2, THU: 3, FRI: 4, SAT: 5, SUN: 6 };
+
+      function shiftDateISO(dateStr, deltaDays) {
+        if (!dateStr || deltaDays === 0) return dateStr;
+        const parts = dateStr.split("-").map(Number);
+        const d = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+        d.setUTCDate(d.getUTCDate() + deltaDays);
+        return d.toISOString().slice(0, 10);
+      }
+
       for (const prop of approvedProposals) {
         const lesson = cloned.lessons.find((l) => l.id === prop.lesson_id);
         if (!lesson) continue;
 
         if (prop.scope === "permanent") {
+          const oldDay = lesson.day_of_week;
+          const oldIdx = DAY_INDEX[oldDay];
+          const newIdx = DAY_INDEX[prop.new_day_of_week];
+          const dayDelta = (oldIdx !== undefined && newIdx !== undefined) ? (newIdx - oldIdx) : 0;
+
           lesson.day_of_week = prop.new_day_of_week;
           lesson.start_time = prop.new_start_time;
           lesson.end_time = prop.new_end_time;
@@ -261,13 +276,23 @@
               occ.start_time = prop.new_start_time;
               occ.end_time = prop.new_end_time;
               if (prop.new_room) occ.room = prop.new_room;
+              if (dayDelta !== 0 && occ.date) {
+                occ.date = shiftDateISO(occ.date, dayDelta);
+              }
             });
           }
         } else if (prop.scope === "single" && prop.target_date) {
           if (Array.isArray(lesson.occurrences)) {
             const occIdx = lesson.occurrences.findIndex((o) => o.date === prop.target_date);
             if (occIdx !== -1) {
+              const origOcc = lesson.occurrences[occIdx];
               lesson.occurrences.splice(occIdx, 1);
+
+              const origDay = prop.original_day_of_week || lesson.day_of_week;
+              const origIdx = DAY_INDEX[origDay];
+              const newIdx = DAY_INDEX[prop.new_day_of_week];
+              const dayDelta = (origIdx !== undefined && newIdx !== undefined) ? (newIdx - origIdx) : 0;
+              const newOccDate = prop.new_date || (dayDelta !== 0 ? shiftDateISO(prop.target_date, dayDelta) : prop.target_date);
 
               const singleLesson = {
                 ...JSON.parse(JSON.stringify(lesson)),
@@ -278,12 +303,12 @@
                 room: prop.new_room || lesson.room,
                 occurrences: [
                   {
-                    date: prop.target_date,
+                    date: newOccDate,
                     start_time: prop.new_start_time,
                     end_time: prop.new_end_time,
                     room: prop.new_room || lesson.room,
-                    number: 1,
-                    of: 1,
+                    number: origOcc && origOcc.number !== undefined ? origOcc.number : 1,
+                    of: origOcc && origOcc.of !== undefined ? origOcc.of : 1,
                     status: "scheduled"
                   }
                 ],

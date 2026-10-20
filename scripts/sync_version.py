@@ -32,7 +32,7 @@ def sync_version(version: str = None) -> str:
             sw_content = f.read()
         sw_updated = re.sub(
             r"const CACHE_NAME = ['\"][^'\"]+['\"];",
-            f"const CACHE_NAME = 'plan-umg-v{ver}';",
+            f"const CACHE_NAME = 'plan-app-v{ver}';",
             sw_content
         )
         with open(sw_path, "w", encoding="utf-8") as f:

@@ -23,27 +23,7 @@
 
   function isHideableLesson(lesson) {
     if (!lesson) return false;
-    // Kontrakt v1: flaga hideable ustawiona przez adapter
-    if (lesson.hideable === true) return true;
-
-    // Reguła legacy UMG: symulatory manewrowe (MS / sym-man) poza aulą
-    const p = (lesson.przedmiot || "").toLowerCase();
-    const rawP = (lesson.raw_przedmiot || "").toLowerCase();
-    const room = (lesson.sala || "").toLowerCase();
-
-    const isManeuvering = (
-      p.includes("manewrowani") ||
-      rawP.includes("manewrowani") ||
-      rawP === "ms" ||
-      p.includes("sym-man") ||
-      rawP.includes("sym-man")
-    );
-    if (!isManeuvering) return false;
-
-    if (room.includes("aula") || room.includes("audytorium")) {
-      return false;
-    }
-    return true;
+    return lesson.hideable === true;
   }
 
   function getSafeGroupName(group) {

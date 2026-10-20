@@ -27,12 +27,14 @@
     locale: "pl",
     tally_form_id: "2E2vNj",
     forms: {
-      lecture:   { label: "Wykład",       abbr: "W",   badge_color: "#2563eb" },
-      exercise:  { label: "Ćwiczenia",    abbr: "Ćw",  badge_color: "#059669" },
-      lab:       { label: "Laboratorium", abbr: "Lab", badge_color: "#7c3aed" },
-      practical: { label: "Symulator",    abbr: "Sym", badge_color: "#d97706" },
-      project:   { label: "Projekt",      abbr: "Pr",  badge_color: "#8b5cf6" },
-      seminar:   { label: "Seminarium",   abbr: "Sem", badge_color: "#6366f1" }
+      lecture:   { label: "Wykład",       abbr: "W",    badge_color: "#2563eb" },
+      exercise:  { label: "Ćwiczenia",    abbr: "Ćw",   badge_color: "#059669" },
+      lab:       { label: "Laboratorium", abbr: "Lab",  badge_color: "#7c3aed" },
+      simulator: { label: "Symulator",    abbr: "Sym",  badge_color: "#d97706" },
+      project:   { label: "Projekt",      abbr: "Pr",   badge_color: "#8b5cf6" },
+      seminar:   { label: "Seminarium",   abbr: "Sem",  badge_color: "#6366f1" },
+      elective:  { label: "Fakultet",     abbr: "Fak",  badge_color: "#0d9488" },
+      other:     { label: "Inne",         abbr: "Inne", badge_color: "#6b7280" }
     },
     features: {
       cross_reference: true,

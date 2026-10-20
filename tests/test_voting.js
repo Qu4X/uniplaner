@@ -133,8 +133,8 @@ global.localStorage = {
         end_time: "13:30",
         room: "Lab 3",
         occurrences: [
-          { date: "2026-10-07", start_time: "12:00", end_time: "13:30", room: "Lab 3" },
-          { date: "2026-10-14", start_time: "12:00", end_time: "13:30", room: "Lab 3" }
+          { date: "2026-10-07", start_time: "12:00", end_time: "13:30", room: "Lab 3", number: 2, of: 5 },
+          { date: "2026-10-14", start_time: "12:00", end_time: "13:30", room: "Lab 3", number: 3, of: 5 }
         ]
       }
     ]
@@ -196,6 +196,8 @@ global.localStorage = {
   assert.strictEqual(l1Updated.end_time, "15:30");
   assert.strictEqual(l1Updated.room, "Aula B");
   assert.strictEqual(l1Updated.occurrences[0].room, "Aula B");
+  assert.strictEqual(l1Updated.occurrences[0].date, "2026-10-09", "Data pierwszego wystąpienia powinna przesunąć się z 2026-10-05 (MON) na 2026-10-09 (FRI)");
+  assert.strictEqual(l1Updated.occurrences[1].date, "2026-10-16", "Data drugiego wystąpienia powinna przesunąć się z 2026-10-12 na 2026-10-16");
 
   // l2 (single change on 2026-10-07)
   const l2Original = updatedSchedule.lessons.find((l) => l.id === "l2");
@@ -207,8 +209,9 @@ global.localStorage = {
   assert.strictEqual(l2SingleOverride.day_of_week, "THU");
   assert.strictEqual(l2SingleOverride.start_time, "10:00");
   assert.strictEqual(l2SingleOverride.room, "Lab 4");
-  assert.strictEqual(l2SingleOverride.occurrences[0].number, 1);
-  assert.strictEqual(l2SingleOverride.occurrences[0].of, 1);
+  assert.strictEqual(l2SingleOverride.occurrences[0].date, "2026-10-08", "Data pojedynczego wystąpienia powinna przesunąć się ze środy na czwartek");
+  assert.strictEqual(l2SingleOverride.occurrences[0].number, 2, "Numer spotkania powinien zostać zachowany");
+  assert.strictEqual(l2SingleOverride.occurrences[0].of, 5, "Całkowita liczba spotkań powinna zostać zachowana");
   assert.strictEqual(l2SingleOverride.occurrences[0].status, "scheduled");
 
   // p3_expired should NOT be applied because token "old-tok" != "tok1"

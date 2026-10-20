@@ -12,6 +12,9 @@
   "source_label": "WMW SGGW (harmonogramy SharePoint)",
   "locale": "pl",
   "tally_form_id": null,
+  "source_adapters": [
+    "sources.sggw_weta.adapter.SggwExcelSource"
+  ],
   "forms": {
     "lecture":   { "label": "Wykład",             "abbr": "W",    "badge_color": "#2563eb" },
     "exercise":  { "label": "Ćwiczenia",          "abbr": "Ćw",   "badge_color": "#059669" },

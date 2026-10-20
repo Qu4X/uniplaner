@@ -247,19 +247,25 @@ function initCrossRefUI() {
   }
 }
 
+function setAcademicCalendar(data) {
+  if (!data) return;
+  ACADEMIC_CALENDAR = data;
+  state.academicCalendar = data;
+  if (_ScheduleEngine) {
+    engine = _ScheduleEngine.create(ACADEMIC_CALENDAR);
+    if (typeof window !== "undefined" && window.CrossRef && window.CrossRef.UI) {
+      window.CrossRef.UI.scheduleEngine = engine;
+    }
+  }
+}
+
 async function loadAcademicCalendarConfig() {
   try {
     const res = await fetch("data/academic_calendar.json");
     if (res.ok) {
       const data = await res.json();
       if (data && data.periods) {
-        ACADEMIC_CALENDAR = data;
-        if (_ScheduleEngine) {
-          engine = _ScheduleEngine.create(ACADEMIC_CALENDAR);
-          if (typeof window !== "undefined" && window.CrossRef && window.CrossRef.UI) {
-            window.CrossRef.UI.scheduleEngine = engine;
-          }
-        }
+        setAcademicCalendar(data);
         updateDayTabsUI();
         if (state.scheduleData) renderSchedule();
       }
@@ -1370,6 +1376,7 @@ if (typeof module !== "undefined" && module.exports) {
     restoreAllHiddenLessonSlots,
     togglePreviewHiddenLessons,
     updateHiddenLessonsBannerUI,
+    setAcademicCalendar,
     _VotingModule,
     state,
     elements
