@@ -10,6 +10,25 @@
   <link rel="icon" type="image/svg+xml" href="assets/uniplaner.svg">
   <link rel="alternate icon" type="image/png" href="icon-192.png">
   <link rel="stylesheet" href="portal.css">
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(regs) {
+        for (var reg of regs) {
+          if (!reg.scope.includes('/umg/') && !reg.scope.includes('/sggw/')) {
+            reg.unregister().then(function() {
+              if ('caches' in window) {
+                caches.keys().then(function(keys) {
+                  keys.forEach(function(k) {
+                    if (k.startsWith('plan-app-')) caches.delete(k);
+                  });
+                });
+              }
+            });
+          }
+        }
+      });
+    }
+  </script>
 </head>
 <body>
   <div class="portal-container">

@@ -62,7 +62,7 @@ def sync_version(version: str = None) -> str:
             f.write(html_updated)
 
     # 3. Kopia do dist/ jeśli istnieje
-    if os.path.exists(DIST_DIR):
+    if False and os.path.exists(DIST_DIR):
         for f in ["sw.js", "index.html", "changelog.json", "app.js"]:
             src = os.path.join(WEB_DIR, f)
             dst = os.path.join(DIST_DIR, f)

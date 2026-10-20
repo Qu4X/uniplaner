@@ -562,7 +562,7 @@ def build_all_tenants(
     target_dist = dist_dir or os.path.join(base, "dist")
 
     logger.info("=== Rozpoczynanie multi-tenant buildu Uniplaner ===")
-    build_portal(dist_dir=target_dist, repo_root=base)
+
 
     tenants = discover_all_tenants(repo_root=base)
     results = {}
@@ -577,6 +577,7 @@ def build_all_tenants(
             logger.error(f"Błąd podczas budowania tenanta {t_slug}: {e}", exc_info=True)
             results[t_slug] = {"error": str(e)}
 
+    build_portal(dist_dir=target_dist, repo_root=base)
     return results
 
 
