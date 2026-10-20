@@ -92,6 +92,25 @@ assert.strictEqual(loaded.institution, "UMG");
 assert.strictEqual(loaded.url, "./umg/wn/");
 console.log("✅ [PASS] saveLastVisited i loadLastVisited poprawnie serializują i odczytują stan.");
 
+// Test 3b: getTenantVisualUrl (obsługa logo_url vs fallback do icon_url)
+console.log("\n-- Test 3b: getTenantVisualUrl");
+assert.strictEqual(
+  PortalDomain.getTenantVisualUrl({ logo_url: "assets/logo.svg", icon_url: "assets/icon.png" }),
+  "assets/logo.svg",
+  "Powinien preferować logo_url jeśli istnieje"
+);
+assert.strictEqual(
+  PortalDomain.getTenantVisualUrl({ logo_url: null, icon_url: "assets/tenants/sggw_wmw/icon.png" }),
+  "assets/tenants/sggw_wmw/icon.png",
+  "Dla tenanta bez logo_url powinien zwrócić icon_url (np. SGGW)"
+);
+assert.strictEqual(
+  PortalDomain.getTenantVisualUrl({ logo_url: null, icon_url: null }),
+  null,
+  "Brak grafik powinien zwrócić null"
+);
+console.log("✅ [PASS] getTenantVisualUrl poprawnie pobiera logo lub ikonę tenanta.");
+
 // Test 4: Walidacja wygenerowanego dist/tenants.json jeśli istnieje
 console.log("\n-- Test 4: Walidacja schematu tenants.json");
 const tenantsJsonPath = path.join(__dirname, "..", "dist", "tenants.json");

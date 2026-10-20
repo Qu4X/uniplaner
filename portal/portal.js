@@ -91,6 +91,14 @@ const PortalDomain = {
     } catch (e) {
       return null;
     }
+  },
+
+  /**
+   * Zwraca URL grafiki tenanta (logo_url lub icon_url jako fallback).
+   */
+  getTenantVisualUrl(tenant) {
+    if (!tenant) return null;
+    return tenant.logo_url || tenant.icon_url || null;
   }
 };
 
@@ -162,7 +170,8 @@ class PortalApp {
         plugin_version: "1.0.0",
         plugin_author: "Społeczność studentów WMW",
         icon: "🐾",
-        logo_url: "assets/tenants/sggw_wmw/logo.svg",
+        icon_url: "assets/tenants/sggw_wmw/icon.png",
+        logo_url: null,
         url: "./sggw/wmw/"
       }
     ];
@@ -383,18 +392,19 @@ class PortalApp {
       info.appendChild(name);
       info.appendChild(meta);
 
-      // Prawa strona: Logo i wskaźnik radiowy
+      // Prawa strona: Logo/ikona i wskaźnik radiowy
       const right = document.createElement("div");
       right.className = "faculty-right";
 
-      if (tenant.logo_url) {
+      const visualUrl = PortalDomain.getTenantVisualUrl(tenant);
+      if (visualUrl) {
         const logo = document.createElement("img");
-        logo.src = tenant.logo_url;
+        logo.src = visualUrl;
         logo.alt = `Logo ${tenant.faculty_full}`;
         logo.className = "faculty-logo-img";
         logo.loading = "lazy";
         logo.onerror = () => {
-          // Fallback do ikony/emoji jeśli plik svg nie istnieje
+          // Fallback do ikony/emoji jeśli plik graficzny nie istnieje lub wystąpił błąd
           logo.remove();
           if (tenant.icon) {
             const emoji = document.createElement("span");
