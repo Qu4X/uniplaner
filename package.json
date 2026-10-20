@@ -1,7 +1,8 @@
 {
-  "name": "planwn",
+  "name": "uniplaner",
   "version": "3.11.0",
-  "description": "Nowoczesny, responsywny plan zajęć dla studentów Wydziału Nawigacyjnego Uniwersytetu Morskiego w Gdyni",
+  "description": "Nowoczesna, modularna i otwarta platforma planu zajęć dla studentów (PWA)",
+  "repository": "https://github.com/Qu4X/uniplaner",
   "private": true,
   "scripts": {
     "test": "node tests/test_calendar.js && node tests/test_cross_reference.js && node tests/test_schedule_engine.js && node tests/test_events.js && node tests/test_voting.js && node tests/test_lesson_hiding.js",
