@@ -1,4 +1,4 @@
-# AGENTS.md — Plan WN
+# AGENTS.md — Uniplaner
 
 Dokument dla agentów AI pracujących w tym repozytorium.
 Przeczytaj przed pierwszą zmianą w kodzie.
@@ -102,8 +102,8 @@ Gdy zmieniasz jedno, zmień drugie. Sprawdź w `tests/test_backend.py` sekcja "F
 
 ### Kontrakt 2 — logika kalendarza akademickiego
 
-`academic_calendar.json` jest parsowany niezależnie przez:
-- `scrapper.py` — przy generowaniu ICS (build time)
+`academic_calendar.json` danego tenanta (`tenants/<tenant>/academic_calendar.json`) jest interpretowany niezależnie przez:
+- `core/expand.py` / `core/ics.py` — przy generowaniu wystąpień i plików ICS (build time)
 - `web/js/schedule-engine.js` / `web/app.js` — przy wyświetlaniu spotkań (runtime)
 
 Gdy zmieniasz reguły interpretacji dat (holidays, breaks, daySwaps) w jednym miejscu,
@@ -142,8 +142,8 @@ Nie edytuj samodzielnie:
 
 | Plik | Dlaczego |
 |------|---------|
-| `data/academic_calendar.json` | Dane rektorskie — muszą być sprawdzone z oficjalnym kalendarzem UMG |
-| `data/subjects_manual.json` | Aliasy nazw przedmiotów — mogą wpłynąć na ICS i cross-reference |
+| `tenants/<tenant>/academic_calendar.json` | Dane rektorskie — muszą być sprawdzone z oficjalnym kalendarzem uczelni |
+| `tenants/<tenant>/aliases.json` | Aliasy nazw przedmiotów/prowadzących — mogą wpłynąć na ICS i cross-reference |
 | `TODO.md` | Backlog projektu |
 
 Zaproponuj zmianę, poczekaj na potwierdzenie.
@@ -170,7 +170,7 @@ Pełny słownik → [`CONTEXT.md`](CONTEXT.md)
 
 ### Issue tracker
 
-Issues and specs live as GitHub issues (Qu4X/planwn). See docs/agents/issue-tracker.md.
+Issues and specs live as GitHub issues (Qu4X/uniplaner). See docs/agents/issue-tracker.md.
 
 ### Triage labels
 

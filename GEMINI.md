@@ -1,4 +1,4 @@
-# GEMINI.md — Plan WN
+# GEMINI.md — Uniplaner
 
 Instrukcje dla modeli Gemini / Antigravity pracujących w tym repozytorium.
 
@@ -13,5 +13,5 @@ Przed rozpoczęciem pracy przeczytaj:
 - **Architektura modułowa (multi-tenant)**: Zawsze zachowuj podział na `core/` (logika i kontrakty niezależne od uczelni), `sources/<tenant>/` (adaptery danych), `tenants/<tenant>/` (konfiguracja, motyw, kalendarz) oraz `web/js/modules/` (moduły UI sterowane z `tenant_config.features`). Nigdy nie zaszywaj logiki specyficznej dla uczelni w `core/` ani `web/`.
 - **Testy**: Uruchamiaj `.venv\Scripts\python.exe tests/test_backend.py`, `.venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py"` oraz `npm test` przed i po każdej zmianie. Wszystkie muszą być zielone.
 - **Brak nowych zależności**: Nie dodawaj bibliotek do `requirements.txt` (poza zatwierdzonymi: `requests`, `beautifulsoup4`, `icalendar`, `pdfplumber`, `openpyxl`) ani `package.json` bez wyraźnej zgody właściciela.
-- **Pliki konfiguracyjne**: Nie modyfikuj samodzielnie `data/academic_calendar.json`, `data/subjects_manual.json` ani `TODO.md`.
+- **Pliki konfiguracyjne**: Nie modyfikuj samodzielnie `tenants/<tenant>/academic_calendar.json`, `tenants/<tenant>/aliases.json` ani `TODO.md`.
 - **Styl**: Dokumentacja po polsku, identyfikatory i commity po angielsku (Conventional Commits).

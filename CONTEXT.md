@@ -1,6 +1,6 @@
-# Plan WN
+# Uniplaner
 
-Słownik pojęć domenowych dla systemu obsługi i prezentacji planów zajęć Uniwersytetu Morskiego w Gdyni.
+Słownik pojęć domenowych dla platformy Uniplaner — systemu obsługi i prezentacji planów zajęć uczelni wyższych.
 
 ## Kalendarz i Dni
 
@@ -117,7 +117,7 @@ _Avoid_: Plan datowany, kalendarz zjazdów.
 ## Powiązania i Obłożenie (Cross-Reference)
 
 **Indeks powiązań (Cross-Reference)**:
-Zagregowana, zdeduplikowana baza relacji wygenerowana ze wszystkich planów UMG (`cross_reference.json`), mapująca powiązania między salami, wykładowcami, przedmiotami i grupami.
+Zagregowana, zdeduplikowana baza relacji wygenerowana ze wszystkich planów danego tenanta (`cross_reference.json`), mapująca powiązania między salami, wykładowcami, przedmiotami i grupami.
 _Avoid_: Baza danych, indeks globalny.
 
 **Globalne obłożenie sal**:
@@ -145,5 +145,5 @@ _Avoid_: Zjazd, termin lekcji, slot datowany.
 ## Granice systemu / Scope & Constraints
 
 **Zakres wydziałowy (Faculty Scope)**:
-W architekturze modularnej każdy tenant definiuje swój własny zakres. Dla tenanta `umg_wn` obsługiwane są wyłącznie plany Wydziału Nawigacyjnego UMG z systemu arktur.umg.edu.pl/planyzaj/. Nowe wydziały lub uczelnie są dołączane jako niezależne tenanty i adaptery bez ingerencji w kod źródłowy istniejących wydziałów.
+W architekturze modularnej każdy tenant definiuje swój własny zakres. Dla tenanta `umg/wn` obsługiwane są plany Wydziału Nawigacyjnego UMG z systemu arktur.umg.edu.pl/planyzaj/. Nowe wydziały lub uczelnie są dołączane jako niezależne tenanty i adaptery bez ingerencji w kod źródłowy istniejących wydziałów.
 _Avoid_: Hardkodowanie wydziałów w silniku, brak grup WE/WM jako błąd.
