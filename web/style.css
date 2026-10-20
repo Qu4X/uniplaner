@@ -3782,3 +3782,26 @@ iframe[src*="tally.so"] {
 }
 
 
+
+
+/* Ukrycie elementów nawigacji portalu w zainstalowanym PWA (display-mode: standalone) */
+@media all and (display-mode: standalone) {
+  .browser-only-nav {
+    display: none !important;
+  }
+}
+
+.back-to-portal-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  margin-top: 6px;
+  transition: color 0.15s ease;
+}
+
+.back-to-portal-link:hover {
+  color: var(--text-primary);
+}

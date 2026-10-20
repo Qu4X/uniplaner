@@ -1,7 +1,7 @@
 {
-  "id": "sggw_weta",
+  "id": "sggw_wmw",
   "name": "Szkoła Główna Gospodarstwa Wiejskiego — Wydział Medycyny Weterynaryjnej",
-  "short_name": "Plan SGGW WETA",
+  "short_name": "Plan SGGW WMW",
   "icon": "🐾",
   "theme_color": "#1b5e20",
   "institution": "SGGW",
@@ -20,7 +20,7 @@
     "contact_email": "dziekanat_wmw@sggw.edu.pl"
   },
   "source_adapters": [
-    "sources.sggw.weta.adapter.SggwExcelSource"
+    "sources.sggw.wmw.adapter.SggwExcelSource"
   ],
   "forms": {
     "lecture":   { "label": "Wykład",             "abbr": "W",    "badge_color": "#2563eb" },

@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tenant:
-        description: 'Tenant ID to check (umg_wn or sggw_weta)'
+        description: 'Tenant ID to check (umg_wn or sggw_wmw)'
         required: false
         default: 'umg_wn'
 
@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        tenant: [umg_wn, sggw_weta]
+        tenant: [umg_wn, sggw_wmw]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

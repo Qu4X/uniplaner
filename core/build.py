@@ -6,6 +6,7 @@ import os
 import sys
 import json
 import re
+import shutil
 import logging
 from typing import Dict, List, Optional, Any
 from datetime import datetime, timezone
@@ -335,6 +336,10 @@ class BuildOrchestrator:
 def resolve_tenant_dir(tenant_id: str, repo_root: Optional[str] = None) -> str:
     base = repo_root or _REPO_ROOT
     clean_id = tenant_id.replace(":", "/").strip("/")
+    if clean_id in ("sggw/weta", "sggw_weta"):
+        clean_id = "sggw/wmw"
+    if tenant_id == "sggw_weta":
+        tenant_id = "sggw_wmw"
     parts = clean_id.split("/")
     hierarchical = os.path.join(base, "tenants", *parts)
     if os.path.exists(hierarchical):
@@ -426,6 +431,155 @@ def get_tenant_sources(tenant_id: str, tenant_config: Optional[Dict[str, Any]] =
     raise ValueError(f"Nieznany tenant lub brak zdefiniowanych źródeł (source_adapters) dla: {tenant_id}")
 
 
+def discover_all_tenants(repo_root: Optional[str] = None) -> List[Dict[str, Any]]:
+    """
+    Skanuje katalog tenants/ w poszukiwaniu wszystkich podkatalogów zawierających config.json.
+    Zwraca listę metadanych tenantów posortowaną wg nazwy uczelni i wydziału.
+    """
+    base = repo_root or _REPO_ROOT
+    tenants_dir = os.path.join(base, "tenants")
+    results = []
+    if not os.path.exists(tenants_dir):
+        return results
+
+    for root, dirs, files in os.walk(tenants_dir):
+        rel = os.path.relpath(root, tenants_dir)
+        parts = rel.replace("\\", "/").split("/")
+        if any(p.startswith(("_", ".")) for p in parts):
+            continue
+
+        if "config.json" in files:
+            tenant_slug = "/".join(parts)
+            try:
+                cfg = load_tenant_config(tenant_slug, repo_root=base)
+                has_logo = os.path.exists(os.path.join(root, "logo.svg"))
+                has_icon = os.path.exists(os.path.join(root, "icon.png"))
+
+                tenant_id = cfg.get("id") or tenant_slug.replace("/", "_")
+                institution = cfg.get("institution", "")
+                institution_full = cfg.get("institution_full", institution)
+                faculty = cfg.get("faculty", "")
+                faculty_full = cfg.get("faculty_full", faculty)
+
+                logo_rel_path = f"assets/tenants/{tenant_id}/logo.svg" if has_logo else None
+                icon_rel_path = f"assets/tenants/{tenant_id}/icon.png" if has_icon else None
+
+                results.append({
+                    "tenant_id": tenant_id,
+                    "path": tenant_slug,
+                    "institution": institution,
+                    "institution_full": institution_full,
+                    "faculty": faculty,
+                    "faculty_full": faculty_full,
+                    "name": cfg.get("name", f"{institution_full} — {faculty_full}"),
+                    "short_name": cfg.get("short_name", f"Plan {faculty}"),
+                    "icon": cfg.get("icon", "📅"),
+                    "theme_color": cfg.get("theme_color", "#0d233a"),
+                    "plugin_version": cfg.get("plugin_version", "1.0.0"),
+                    "plugin_author": cfg.get("plugin_author", ""),
+                    "source_label": cfg.get("source_label", ""),
+                    "has_logo": has_logo,
+                    "has_icon": has_icon,
+                    "logo_url": logo_rel_path,
+                    "icon_url": icon_rel_path,
+                    "url": f"./{tenant_slug}/"
+                })
+            except Exception as e:
+                logger.warning(f"Błąd podczas wczytywania tenanta z {root}: {e}")
+
+    results.sort(key=lambda t: (t["institution_full"], t["faculty_full"]))
+    return results
+
+
+def generate_tenants_registry(repo_root: Optional[str] = None, dist_dir: Optional[str] = None) -> List[Dict[str, Any]]:
+    """
+    Generuje statyczny plik dist/tenants.json oraz kopiuje logotypy tenantów do dist/assets/tenants/<tenant_id>/.
+    """
+    base = repo_root or _REPO_ROOT
+    target_dist = dist_dir or os.path.join(base, "dist")
+    os.makedirs(target_dist, exist_ok=True)
+
+    tenants = discover_all_tenants(repo_root=base)
+
+    assets_dir = os.path.join(target_dist, "assets")
+    os.makedirs(assets_dir, exist_ok=True)
+
+    uni_svg_src = os.path.join(base, "uniplaner.svg")
+    if os.path.exists(uni_svg_src):
+        shutil.copy2(uni_svg_src, os.path.join(assets_dir, "uniplaner.svg"))
+        shutil.copy2(uni_svg_src, os.path.join(target_dist, "uniplaner.svg"))
+
+    for t in tenants:
+        t_id = t["tenant_id"]
+        t_dir = resolve_tenant_dir(t["path"], repo_root=base)
+        t_assets = os.path.join(assets_dir, "tenants", t_id)
+        os.makedirs(t_assets, exist_ok=True)
+
+        if t["has_logo"]:
+            shutil.copy2(os.path.join(t_dir, "logo.svg"), os.path.join(t_assets, "logo.svg"))
+        if t["has_icon"]:
+            shutil.copy2(os.path.join(t_dir, "icon.png"), os.path.join(t_assets, "icon.png"))
+
+    registry_path = os.path.join(target_dist, "tenants.json")
+    with open(registry_path, "w", encoding="utf-8") as f:
+        json.dump(tenants, f, ensure_ascii=False, indent=2)
+
+    logger.info(f"Wygenerowano rejestr {len(tenants)} tenantów w {registry_path}")
+    return tenants
+
+
+def build_portal(dist_dir: Optional[str] = None, repo_root: Optional[str] = None) -> None:
+    """
+    Kopiuje pliki portalu (portal/) do dist/ i generuje tenants.json.
+    """
+    base = repo_root or _REPO_ROOT
+    target_dist = dist_dir or os.path.join(base, "dist")
+    os.makedirs(target_dist, exist_ok=True)
+
+    portal_dir = os.path.join(base, "portal")
+    if os.path.exists(portal_dir):
+        for item in os.listdir(portal_dir):
+            s = os.path.join(portal_dir, item)
+            d = os.path.join(target_dist, item)
+            if os.path.isdir(s):
+                shutil.copytree(s, d, dirs_exist_ok=True)
+            else:
+                shutil.copy2(s, d)
+
+    generate_tenants_registry(repo_root=base, dist_dir=target_dist)
+
+
+def build_all_tenants(
+    dist_dir: Optional[str] = None,
+    force: bool = False,
+    limit: Optional[int] = None,
+    repo_root: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    Buduje portal w katalogu głównym dist/ oraz każdego wykrytego tenanta w podkatalogu dist/<u_id>/<w_id>/.
+    """
+    base = repo_root or _REPO_ROOT
+    target_dist = dist_dir or os.path.join(base, "dist")
+
+    logger.info("=== Rozpoczynanie multi-tenant buildu Uniplaner ===")
+    build_portal(dist_dir=target_dist, repo_root=base)
+
+    tenants = discover_all_tenants(repo_root=base)
+    results = {}
+    for t in tenants:
+        t_slug = t["path"]
+        t_dist = os.path.join(target_dist, *t_slug.split("/"))
+        logger.info(f"--- Budowanie tenanta: {t_slug} do {t_dist} ---")
+        try:
+            res = build_tenant(t_slug, dist_dir=t_dist, force=force, limit=limit)
+            results[t_slug] = res
+        except Exception as e:
+            logger.error(f"Błąd podczas budowania tenanta {t_slug}: {e}", exc_info=True)
+            results[t_slug] = {"error": str(e)}
+
+    return results
+
+
 def build_tenant(
     tenant_id: str,
     dist_dir: Optional[str] = None,
@@ -433,6 +587,12 @@ def build_tenant(
     plan_filter: Optional[List[str]] = None,
     limit: Optional[int] = None
 ) -> Dict[str, Any]:
+    if tenant_id == "all":
+        return build_all_tenants(dist_dir=dist_dir, force=force, limit=limit, repo_root=_REPO_ROOT)
+    if tenant_id == "portal":
+        build_portal(dist_dir=dist_dir, repo_root=_REPO_ROOT)
+        return {"portal": True}
+
     import shutil
     base = _REPO_ROOT
     target_dist = dist_dir or os.path.join(base, "dist")
@@ -584,7 +744,9 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
     import argparse
     parser = argparse.ArgumentParser(description="Multi-tenant Static Build Orchestrator")
-    parser.add_argument("--tenant", type=str, default="umg_wn", help="Tenant ID (umg_wn, sggw_weta)")
+    parser.add_argument("--tenant", type=str, default="umg_wn", help="Tenant ID (umg_wn, sggw_wmw, all, portal)")
+    parser.add_argument("--portal", action="store_true", help="Build landing page portal only")
+    parser.add_argument("--all", action="store_true", help="Build portal and all discovered tenants")
     parser.add_argument("--out", "--output", dest="out", type=str, default="dist", help="Output directory")
     parser.add_argument("--force", action="store_true", help="Force rebuild all plans")
     parser.add_argument("--check-only", action="store_true", help="Only check if any plans changed via discover()")
@@ -593,7 +755,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     plans_list = [p.strip() for p in args.plan.split(",")] if args.plan else None
-    if args.check_only:
+    if args.portal or args.tenant == "portal":
+        build_portal(dist_dir=args.out)
+    elif args.all or args.tenant == "all":
+        build_all_tenants(dist_dir=args.out, force=args.force, limit=args.limit)
+    elif args.check_only:
         config = load_tenant_config(args.tenant)
         sources = get_tenant_sources(args.tenant, tenant_config=config)
         orchestrator = BuildOrchestrator(tenant_config=config, sources=sources, dist_dir=args.out)

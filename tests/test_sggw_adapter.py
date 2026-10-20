@@ -70,16 +70,19 @@ class TestSggwAdapter(unittest.TestCase):
         self.assertEqual(lecture.duration_minutes, 45)
 
     def test_tenant_config_and_sources_registration(self):
-        config = load_tenant_config("sggw_weta")
-        self.assertEqual(config["id"], "sggw_weta")
+        config = load_tenant_config("sggw_wmw")
+        self.assertEqual(config["id"], "sggw_wmw")
         self.assertEqual(config["institution"], "SGGW")
         self.assertTrue(config["features"]["lesson_hiding"]["bulk_electives_dialog"])
         self.assertTrue(config["features"]["voting"]["enabled"])
         self.assertIn("academic_calendar", config)
 
-        sources = get_tenant_sources("sggw_weta")
+        sources = get_tenant_sources("sggw_wmw")
         self.assertEqual(len(sources), 1)
-        self.assertEqual(sources[0].source_id, "sggw_weta_excel")
+        self.assertEqual(sources[0].source_id, "sggw_wmw_excel")
+
+        config_alias = load_tenant_config("sggw_weta")
+        self.assertEqual(config_alias["id"], "sggw_wmw")
 
 
 if __name__ == "__main__":

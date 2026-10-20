@@ -1,4 +1,4 @@
-name: Deploy UMG Schedule to GitHub Pages
+name: Deploy Uniplaner to GitHub Pages
 
 on:
   # Run automatically once daily in the morning (~06:00 CEST / ~05:00 CET)
@@ -45,17 +45,39 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Backend Regression Tests (Python)
+      - name: Run Backend Regression & Modular Tests (Python)
         run: |
           python tests/test_backend.py
+          python -m unittest discover -s tests -p "test_*.py"
 
       - name: Run Frontend Engine Tests (Node.js)
         run: |
           npm test
 
-      - name: Build static site (Scrape & Export to dist/)
+      - name: Build Uniplaner Platform (Portal & Multi-Tenant PWAs)
         run: |
-          python build_static.py
+          python -m core.build --all
+
+      - name: Verify Multi-PWA Output Structure
+        run: |
+          python -c "
+          import os, sys
+          required = [
+              'dist/index.html',
+              'dist/tenants.json',
+              'dist/portal.css',
+              'dist/portal.js',
+              'dist/umg/wn/index.html',
+              'dist/umg/wn/manifest.json',
+              'dist/sggw/wmw/index.html',
+              'dist/sggw/wmw/manifest.json'
+          ]
+          missing = [f for f in required if not os.path.exists(f)]
+          if missing:
+              print(f'Missing files in dist/: {missing}', file=sys.stderr)
+              sys.exit(1)
+          print('Verification of dist/ structure succeeded.')
+          "
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
