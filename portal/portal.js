@@ -137,44 +137,18 @@ class PortalApp {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       this.tenants = await res.json();
     } catch (err) {
-      console.warn("Błąd ładowania tenants.json, używam domyślnych danych awaryjnych:", err);
-      this.tenants = this.getFallbackTenants();
+      console.error("Błąd ładowania tenants.json:", err);
+      if (this.statusEl) {
+        this.statusEl.textContent = "Nie udało się załadować listy uczelni. Sprawdź połączenie i odśwież stronę.";
+      }
+      if (this.searchInput) {
+        this.searchInput.placeholder = "Błąd pobierania listy uczelni...";
+      }
+      this.tenants = [];
     }
 
     this.institutions = PortalDomain.groupTenantsByInstitution(this.tenants);
     this.filteredInstitutions = [...this.institutions];
-  }
-
-  getFallbackTenants() {
-    return [
-      {
-        tenant_id: "umg_wn",
-        institution: "UMG",
-        institution_full: "Uniwersytet Morski w Gdyni (UMG)",
-        faculty: "WN",
-        faculty_full: "Wydział Nawigacyjny",
-        name: "Uniwersytet Morski w Gdyni — Wydział Nawigacyjny",
-        plugin_version: "3.11.0",
-        plugin_author: "Społeczność studentów WN",
-        icon: "⚓",
-        logo_url: "assets/tenants/umg_wn/logo.svg",
-        url: "./umg/wn/"
-      },
-      {
-        tenant_id: "sggw_wmw",
-        institution: "SGGW",
-        institution_full: "Szkoła Główna Gospodarstwa Wiejskiego w Warszawie (SGGW)",
-        faculty: "WMW",
-        faculty_full: "Wydział Medycyny Weterynaryjnej",
-        name: "Szkoła Główna Gospodarstwa Wiejskiego — Wydział Medycyny Weterynaryjnej",
-        plugin_version: "1.0.0",
-        plugin_author: "Społeczność studentów WMW",
-        icon: "🐾",
-        icon_url: "assets/tenants/sggw_wmw/icon.png",
-        logo_url: null,
-        url: "./sggw/wmw/"
-      }
-    ];
   }
 
   renderLastVisited() {
