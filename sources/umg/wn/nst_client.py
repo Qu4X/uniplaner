@@ -7,6 +7,7 @@ import os
 import re
 from typing import Dict, List, Optional
 import requests
+from requests.adapters import HTTPAdapter
 from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
@@ -22,8 +23,11 @@ def fetch_nst_plans_list(session: Optional[requests.Session] = None) -> List[Dic
     Returns a list of plan dictionaries with metadata.
     """
     http_session = session or requests.Session()
+    adapter = HTTPAdapter(max_retries=3)
+    http_session.mount("https://", adapter)
+    http_session.mount("http://", adapter)
     try:
-        response = http_session.get(NST_LIST_URL, headers=DEFAULT_HEADERS, timeout=10)
+        response = http_session.get(NST_LIST_URL, headers=DEFAULT_HEADERS, timeout=25)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, "html.parser")
 

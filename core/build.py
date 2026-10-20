@@ -574,10 +574,15 @@ def build_all_tenants(
         logger.info(f"--- Budowanie tenanta: {t_slug} do {t_dist} ---")
         try:
             res = build_tenant(t_slug, dist_dir=t_dist, force=force, limit=limit)
+            if "error" in res:
+                raise RuntimeError(f"Błąd podczas budowania tenanta {t_slug}: {res['error']}")
+            if (limit is None or limit > 0) and res.get("total_plans", 0) == 0 and res.get("total_groups_processed", 0) == 0:
+                raise RuntimeError(f"Quality gate failure: tenant {t_slug} wygenerował 0 planów.")
             results[t_slug] = res
         except Exception as e:
             logger.error(f"Błąd podczas budowania tenanta {t_slug}: {e}", exc_info=True)
             results[t_slug] = {"error": str(e)}
+            raise
 
     build_portal(dist_dir=target_dist, repo_root=base)
     return results

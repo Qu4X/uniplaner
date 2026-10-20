@@ -61,7 +61,7 @@ jobs:
       - name: Verify Multi-PWA Output Structure
         run: |
           python -c "
-          import os, sys
+          import os, sys, json
           required = [
               'dist/index.html',
               'dist/tenants.json',
@@ -76,6 +76,19 @@ jobs:
           if missing:
               print(f'Missing files in dist/: {missing}', file=sys.stderr)
               sys.exit(1)
+
+          for plans_path in ['dist/umg/wn/data/plans.json', 'dist/sggw/wmw/data/plans.json']:
+              if not os.path.exists(plans_path):
+                  print(f'Missing {plans_path}', file=sys.stderr)
+                  sys.exit(1)
+              with open(plans_path, 'r', encoding='utf-8') as f:
+                  data = json.load(f)
+                  count = len(data.get('plans', []))
+                  if count == 0:
+                      print(f'Quality gate failure: {plans_path} has 0 plans!', file=sys.stderr)
+                      sys.exit(1)
+                  print(f'Validated {plans_path}: {count} plans found.')
+
           print('Verification of dist/ structure succeeded.')
           "
 

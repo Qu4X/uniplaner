@@ -24,13 +24,14 @@ URL_AJAX = "https://arktur.umg.edu.pl/planyzaj/validate_sp_ka.php"
 DEFAULT_HEADERS = {"User-Agent": "Mozilla/5.0"}
 
 
-def pobierz_liste_planow() -> Dict[str, str]:
+def pobierz_liste_planow(session: Optional[requests.Session] = None) -> Dict[str, str]:
     """
     Pobiera listę dostępnych planów zajęć z formularza wyboru Arktura.
     Zwraca słownik: {nazwa_planu: id_planu}
     """
     try:
-        r = requests.get(URL_LISTA, headers=DEFAULT_HEADERS, timeout=10)
+        requester = session if session is not None else requests
+        r = requester.get(URL_LISTA, headers=DEFAULT_HEADERS, timeout=25)
         r.raise_for_status()
         soup = BeautifulSoup(r.text, 'html.parser')
         return {
