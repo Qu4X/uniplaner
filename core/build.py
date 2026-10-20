@@ -267,6 +267,7 @@ class BuildOrchestrator:
                     "study_mode": plan.study_mode,
                     "semester_number": plan.semester_number,
                     "published_at": plan.published_at,
+                    "version": plan.version,
                     "version_token": plan.version_token,
                     "groups": groups,
                     "archived": is_winter_plan_archived(plan.semester_number, academic_calendar, generated_timestamp)
@@ -290,6 +291,7 @@ class BuildOrchestrator:
                 "study_mode": plan.study_mode,
                 "semester_number": plan.semester_number,
                 "published_at": plan.published_at,
+                "version": plan.version,
                 "version_token": plan.version_token,
                 "groups": groups_list,
                 "archived": is_winter_plan_archived(plan.semester_number, academic_calendar, generated_timestamp)

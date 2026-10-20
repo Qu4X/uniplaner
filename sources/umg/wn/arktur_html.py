@@ -262,8 +262,8 @@ class UmgArkturHtmlSource:
                     pass
         return {}
 
-    def discover(self) -> List[PlanMetadata]:
-        plans_raw = pobierz_liste_planow()
+    def discover(self, raw_plans: Optional[Any] = None) -> List[PlanMetadata]:
+        plans_raw = raw_plans if raw_plans is not None else pobierz_liste_planow()
         discovered: List[PlanMetadata] = []
 
         if isinstance(plans_raw, dict):
@@ -311,6 +311,7 @@ class UmgArkturHtmlSource:
                 semester_number=sem_num,
                 version_token=version_token,
                 published_at=published_at,
+                version=version,
                 groups=groups
             ))
 

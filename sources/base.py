@@ -16,6 +16,7 @@ class PlanMetadata:
     version_token: str
     groups: List[str] = field(default_factory=list)
     published_at: Optional[str] = None
+    version: Optional[str] = None
     archived: bool = False
 
 

@@ -1015,6 +1015,66 @@ with tempfile.TemporaryDirectory() as tmp_tenant_dir:
             check("Oryginalny raw_subject został zachowany", lesson["raw_subject"] == "Wsp. Syst. Naw.")
             check("Wykładowca został znormalizowany przez aliases.json", lesson["teacher"] == "dr Jan Kowalski")
 
+# ── 33. Obsługa pola version w PlanMetadata i PlanEntry ──────────────
+print("\n-- 33. Obsługa pola version w PlanMetadata i PlanEntry --")
+
+from typing import List, Dict
+from sources.base import PlanMetadata, ScheduleSource, RawLesson
+from sources.umg.wn.arktur_html import UmgArkturHtmlSource
+
+# Test 1: PlanMetadata z polem version
+pm = PlanMetadata(
+    id="123",
+    institution="umg",
+    faculty="wn",
+    name="Nawigacja sem. 3",
+    study_mode="full_time",
+    semester_number=3,
+    version_token="wer. 3 [2026-10-19 17:11]",
+    version="wer. 3",
+    published_at="2026-10-19 17:11"
+)
+check("PlanMetadata posiada atrybut version", pm.version == "wer. 3")
+
+# Test 2: ArkturHtmlSource discover parsuje czysty version
+arktur_src = UmgArkturHtmlSource()
+mock_raw_plans = [
+    {
+        "id": "999",
+        "nazwa": "Nawigacja sem. 3 [2026-10-19 17:11] wer. 3",
+        "grupy": ["1"]
+    }
+]
+discovered = arktur_src.discover(raw_plans=mock_raw_plans)
+check("ArkturHtmlSource zwrócił plan", len(discovered) == 1)
+check("ArkturHtmlSource wyodrębnił version='wer. 3'", discovered[0].version == "wer. 3")
+check("ArkturHtmlSource wyodrębnił published_at='2026-10-19 17:11'", discovered[0].published_at == "2026-10-19 17:11")
+check("ArkturHtmlSource ustawił version_token='wer. 3 [2026-10-19 17:11]'", discovered[0].version_token == "wer. 3 [2026-10-19 17:11]")
+
+# Test 3: BuildOrchestrator zapisuje version w plans.json
+class MockVersionSource(ScheduleSource):
+    source_id = "mock_ver"
+    def discover(self) -> List[PlanMetadata]:
+        return [discovered[0]]
+    def fetch_schedule(self, plan_id: str) -> Dict[str, List[RawLesson]]:
+        return {"1": []}
+
+with tempfile.TemporaryDirectory() as tmp_dist_dir:
+    orch = BuildOrchestrator(
+        tenant_config={"tenant_id": "umg_wn", "source_adapters": ["sources.umg.wn.arktur_html.ArkturHtmlSource"]},
+        sources=[MockVersionSource()],
+        dist_dir=tmp_dist_dir
+    )
+    orch.run(force=True)
+    plans_json_file = os.path.join(tmp_dist_dir, "data", "plans.json")
+    check("plans.json został wygenerowany", os.path.exists(plans_json_file))
+    with open(plans_json_file, "r", encoding="utf-8") as pf:
+        p_data = json.load(pf)
+        first_plan = p_data["plans"][0]
+        check("plans.json zawiera pole version='wer. 3'", first_plan.get("version") == "wer. 3")
+        check("plans.json zawiera pole published_at", first_plan.get("published_at") == "2026-10-19 17:11")
+
+
 
 # ── Summary ───────────────────────────────────────────────────────────────────
 print("\n" + "="*60)

@@ -57,6 +57,7 @@ class PlanEntry(TypedDict, total=False):
     groups: List[str]
     semester_number: Optional[int]
     published_at: Optional[str]
+    version: Optional[str]
     archived: bool
 
 

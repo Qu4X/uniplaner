@@ -1640,5 +1640,35 @@ assert.strictEqual(fakePlanIssuesBtn.attributes["data-tally-open"], undefined);
 assert.strictEqual(fakePlanIssuesBtn.labelSpan.textContent, "Błąd w planie WMW");
 console.log("✅ [PASS] Routing zgłoszeń feedback do autorów wtyczek przetestowany pomyślnie.");
 
+// 8. Normalizacja wersji planu w normalizePlansData (czysta wersja vs token ze znacznikiem daty vs brak wersji)
+const Timeline = require("../web/js/timeline.js");
+const normalizedPlans = Timeline.normalizePlansData({
+  plans: [
+    {
+      id: "1",
+      name: "Nawigacja sem. 3",
+      version: "wer. 3",
+      version_token: "wer. 3 [2026-10-19 17:11]"
+    },
+    {
+      id: "2",
+      name: "Weterynaria sem. 1",
+      version: null,
+      version_token: "sha256_hash_123456"
+    },
+    {
+      id: "3",
+      name: "Plan legacy",
+      version_token: "wer. 2 [2026-10-15 10:00]"
+    }
+  ]
+});
+
+assert.strictEqual(normalizedPlans.plans["1"].version, "wer. 3", "Powinien zachować czyste version='wer. 3' z adaptera");
+assert.strictEqual(normalizedPlans.plans["2"].version, null, "Dla technicznego tokenu/hasha version powinno wynosić null");
+assert.strictEqual(normalizedPlans.plans["3"].version, "wer. 2", "Powinien oczyścić legacy version_token z daty w nawiasie");
+console.log("✅ [PASS] Normalizacja wersji planu w normalizePlansData przetestowana pomyślnie.");
+
+
 
 

@@ -227,7 +227,7 @@
           ...entry,
           name: entry.name || entry.id,
           clean_name: entry.clean_name || entry.name || entry.id,
-          version: entry.version || entry.version_token || null,
+          version: entry.version || (entry.version_token && /^(?:wer\.?|v(?:er)?\.?)\s*\d+/i.test(entry.version_token) ? entry.version_token.replace(/\s*\[.*?\]\s*/g, "").trim() : null),
           mode: entry.mode || (entry.study_mode === "part_time" ? "niestacjonarne" : "stacjonarne"),
           groups: Array.isArray(entry.groups) ? entry.groups : []
         };
