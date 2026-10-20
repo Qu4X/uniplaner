@@ -1,22 +1,29 @@
-# Szablon Adaptera Źródła Planu (`sources/_template/`)
+# Szablon Wtyczki i Adaptera Źródła (`sources/_template/`)
 
-Ten katalog służy jako wzorzec implementacji adaptera dla nowej uczelni lub wydziału w architekturze Plan WN multi-tenant.
+Ten katalog służy jako wzorzec implementacji wtyczki adaptera dla nowej uczelni lub wydziału w architekturze Uniplaner multi-tenant.
 
-## Kroki dodania nowej uczelni:
+Kompletna specyfikacja tworzenia wtyczki znajduje się w dokumencie:
+👉 **[`docs/specs/adapter-guide.md`](../../docs/specs/adapter-guide.md)**
 
-1. **Utworzenie modułu adaptera**:
-   - Skopiuj zawartość `sources/_template/` do `sources/<nazwa_uczelni>/`.
-   - Zaimplementuj klasę implementującą protokół `ScheduleSource` (`discover` i `fetch_schedule`).
-   - Zadbaj o mapowanie form zajęć (`form`) na standardowe wartości enumu: `lecture`, `exercise`, `lab`, `simulator`, `project`, `seminar`, `elective`, `other`.
+---
 
-2. **Konfiguracja tenanta**:
-   - Utwórz katalog `tenants/<nazwa_uczelni>/`.
-   - Dodaj `config.json` z flagami funkcjonalności i definicją form.
-   - Dodaj `academic_calendar.json` zawierający zamiany dni (`daySwaps`), święta (`holidays`) i okresy semestru (`periods`).
-   - Opcjonalnie dodaj dedykowany arkusz `theme.css`.
+## Szybki start:
 
-3. **Rejestracja w orkiestratorze**:
-   - W `core/build.py` dodaj mapowanie źródeł dla nowego identyfikatora tenanta.
+1. **Utworzenie modułu adaptera w Pythonie**:
+   - Skopiuj `adapter.py` do `sources/<uczelnia_id>/<wydzial_id>/adapter.py`.
+   - Zaimplementuj metody `discover()` oraz `fetch_schedule()` zgodnie z protokołem `ScheduleSource`.
+   - Zmapuj lokalne formy zajęć na standardowy enum (`lecture`, `exercise`, `lab`, `clinical`, `project`, `elective` itp.).
 
-4. **Testy jednostkowe**:
-   - Dodaj testy weryfikujące `discover()` i `fetch_schedule()` w `tests/test_<nazwa_uczelni>_adapter.py`.
+2. **Utworzenie katalogu konfiguracji i zasobów tenanta**:
+   - Utwórz katalog `tenants/<uczelnia_id>/<wydzial_id>/`.
+   - Dodaj plik `config.json` z konfiguracją uczelni, form i modułów.
+   - Dodaj plik `academic_calendar.json` z oficjalnym kalendarzem akademickim (początek semestru, zamiany dni, święta).
+   - Dodaj plik `icon.png` (512×512 px, przezroczyste tło) oraz opcjonalnie `logo.svg`.
+   - Dodaj dedykowany arkusz barw `theme.css`.
+
+3. **Budowanie i testowanie**:
+   ```powershell
+   .venv\Scripts\python.exe -m core.build --tenant <uczelnia_id>/<wydzial_id> --out dist_<id>
+   npm test
+   .venv\Scripts\python.exe tests/test_backend.py
+   ```

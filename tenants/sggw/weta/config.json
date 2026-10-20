@@ -11,7 +11,14 @@
   "source_url": "https://www.wmw.sggw.edu.pl/",
   "source_label": "WMW SGGW (harmonogramy SharePoint)",
   "locale": "pl",
+  "plugin_version": "1.0.0",
+  "plugin_author": "Społeczność studentów WMW",
   "tally_form_id": null,
+  "feedback": {
+    "plan_issues_url": null,
+    "tally_form_id": null,
+    "contact_email": "dziekanat_wmw@sggw.edu.pl"
+  },
   "source_adapters": [
     "sources.sggw.weta.adapter.SggwExcelSource"
   ],

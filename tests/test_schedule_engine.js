@@ -241,4 +241,31 @@ assert.strictEqual(engine.resolveBaseDay(""), null);
 assert.strictEqual(engine.resolveBaseDay("invalid-date"), null);
 console.log("✅ [PASS] resolveBaseDay poprawnie rozwiązuje dzień bazowy i zamiany rektorskie.");
 
+// --- Test 13: aggregateAllGroupsSchedule ---
+console.log("\n-- Test 13: aggregateAllGroupsSchedule (Uniwersalna agregacja grup)");
+const groupsMock = {
+  "GR_2": [
+    { subject: "Fizyka", occurrences: [{ date: "2026-10-05" }, { date: "2026-10-12" }] }
+  ],
+  "GR_1": [
+    { subject: "Matematyka", occurrences: [{ date: "2026-10-05" }] },
+    { subject: "Chemia", occurrences: [{ date: "2026-10-12" }] }
+  ]
+};
+
+const allAggregated = ScheduleEngine.aggregateAllGroupsSchedule(groupsMock);
+assert.strictEqual(allAggregated.length, 2);
+assert.strictEqual(allAggregated[0].group, "GR_1", "Grupy powinny być posortowane alfabetycznie");
+assert.strictEqual(allAggregated[0].lessons.length, 2);
+assert.strictEqual(allAggregated[1].group, "GR_2");
+
+const filteredForDate = ScheduleEngine.aggregateAllGroupsSchedule(groupsMock, "2026-10-05");
+assert.strictEqual(filteredForDate[0].group, "GR_1");
+assert.strictEqual(filteredForDate[0].lessons.length, 1);
+assert.strictEqual(filteredForDate[0].lessons[0].subject, "Matematyka");
+assert.strictEqual(filteredForDate[1].group, "GR_2");
+assert.strictEqual(filteredForDate[1].lessons.length, 1);
+assert.strictEqual(filteredForDate[1].lessons[0].subject, "Fizyka");
+console.log("✅ [PASS] aggregateAllGroupsSchedule prawidłowo agreguje i filtruje grupy dla widoku uniwersalnego.");
+
 console.log("\n🎉 Wszystkie testy ScheduleEngine zakończone sukcesem (100% PASS)!\n");

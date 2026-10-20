@@ -11,7 +11,14 @@
   "source_url": "https://arktur.umg.edu.pl/planyzaj/strpza5.php",
   "source_label": "arktur.umg.edu.pl",
   "locale": "pl",
+  "plugin_version": "3.11.0",
+  "plugin_author": "Społeczność studentów WN",
   "tally_form_id": "2E2vNj",
+  "feedback": {
+    "plan_issues_url": "https://tally.so/r/2E2vNj",
+    "tally_form_id": "2E2vNj",
+    "contact_email": null
+  },
   "source_adapters": [
     "sources.umg.wn.arktur_html.UmgArkturHtmlSource",
     "sources.umg.wn.arktur_nst.UmgArkturNstSource"

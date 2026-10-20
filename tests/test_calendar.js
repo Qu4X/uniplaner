@@ -1541,9 +1541,104 @@ if (typeof document !== "undefined" && document.dispatchEvent) {
 // 5. Weryfikacja tła ikony aplikacji w CSS (.about-logo-badge ma stały ciemnogranatowy kolor)
 const cssContent = fs.readFileSync(path.join(ROOT_DIR, "web/style.css"), "utf-8");
 assert.ok(cssContent.includes(".about-logo-badge"), "style.css powinien definiować .about-logo-badge");
-assert.ok(cssContent.includes("#0d233a"), "style.css powinien używać stałego koloru #0d233a dla .about-logo-badge");
+assert.ok(cssContent.includes("transparent"), "style.css powinien używać transparent dla .about-logo-badge");
 
-console.log("✅ [PASS] Dialog Wydarzenia, obsługa Tally i stałe tło logo aplikacji przetestowane pomyślnie.");
+console.log("✅ [PASS] Dialog Wydarzenia, obsługa Tally i transparentne tło logo aplikacji przetestowane pomyślnie.");
+
+// 6. Weryfikacja modalu O aplikacji (Uniplaner + Aktywna Wtyczka) oraz dynamicznej stopki
+const htmlAboutModal = fs.readFileSync(path.join(ROOT_DIR, "web/index.html"), "utf-8");
+assert.ok(htmlAboutModal.includes('id="about-plugin-name"'), "index.html powinien zawierać id=about-plugin-name");
+assert.ok(htmlAboutModal.includes('id="about-plugin-version"'), "index.html powinien zawierać id=about-plugin-version");
+assert.ok(htmlAboutModal.includes('id="about-plugin-author"'), "index.html powinien zawierać id=about-plugin-author");
+assert.ok(htmlAboutModal.includes('id="footer-plugin-name"'), "index.html powinien zawierać id=footer-plugin-name");
+assert.ok(cssContent.includes(".about-plugin-card"), "style.css powinien definiować .about-plugin-card");
+
+const tenantConfigModule = require(path.join(ROOT_DIR, "web/js/tenant-config.js"));
+const domElements = {
+  aboutTitle: { textContent: "" },
+  aboutAppName: { textContent: "" },
+  pluginName: { textContent: "" },
+  pluginVer: { textContent: "" },
+  pluginAuthor: { textContent: "" },
+  footerPlugin: { textContent: "" },
+  sourceLink: { textContent: "", setAttribute: function(k, v) { this[k] = v; } },
+  disclaimerInst: { textContent: "" },
+  disclaimerTm: { textContent: "" }
+};
+
+global.document.getElementById = function(id) {
+  if (id === "about-modal-title") return domElements.aboutTitle;
+  if (id === "about-app-name") return domElements.aboutAppName;
+  if (id === "about-plugin-name") return domElements.pluginName;
+  if (id === "about-plugin-version") return domElements.pluginVer;
+  if (id === "about-plugin-author") return domElements.pluginAuthor;
+  if (id === "footer-plugin-name") return domElements.footerPlugin;
+  if (id === "about-plugin-source" || id === "about-source-link" || id === "footer-source-link") return domElements.sourceLink;
+  if (id === "about-disclaimer-inst") return domElements.disclaimerInst;
+  if (id === "about-disclaimer-trademark") return domElements.disclaimerTm;
+  return null;
+};
+
+const fakeTenantCfg = {
+  name: "Szkoła Główna Gospodarstwa Wiejskiego — Wydział Medycyny Weterynaryjnej",
+  faculty: "WMW",
+  institution: "SGGW",
+  institution_full: "Szkoła Główna Gospodarstwa Wiejskiego w Warszawie (SGGW)",
+  plugin_version: "1.2.3",
+  plugin_author: "Koło Naukowe SGGW",
+  source_label: "SharePoint WMW",
+  source_url: "https://wmw.sggw.edu.pl"
+};
+
+tenantConfigModule.applyBrandingToDOM(fakeTenantCfg);
+
+assert.strictEqual(domElements.aboutTitle.textContent, "O aplikacji Uniplaner");
+assert.strictEqual(domElements.aboutAppName.textContent, "Uniplaner");
+assert.strictEqual(domElements.pluginName.textContent, "Szkoła Główna Gospodarstwa Wiejskiego — Wydział Medycyny Weterynaryjnej");
+assert.strictEqual(domElements.pluginVer.textContent, "v1.2.3");
+assert.strictEqual(domElements.pluginAuthor.textContent, "Koło Naukowe SGGW");
+assert.strictEqual(domElements.footerPlugin.textContent, "WMW (SGGW)");
+assert.ok(domElements.disclaimerInst.textContent.includes("Szkoła Główna Gospodarstwa Wiejskiego w Warszawie (SGGW)"));
+
+console.log("✅ [PASS] Dynamiczny modal O aplikacji Uniplaner i stopka przetestowane pomyślnie.");
+
+// 7. Weryfikacja routingu feedbacku (błędy merytoryczne do wtyczki vs usterki do platformy)
+const fakePlanIssuesBtn = {
+  attributes: {},
+  classList: {
+    classes: new Set(),
+    add: function(c) { this.classes.add(c); },
+    remove: function(c) { this.classes.delete(c); }
+  },
+  labelSpan: { textContent: "" },
+  querySelector: function(sel) { if (sel === "span") return this.labelSpan; return null; },
+  setAttribute: function(k, v) { this.attributes[k] = v; },
+  removeAttribute: function(k) { delete this.attributes[k]; }
+};
+
+const origGetElementById = global.document.getElementById;
+global.document.getElementById = function(id) {
+  if (id === "about-tally-btn" || id === "about-plan-issues-btn") return fakePlanIssuesBtn;
+  return origGetElementById(id);
+};
+
+// Test A: Wtyczka z Tally (UMG WN)
+tenantConfigModule.applyBrandingToDOM({
+  faculty: "WN",
+  feedback: { tally_form_id: "2E2vNj" }
+});
+assert.strictEqual(fakePlanIssuesBtn.attributes["data-tally-open"], "2E2vNj");
+assert.strictEqual(fakePlanIssuesBtn.labelSpan.textContent, "Błąd w planie WN");
+
+// Test B: Wtyczka z emailem kontaktowym (SGGW)
+tenantConfigModule.applyBrandingToDOM({
+  faculty: "WMW",
+  feedback: { contact_email: "dziekanat@sggw.pl" }
+});
+assert.ok(fakePlanIssuesBtn.attributes["href"].startsWith("mailto:dziekanat@sggw.pl"));
+assert.strictEqual(fakePlanIssuesBtn.attributes["data-tally-open"], undefined);
+assert.strictEqual(fakePlanIssuesBtn.labelSpan.textContent, "Błąd w planie WMW");
+console.log("✅ [PASS] Routing zgłoszeń feedback do autorów wtyczek przetestowany pomyślnie.");
 
 
 

@@ -222,9 +222,19 @@ if (typeof document !== "undefined") {
 }
 
 async function loadTenantConfig() {
-  return _TenantConfig && typeof _TenantConfig.load === "function"
+  const loaded = _TenantConfig && typeof _TenantConfig.load === "function"
     ? await _TenantConfig.load("data/tenant_config.json", state, elements)
     : null;
+  if (state.tenantConfig && state.tenantConfig.id) {
+    state.tenantId = state.tenantConfig.id;
+    const savedStudyMode = _getStorage("study_mode", "umg_study_mode");
+    if (savedStudyMode) state.studyMode = savedStudyMode;
+    const savedDaysView = _getStorage("days_view", "umg_days_view");
+    if (savedDaysView) state.daysView = savedDaysView;
+    const savedTheme = _getStorage("theme", "umg_theme");
+    if (savedTheme) state.theme = savedTheme;
+  }
+  return loaded;
 }
 
 function initCrossRefUI() {

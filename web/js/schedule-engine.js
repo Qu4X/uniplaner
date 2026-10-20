@@ -362,8 +362,28 @@
       isTeachingDay,
       resolveBaseDay,
       getMonday,
-      formatDateISO
+      formatDateISO,
+      aggregateAllGroupsSchedule
     };
+  }
+
+  function aggregateAllGroupsSchedule(schedulesByGroup, isoDate = null) {
+    if (!schedulesByGroup || typeof schedulesByGroup !== "object") return [];
+    const groups = Object.keys(schedulesByGroup).sort();
+    return groups.map(group => {
+      const allLessons = Array.isArray(schedulesByGroup[group]) ? schedulesByGroup[group] : [];
+      let filtered = allLessons;
+      if (isoDate) {
+        filtered = allLessons.filter(lesson => {
+          if (!Array.isArray(lesson.occurrences)) return false;
+          return lesson.occurrences.some(occ => occ && occ.date === isoDate);
+        });
+      }
+      return {
+        group,
+        lessons: filtered
+      };
+    });
   }
 
   return {
@@ -371,6 +391,7 @@
     DNI_TYGODNIA,
     DNI_MAP_SUNDAY_FIRST,
     formatDateISO,
-    getMonday
+    getMonday,
+    aggregateAllGroupsSchedule
   };
 });

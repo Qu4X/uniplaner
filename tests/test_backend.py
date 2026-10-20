@@ -942,6 +942,80 @@ finally:
         os.remove(tmp_path)
 
 
+# ── 32. Obsługa aliases.json w konfiguracji tenanta i normalizacja ────────
+print("\n-- 32. Obsługa aliases.json w konfiguracji tenanta i normalizacja --")
+from core.build import load_tenant_config, BuildOrchestrator
+from sources.base import RawLesson, PlanMetadata
+
+with tempfile.TemporaryDirectory() as tmp_tenant_dir:
+    # 1. Tworzymy tymczasowego tenanta z aliases.json
+    t_cfg = {
+        "id": "test_tenant",
+        "name": "Test University",
+        "faculty": "TU"
+    }
+    with open(os.path.join(tmp_tenant_dir, "config.json"), "w", encoding="utf-8") as tf:
+        json.dump(t_cfg, tf)
+
+    aliases_dict = {
+        "subjects": {
+            "Wsp. Syst. Naw.": "Współczesne Systemy Nawigacyjne"
+        },
+        "teachers": {
+            "dr J. Kowal": "dr Jan Kowalski"
+        }
+    }
+    with open(os.path.join(tmp_tenant_dir, "aliases.json"), "w", encoding="utf-8") as af:
+        json.dump(aliases_dict, af)
+
+    loaded_cfg = load_tenant_config(tmp_tenant_dir)
+    check("load_tenant_config wczytuje sekcję aliases z aliases.json", "aliases" in loaded_cfg)
+    check("Aliasy przedmiotów są poprawnie sparsowane", loaded_cfg["aliases"]["subjects"]["Wsp. Syst. Naw."] == "Współczesne Systemy Nawigacyjne")
+
+    # 2. Test aplikowania aliasów w ScheduleOrchestrator
+    class MockAliasSource:
+        source_id = "mock_alias_src"
+        def discover(self):
+            return [PlanMetadata(
+                id="p_alias", institution="TU", faculty="TU", name="Plan Alias",
+                study_mode="full_time", semester_number=1, version_token="v1",
+                published_at=None, groups=["1"]
+            )]
+        def fetch_schedule(self, plan_id):
+            return {
+                "1": [
+                    RawLesson(
+                        subject="Wsp. Syst. Naw.",
+                        start_time="08:00",
+                        end_time="09:30",
+                        duration_minutes=90,
+                        form="lecture",
+                        teacher="dr J. Kowal",
+                        room="101",
+                        day_of_week="MON"
+                    )
+                ]
+            }
+
+    with tempfile.TemporaryDirectory() as tmp_dist_dir:
+        orch = BuildOrchestrator(
+            tenant_config=loaded_cfg,
+            sources=[MockAliasSource()],
+            dist_dir=tmp_dist_dir
+        )
+        run_res = orch.run(force=True)
+        check("Orchestrator przetworzył plan z aliasami", run_res.get("total_groups_processed") == 1)
+
+        sched_file = os.path.join(tmp_dist_dir, "data", "schedules", "p_alias_1.json")
+        check("Plik harmonogramu grupy p_alias_1.json istnieje", os.path.exists(sched_file))
+        with open(sched_file, "r", encoding="utf-8") as sf:
+            saved_sched = json.load(sf)
+            lesson = saved_sched["lessons"][0]
+            check("Przedmiot został znormalizowany przez aliases.json", lesson["subject"] == "Współczesne Systemy Nawigacyjne")
+            check("Oryginalny raw_subject został zachowany", lesson["raw_subject"] == "Wsp. Syst. Naw.")
+            check("Wykładowca został znormalizowany przez aliases.json", lesson["teacher"] == "dr Jan Kowalski")
+
+
 # ── Summary ───────────────────────────────────────────────────────────────────
 print("\n" + "="*60)
 passed = sum(1 for ok,_ in results if ok)

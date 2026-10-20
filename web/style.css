@@ -3285,26 +3285,124 @@ iframe[src*="tally.so"] {
 .about-card.about-intro {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem;
+  gap: 1.25rem;
+  padding: 1.15rem;
   background: var(--bg-card-subtle);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius);
 }
 
 .about-logo-badge {
-  font-size: 2.2rem;
+  font-size: 2.8rem;
   line-height: 1;
-  background: #0d233a;
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
+  background: transparent;
+  width: 64px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: none;
+  box-shadow: none;
+}
+
+.about-logo-badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.about-intro-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.about-platform-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+/* Karta aktywnej wtyczki w modalu */
+.about-plugin-card {
+  padding: 1rem 1.15rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  border-left: 4px solid var(--brand-accent);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.about-plugin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.about-plugin-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--brand-accent);
+}
+
+.about-plugin-ver-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: var(--bg-card-subtle);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+}
+
+.about-plugin-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.35;
+}
+
+.about-plugin-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  margin-top: 0.2rem;
+}
+
+@media (min-width: 480px) {
+  .about-plugin-meta-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.about-plugin-meta-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.about-plugin-meta-item .meta-label {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.about-plugin-meta-item .meta-value {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.about-plugin-meta-item .meta-value a {
+  color: var(--brand-accent);
+  text-decoration: underline;
 }
 
 .about-section h5 {
@@ -3683,4 +3781,4 @@ iframe[src*="tally.so"] {
   color: var(--color-success);
 }
 
-
+

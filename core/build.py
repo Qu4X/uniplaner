@@ -184,11 +184,23 @@ class BuildOrchestrator:
                 staged_schedules: Dict[str, GroupSchedule] = {}
                 staged_ics: Dict[str, str] = {}
 
+                tenant_aliases = self.tenant_config.get("aliases") or {}
+                subject_aliases = tenant_aliases.get("subjects") if isinstance(tenant_aliases, dict) and "subjects" in tenant_aliases else tenant_aliases
+                teacher_aliases = tenant_aliases.get("teachers", {}) if isinstance(tenant_aliases, dict) and "teachers" in tenant_aliases else {}
+
                 for grp in groups:
                     raw_lessons = schedule_by_group[grp]
                     contract_lessons: List[Lesson] = []
 
                     for rl in raw_lessons:
+                        clean_subject = rl.subject
+                        if isinstance(subject_aliases, dict) and clean_subject in subject_aliases:
+                            clean_subject = subject_aliases[clean_subject]
+
+                        clean_teacher = rl.teacher
+                        if clean_teacher and isinstance(teacher_aliases, dict) and clean_teacher in teacher_aliases:
+                            clean_teacher = teacher_aliases[clean_teacher]
+
                         occurrences = rl.occurrences
                         if occurrences is None:
                             occurrences = expand_occurrences(rl, academic_calendar)
@@ -198,13 +210,13 @@ class BuildOrchestrator:
 
                         lesson_dict: Lesson = {
                             "id": lesson_id,
-                            "subject": rl.subject,
+                            "subject": clean_subject,
                             "raw_subject": rl.raw_subject or rl.subject,
                             "start_time": rl.start_time,
                             "end_time": rl.end_time,
                             "duration_minutes": rl.duration_minutes,
                             "form": rl.form,
-                            "teacher": rl.teacher,
+                            "teacher": clean_teacher,
                             "room": rl.room,
                             "remote": rl.remote,
                             "hideable": rl.hideable,
@@ -363,6 +375,14 @@ def load_tenant_config(tenant_id: str, repo_root: Optional[str] = None) -> Dict[
         else:
             logger.warning(f"Zdefiniowany katalog przedmiotów nie istnieje: {full_catalog}")
 
+    aliases_file = os.path.join(tenant_dir, "aliases.json")
+    if os.path.exists(aliases_file):
+        try:
+            with open(aliases_file, "r", encoding="utf-8") as af:
+                config["aliases"] = json.load(af)
+        except Exception as e:
+            logger.warning(f"Błąd podczas wczytywania {aliases_file}: {e}")
+
     return config
 
 
@@ -449,27 +469,40 @@ def build_tenant(
 
     # Modularne ikony tenanta i branding
     tenant_icon = os.path.join(tenant_dir, "icon.png")
-    if os.path.exists(tenant_icon):
+    tenant_logo = os.path.join(tenant_dir, "logo.svg")
+    has_icon = os.path.exists(tenant_icon)
+    has_logo = os.path.exists(tenant_logo)
+
+    if has_icon:
         for target_name in ["icon.png", "apple-touch-icon.png", "favicon.png", "icon-192.png", "icon-512.png"]:
             shutil.copy2(tenant_icon, os.path.join(target_dist, target_name))
 
-        index_html_path = os.path.join(target_dist, "index.html")
-        if os.path.exists(index_html_path):
-            with open(index_html_path, "r", encoding="utf-8") as hf:
-                html_text = hf.read()
+    if has_logo:
+        shutil.copy2(tenant_logo, os.path.join(target_dist, "logo.svg"))
+
+    index_html_path = os.path.join(target_dist, "index.html")
+    if os.path.exists(index_html_path):
+        with open(index_html_path, "r", encoding="utf-8") as hf:
+            html_text = hf.read()
+        if has_icon:
             html_text = re.sub(
                 r'<link rel="icon"\s+href="[^"]+">',
                 '<link rel="icon" type="image/png" href="icon.png">',
                 html_text
             )
+        if has_logo:
+            html_text = html_text.replace('src="planwn.svg"', 'src="logo.svg"')
+        elif has_icon:
             html_text = html_text.replace('src="planwn.svg"', 'src="icon.png"')
-            with open(index_html_path, "w", encoding="utf-8") as hf:
-                hf.write(html_text)
+        with open(index_html_path, "w", encoding="utf-8") as hf:
+            hf.write(html_text)
 
-    # Dynamiczny manifest.json per-tenant
+    # Dynamiczny manifest.json per-tenant (Zainstalowana nazwa PWA: "Plan [akronim]")
+    faculty_abbr = config.get("faculty", "").strip()
+    pwa_app_name = f"Plan {faculty_abbr}".strip() if faculty_abbr else config.get("short_name", "Plan Zajęć")
     manifest_data = {
-        "name": config.get("name", "Plan Zajęć"),
-        "short_name": config.get("short_name", "Plan"),
+        "name": pwa_app_name,
+        "short_name": pwa_app_name,
         "start_url": "./",
         "scope": "./",
         "display": "standalone",
@@ -478,13 +511,13 @@ def build_tenant(
         "description": config.get("name", "Plan Zajęć"),
         "icons": [
             {
-                "src": "icon.png" if os.path.exists(tenant_icon) else "icon-192.png",
+                "src": "icon.png" if has_icon else "icon-192.png",
                 "sizes": "192x192",
                 "type": "image/png",
                 "purpose": "any"
             },
             {
-                "src": "icon.png" if os.path.exists(tenant_icon) else "icon-512.png",
+                "src": "icon.png" if has_icon else "icon-512.png",
                 "sizes": "512x512",
                 "type": "image/png",
                 "purpose": "any"

@@ -90,7 +90,7 @@
     if (typeof document.querySelector === "function") {
       const brandLogo = document.querySelector(".brand-logo");
       const currentSrc = brandLogo ? (brandLogo.getAttribute("src") || "") : "";
-      const hasCustomFileLogo = currentSrc.includes("icon.png") || currentSrc.includes("logo.svg");
+      const hasCustomFileLogo = currentSrc.includes("icon.png") || currentSrc.includes("logo.svg") || currentSrc.endsWith(".svg") || currentSrc.endsWith(".png");
 
       if (!hasCustomFileLogo && config.icon && String(config.icon).length <= 4) {
         const svgIconUri = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${encodeURIComponent(config.icon)}</text></svg>`;
@@ -148,17 +148,32 @@
       }
     }
 
-    // Dynamic footer & about modal branding
+    // Dynamic footer & about modal branding (Uniplaner platform + Active Plugin)
     if (typeof document.getElementById === "function") {
       const aboutTitle = document.getElementById("about-modal-title");
-      if (aboutTitle && brandName) aboutTitle.textContent = `O aplikacji ${brandName}`;
+      if (aboutTitle) aboutTitle.textContent = "O aplikacji Uniplaner";
 
       const aboutAppName = document.getElementById("about-app-name");
-      if (aboutAppName && brandName) aboutAppName.textContent = brandName;
+      if (aboutAppName) aboutAppName.textContent = "Uniplaner";
+
+      const pluginNameEl = document.getElementById("about-plugin-name");
+      if (pluginNameEl) {
+        pluginNameEl.textContent = config.name || `${config.institution || ""} — ${config.faculty_full || config.faculty || ""}`.trim();
+      }
+
+      const pluginVerEl = document.getElementById("about-plugin-version");
+      if (pluginVerEl) {
+        pluginVerEl.textContent = config.plugin_version ? `v${config.plugin_version}` : "v1.0.0";
+      }
+
+      const pluginAuthorEl = document.getElementById("about-plugin-author");
+      if (pluginAuthorEl) {
+        pluginAuthorEl.textContent = config.plugin_author || "Społeczność akademicka";
+      }
 
       const sourceUrl = config.source_url || "https://arktur.umg.edu.pl/planyzaj/strpza5.php";
       const sourceLabel = config.source_label || "systemu uczelni";
-      for (const linkId of ["about-source-link", "about-disclaimer-link", "footer-source-link"]) {
+      for (const linkId of ["about-source-link", "about-disclaimer-link", "footer-source-link", "about-plugin-source"]) {
         const linkEl = document.getElementById(linkId);
         if (linkEl) {
           linkEl.setAttribute("href", sourceUrl);
@@ -176,19 +191,41 @@
         disclaimerTm.textContent = `Wszelkie nazwy własne, skróty i znaki (w tym „${instShort}” oraz „${instFull}”) należą do ich prawnych właścicieli i zostały użyte wyłącznie w celach informacyjnych oraz identyfikacyjnych.`;
       }
 
-      const footerFaculty = document.getElementById("footer-faculty-label");
-      if (footerFaculty && config.faculty) {
-        footerFaculty.textContent = `Projekt nieoficjalny dla studentów ${config.faculty}.`;
+      const footerPlugin = document.getElementById("footer-plugin-name");
+      if (footerPlugin) {
+        const fac = config.faculty || "Wydział";
+        const inst = config.institution || "Uczelnia";
+        footerPlugin.textContent = `${fac} (${inst})`;
       }
 
-      const tallyBtn = document.getElementById("about-tally-btn");
-      if (tallyBtn) {
-        if (config.tally_form_id) {
-          tallyBtn.setAttribute("href", `https://tally.so/r/${config.tally_form_id}`);
-          tallyBtn.setAttribute("data-tally-open", config.tally_form_id);
-          tallyBtn.classList.remove("hidden");
+      const planIssuesBtn = document.getElementById("about-tally-btn");
+      if (planIssuesBtn) {
+        const feedback = config.feedback || {};
+        const tallyId = feedback.tally_form_id || config.tally_form_id;
+        const issuesUrl = feedback.plan_issues_url;
+        const email = feedback.contact_email;
+        const facultyLabel = config.faculty ? `w planie ${config.faculty}` : "w planie zajęć";
+
+        const labelSpan = planIssuesBtn.querySelector("span");
+        if (labelSpan) {
+          labelSpan.textContent = `Błąd ${facultyLabel}`;
+        }
+
+        if (tallyId) {
+          planIssuesBtn.setAttribute("href", `https://tally.so/r/${tallyId}`);
+          planIssuesBtn.setAttribute("data-tally-open", tallyId);
+          planIssuesBtn.classList.remove("hidden");
+        } else if (issuesUrl) {
+          planIssuesBtn.setAttribute("href", issuesUrl);
+          planIssuesBtn.removeAttribute("data-tally-open");
+          planIssuesBtn.classList.remove("hidden");
+        } else if (email) {
+          const subject = encodeURIComponent(`[${config.short_name || config.name || "Uniplaner"}] Błąd w planie zajęć`);
+          planIssuesBtn.setAttribute("href", `mailto:${email}?subject=${subject}`);
+          planIssuesBtn.removeAttribute("data-tally-open");
+          planIssuesBtn.classList.remove("hidden");
         } else {
-          tallyBtn.classList.add("hidden");
+          planIssuesBtn.classList.add("hidden");
         }
       }
     }
