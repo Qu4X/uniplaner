@@ -1,0 +1,30 @@
+/**
+ * AGH Wydział Technologii Kosmicznych — Theme CSS
+ * Oficjalne barwy AGH: Czerwień (#A71930), Zieleń (#00693C), Biel i Czerń (#1E1E1E).
+ */
+
+:root {
+  --brand-navy: #1e1e1e;
+  --brand-primary: #a71930;
+  --brand-primary-hover: #8c1427;
+  --brand-accent: #00693c;
+  --brand-light: #fdf5f6;
+  --primary-color: #a71930;
+  --primary-hover: #8c1427;
+  --primary-light: #f9eef0;
+  --accent-color: #00693c;
+  --accent-badge: #00693c;
+  --border-radius: 10px;
+}
+
+[data-theme="dark"] {
+  --brand-navy: #121212;
+  --brand-primary: #e0314b;
+  --brand-primary-hover: #c7253e;
+  --brand-accent: #10b981;
+  --brand-light: #1f1416;
+  --primary-color: #c7253e;
+  --primary-hover: #e0314b;
+  --primary-light: #180c0e;
+  --accent-color: #34d399;
+}

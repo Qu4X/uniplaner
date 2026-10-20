@@ -1,0 +1,46 @@
+{
+  "id": "agh_wtk",
+  "name": "Akademia Górniczo-Hutnicza — Wydział Technologii Kosmicznych",
+  "short_name": "Plan WTK AGH",
+  "icon": "🚀",
+  "theme_color": "#a71930",
+  "institution": "AGH",
+  "institution_full": "Akademia Górniczo-Hutnicza w Krakowie (AGH)",
+  "faculty": "WTK",
+  "faculty_full": "Wydział Technologii Kosmicznych",
+  "source_url": "https://plan.agh.edu.pl/UniTime/gwt.jsp?page=timetable#events=&name=TK-SPT-2&tab=1&term=Semestr+zimowy2026AGH&type=curriculum",
+  "source_label": "plan.agh.edu.pl",
+  "locale": "pl",
+  "plugin_version": "1.0.0",
+  "plugin_author": "Społeczność WTK AGH",
+  "tally_form_id": null,
+  "feedback": {
+    "plan_issues_url": null,
+    "tally_form_id": null,
+    "contact_email": null
+  },
+  "source_adapters": [
+    "sources.agh.wtk.adapter.AghWtkSource"
+  ],
+  "forms": {
+    "lecture":   { "label": "Wykład",       "abbr": "W",    "badge_color": "#2563eb" },
+    "exercise":  { "label": "Ćwiczenia",    "abbr": "Ćw",   "badge_color": "#059669" },
+    "lab":       { "label": "Laboratorium", "abbr": "Lab",  "badge_color": "#7c3aed" },
+    "project":   { "label": "Projekt",      "abbr": "Pr",   "badge_color": "#8b5cf6" },
+    "seminar":   { "label": "Seminarium",   "abbr": "Sem",  "badge_color": "#6366f1" },
+    "other":     { "label": "Inne",         "abbr": "Inne", "badge_color": "#d97706" }
+  },
+  "features": {
+    "cross_reference": true,
+    "free_rooms": true,
+    "events": false,
+    "lesson_hiding": {
+      "enabled": true,
+      "bulk_electives_dialog": true
+    },
+    "voting": {
+      "enabled": false
+    },
+    "changelog": true
+  }
+}

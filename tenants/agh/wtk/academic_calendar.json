@@ -1,0 +1,30 @@
+{
+  "daySwaps": {},
+  "holidays": {
+    "2026-11-01": "Wszystkich Świętych",
+    "2026-11-02": "Dzień zaduszny (wolny od zajęć)",
+    "2026-11-11": "Święto Niepodległości",
+    "2026-12-23": "Zimowa przerwa świąteczna",
+    "2026-12-24": "Wigilia Bożego Narodzenia",
+    "2026-12-25": "Boże Narodzenie",
+    "2026-12-26": "Drugi dzień Świąt",
+    "2026-12-27": "Zimowa przerwa świąteczna",
+    "2026-12-28": "Zimowa przerwa świąteczna",
+    "2026-12-29": "Zimowa przerwa świąteczna",
+    "2026-12-30": "Zimowa przerwa świąteczna",
+    "2026-12-31": "Zimowa przerwa świąteczna",
+    "2027-01-01": "Nowy Rok",
+    "2027-01-02": "Zimowa przerwa świąteczna",
+    "2027-01-03": "Zimowa przerwa świąteczna",
+    "2027-01-06": "Święto Trzech Króli",
+    "2027-05-01": "Święto Pracy",
+    "2027-05-03": "Święto Konstytucji 3 Maja"
+  },
+  "periods": [
+    { "name": "Zimowa przerwa świąteczna", "type": "break", "start": "2026-12-23", "end": "2027-01-03" },
+    { "name": "Zimowa sesja egzaminacyjna", "type": "exam", "start": "2027-02-01", "end": "2027-02-14" },
+    { "name": "Zimowa sesja poprawkowa", "type": "retake", "start": "2027-02-15", "end": "2027-02-21" },
+    { "name": "Okres zajęć dydaktycznych – semestr zimowy", "type": "teaching", "start": "2026-10-01", "end": "2027-01-31" },
+    { "name": "Okres zajęć dydaktycznych – semestr letni", "type": "teaching", "start": "2027-02-22", "end": "2027-06-20" }
+  ]
+}
