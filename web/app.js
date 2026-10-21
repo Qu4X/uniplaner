@@ -196,14 +196,19 @@ const elements = typeof document !== "undefined" ? {
   proposeBtn: document.getElementById("propose-btn"),
   proposeDialog: document.getElementById("propose-dialog"),
   closeProposeModalBtn: document.getElementById("close-propose-modal"),
-  proposeActiveList: document.getElementById("propose-active-list"),
+  proposalsList: document.getElementById("proposals-list"),
   proposeForm: document.getElementById("propose-form"),
   proposeLessonSelect: document.getElementById("propose-lesson-select"),
-  proposeRoomInput: document.getElementById("propose-room-input"),
-  proposeDateInput: document.getElementById("propose-date-input"),
-  proposeStartInput: document.getElementById("propose-start-input"),
-  proposeEndInput: document.getElementById("propose-end-input"),
-  proposeStatusMsg: document.getElementById("propose-status-msg")
+  proposeScopeSelect: document.getElementById("propose-scope-select"),
+  proposeTargetDateWrap: document.getElementById("propose-target-date-wrap"),
+  proposeTargetDate: document.getElementById("propose-target-date"),
+  proposeNewDay: document.getElementById("propose-new-day"),
+  proposeNewRoom: document.getElementById("propose-new-room"),
+  proposeNewStart: document.getElementById("propose-new-start"),
+  proposeNewEnd: document.getElementById("propose-new-end"),
+  proposeReason: document.getElementById("propose-reason"),
+  proposeFeedback: document.getElementById("propose-feedback"),
+  submitProposeBtn: document.getElementById("submit-propose-btn")
 } : {};
 
 if (typeof document !== "undefined") {
@@ -596,6 +601,23 @@ async function loadSchedule() {
           }
         });
         state.proposals = proposals;
+
+        if (proposals.length > 0) {
+          const voterToken = _VotingModule.getVoterToken(tid);
+          state.voterToken = voterToken;
+          const userVotes = await _VotingModule.fetchUserVotes({
+            proposalIds: proposals.map((p) => p.id),
+            voterToken: voterToken,
+            client: {
+              supabaseUrl: state.tenantConfig.supabase_url,
+              supabaseAnonKey: state.tenantConfig.supabase_anon_key
+            }
+          });
+          state.userVotes = userVotes;
+        } else {
+          state.userVotes = new Set();
+        }
+
         const planMeta = state.plansData && state.plansData.plans && state.plansData.plans[state.selectedPlanId];
         const verToken = (planMeta && (planMeta.version_token || planMeta.version)) || null;
         loadedSchedule = _VotingModule.applyProposalOverlay(loadedSchedule, proposals, verToken);
@@ -1105,7 +1127,7 @@ function setupEventListeners() {
   if (elements.proposeBtn) {
     elements.proposeBtn.addEventListener("click", () => {
       closeSidebar();
-      if (_VotingModule) _VotingModule.openProposeModal(state, elements, escapeHtml);
+      if (_VotingModule) _VotingModule.openProposeModal(elements, state);
     });
   }
   if (elements.closeProposeModalBtn) {
@@ -1114,37 +1136,116 @@ function setupEventListeners() {
   if (elements.proposeDialog) {
     setupDialogBackdropDismiss(elements.proposeDialog, () => _VotingModule?.closeProposeModal(elements));
   }
+  if (elements.proposeScopeSelect && elements.proposeTargetDateWrap) {
+    elements.proposeScopeSelect.addEventListener("change", (e) => {
+      elements.proposeTargetDateWrap.style.display = e.target.value === "permanent" ? "none" : "";
+    });
+  }
+  if (elements.proposeLessonSelect) {
+    elements.proposeLessonSelect.addEventListener("change", (e) => {
+      const selectedId = e.target.value;
+      const lesson = state.scheduleData?.lessons?.find((l) => l.id === selectedId);
+      if (lesson) {
+        if (elements.proposeNewDay) elements.proposeNewDay.value = lesson.day_of_week || "MON";
+        if (elements.proposeNewStart) elements.proposeNewStart.value = lesson.start_time || "08:00";
+        if (elements.proposeNewEnd) elements.proposeNewEnd.value = lesson.end_time || "09:30";
+        if (elements.proposeNewRoom) elements.proposeNewRoom.value = lesson.room || "";
+      }
+    });
+  }
+  if (elements.proposalsList) {
+    elements.proposalsList.addEventListener("click", async (e) => {
+      const voteBtn = e.target.closest(".btn-vote-proposal");
+      if (!voteBtn || !_VotingModule) return;
+      const proposalId = voteBtn.getAttribute("data-proposal-id");
+      const hasVoted = voteBtn.getAttribute("data-voted") === "true";
+      const tid = _AppState ? _AppState.getTenantId(state) : "umg_wn";
+      const voterToken = state.voterToken || _VotingModule.getVoterToken(tid);
+
+      voteBtn.disabled = true;
+      try {
+        const client = {
+          supabaseUrl: state.tenantConfig?.supabase_url,
+          supabaseAnonKey: state.tenantConfig?.supabase_anon_key
+        };
+        if (hasVoted) {
+          await _VotingModule.retractVote({ proposalId, voterToken, client });
+          if (state.userVotes) state.userVotes.delete(proposalId);
+        } else {
+          await _VotingModule.castVote({ proposalId, voterToken, client });
+          if (!state.userVotes) state.userVotes = new Set();
+          state.userVotes.add(proposalId);
+        }
+        await loadSchedule();
+        _VotingModule.renderProposalsList(elements, state);
+      } catch (err) {
+        alert(`Błąd głosowania: ${err.message}`);
+      } finally {
+        voteBtn.disabled = false;
+      }
+    });
+  }
   if (elements.proposeForm) {
     elements.proposeForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!_VotingModule || !state.selectedPlanId || !state.selectedGroup) return;
       const tid = _AppState ? _AppState.getTenantId(state) : "umg_wn";
       const planMeta = state.plansData && state.plansData.plans && state.plansData.plans[state.selectedPlanId];
+      const selectedLessonId = elements.proposeLessonSelect?.value;
+      const lesson = state.scheduleData?.lessons?.find((l) => l.id === selectedLessonId);
+      const scope = elements.proposeScopeSelect?.value || "single";
+      const targetDate = scope === "single" ? (elements.proposeTargetDate?.value || null) : null;
+      const newDay = elements.proposeNewDay?.value || (lesson?.day_of_week || "MON");
+      const newStart = elements.proposeNewStart?.value || "08:00";
+      const newEnd = elements.proposeNewEnd?.value || "09:30";
+      const newRoom = elements.proposeNewRoom?.value?.trim() || null;
+      const reason = elements.proposeReason?.value?.trim() || "";
+
+      if (scope === "single" && !targetDate) {
+        if (elements.proposeFeedback) {
+          elements.proposeFeedback.textContent = "Wskaż datę dla jednorazowego przeniesienia zajęć.";
+          elements.proposeFeedback.style.color = "#ef4444";
+          elements.proposeFeedback.classList.remove("hidden");
+        }
+        return;
+      }
+
       try {
         await _VotingModule.submitProposal({
-          tenantId: tid,
-          planId: state.selectedPlanId,
-          groupName: state.selectedGroup,
-          lessonId: elements.proposeLessonSelect?.value || "",
-          proposedRoom: elements.proposeRoomInput?.value || "",
-          proposedDate: elements.proposeDateInput?.value || "",
-          proposedStart: elements.proposeStartInput?.value || "",
-          proposedEnd: elements.proposeEndInput?.value || "",
-          sourceVersionToken: (planMeta && (planMeta.version_token || planMeta.version)) || "",
+          tenant_id: tid,
+          plan_id: state.selectedPlanId,
+          group_name: state.selectedGroup,
+          lesson_id: selectedLessonId,
+          subject: (lesson && (lesson.subject || lesson.przedmiot)) || "Zajęcia",
+          scope: scope,
+          target_date: targetDate,
+          original_day_of_week: (lesson && lesson.day_of_week) || "MON",
+          original_start_time: (lesson && lesson.start_time) || "08:00",
+          original_end_time: (lesson && lesson.end_time) || "09:30",
+          new_day_of_week: newDay,
+          new_start_time: newStart,
+          new_end_time: newEnd,
+          new_room: newRoom,
+          reason: reason,
+          plan_version_token: (planMeta && (planMeta.version_token || planMeta.version)) || null,
           client: {
             supabaseUrl: state.tenantConfig?.supabase_url,
             supabaseAnonKey: state.tenantConfig?.supabase_anon_key
           }
         });
-        if (elements.proposeStatusMsg) {
-          elements.proposeStatusMsg.textContent = "Propozycja została wysłana!";
-          elements.proposeStatusMsg.classList.remove("hidden");
+        if (elements.proposeFeedback) {
+          elements.proposeFeedback.textContent = "Propozycja została pomyślnie wysłana i oczekuje na głosy!";
+          elements.proposeFeedback.style.color = "#10b981";
+          elements.proposeFeedback.classList.remove("hidden");
         }
-        loadSchedule();
+        elements.proposeForm.reset();
+        await loadSchedule();
+        _VotingModule.renderProposalsList(elements, state);
       } catch (err) {
-        if (elements.proposeStatusMsg) {
-          elements.proposeStatusMsg.textContent = `Błąd: ${err.message}`;
-          elements.proposeStatusMsg.classList.remove("hidden");
+        if (elements.proposeFeedback) {
+          elements.proposeFeedback.textContent = `Błąd: ${err.message}`;
+          elements.proposeFeedback.style.color = "#ef4444";
+          elements.proposeFeedback.classList.remove("hidden");
         }
       }
     });

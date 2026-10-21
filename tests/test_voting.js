@@ -218,6 +218,104 @@ global.localStorage = {
   assert.notStrictEqual(l2Original.day_of_week, "FRI", "Wygasła propozycja z poprzedniej wersji nie powinna być aplikowana");
   // p4_pending should NOT be applied
   assert.notStrictEqual(l2Original.start_time, "18:00", "Propozycja pending nie może być aplikowana");
+}
+
+// 5. Cast Vote RPC
+(async () => {
+  let calledUrl = "";
+  let calledMethod = "";
+  let calledBody = null;
+  const mockFetch = async (url, opts) => {
+    calledUrl = url;
+    calledMethod = opts.method;
+    calledBody = JSON.parse(opts.body);
+    return {
+      ok: true,
+      json: async () => ({ ok: true })
+    };
+  };
+
+  const res = await VotingModule.castVote({
+    proposalId: "prop-42",
+    voterToken: "voter-tok-123",
+    supabaseUrl: "https://example.supabase.co",
+    supabaseAnonKey: "anon-key-xyz",
+    customFetch: mockFetch
+  });
+
+  assert.strictEqual(res, true);
+  assert.ok(calledUrl.endsWith("/rest/v1/rpc/cast_vote"), "Powinno wywoływać RPC cast_vote");
+  assert.strictEqual(calledMethod, "POST");
+  assert.strictEqual(calledBody.p_proposal_id, "prop-42");
+  assert.strictEqual(calledBody.p_voter_token, "voter-tok-123");
+})().catch((err) => {
+  console.error("Test castVote failed:", err);
+  process.exit(1);
+});
+
+// 6. Retract Vote RPC
+(async () => {
+  let calledUrl = "";
+  let calledMethod = "";
+  let calledBody = null;
+  const mockFetch = async (url, opts) => {
+    calledUrl = url;
+    calledMethod = opts.method;
+    calledBody = JSON.parse(opts.body);
+    return {
+      ok: true,
+      json: async () => ({ ok: true })
+    };
+  };
+
+  const res = await VotingModule.retractVote({
+    proposalId: "prop-42",
+    voterToken: "voter-tok-123",
+    supabaseUrl: "https://example.supabase.co",
+    supabaseAnonKey: "anon-key-xyz",
+    customFetch: mockFetch
+  });
+
+  assert.strictEqual(res, true);
+  assert.ok(calledUrl.endsWith("/rest/v1/rpc/retract_vote"), "Powinno wywoływać RPC retract_vote");
+  assert.strictEqual(calledMethod, "POST");
+  assert.strictEqual(calledBody.p_proposal_id, "prop-42");
+  assert.strictEqual(calledBody.p_voter_token, "voter-tok-123");
+})().catch((err) => {
+  console.error("Test retractVote failed:", err);
+  process.exit(1);
+});
+
+// 7. Fetch User Votes RPC
+(async () => {
+  let calledUrl = "";
+  let calledBody = null;
+  const mockFetch = async (url, opts) => {
+    calledUrl = url;
+    calledBody = JSON.parse(opts.body);
+    return {
+      ok: true,
+      json: async () => [{ proposal_id: "prop-42" }, { proposal_id: "prop-99" }]
+    };
+  };
+
+  const votesSet = await VotingModule.fetchUserVotes({
+    proposalIds: ["prop-42", "prop-99", "prop-100"],
+    voterToken: "voter-tok-123",
+    supabaseUrl: "https://example.supabase.co",
+    supabaseAnonKey: "anon-key-xyz",
+    customFetch: mockFetch
+  });
+
+  assert.ok(calledUrl.endsWith("/rest/v1/rpc/get_user_votes"), "Powinno wywoływać RPC get_user_votes");
+  assert.strictEqual(calledBody.p_voter_token, "voter-tok-123");
+  assert.deepStrictEqual(calledBody.p_proposal_ids, ["prop-42", "prop-99", "prop-100"]);
+  assert.ok(votesSet.has("prop-42"));
+  assert.ok(votesSet.has("prop-99"));
+  assert.ok(!votesSet.has("prop-100"));
 
   console.log("✅ All Voting Module tests passed successfully!\n");
-}
+})().catch((err) => {
+  console.error("Test fetchUserVotes failed:", err);
+  process.exit(1);
+});

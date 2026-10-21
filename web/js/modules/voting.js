@@ -1,6 +1,6 @@
 /**
  * voting.js — Moduł propozycji i społecznego głosowania nad zmianami planu (ES/UMD).
- * Integracja z bazą Supabase: zgłaszanie przeniesień zajęć, oddawanie głosów,
+ * Integracja z bazą Supabase: zgłaszanie przeniesień zajęć, oddawanie głosów (RPC),
  * aplikowanie zatwierdzonych propozycji (overlay) w runtime oraz obsługa modala #propose-dialog.
  */
 
@@ -96,58 +96,68 @@
     async fetchUserVotes(opts = {}) {
       const { proposalIds, voterToken } = opts;
       const { supabaseUrl, supabaseAnonKey, doFetch } = _resolveClient(opts);
-      if (!supabaseUrl || !supabaseAnonKey || !voterToken || !proposalIds || !proposalIds.length || !doFetch) {
+      if (!supabaseUrl || !supabaseAnonKey || !voterToken || !doFetch) {
         return new Set();
       }
 
-      const queryParams = new URLSearchParams({
-        voter_token: `eq.${voterToken}`,
-        proposal_id: `in.(${proposalIds.join(",")})`,
-        select: "proposal_id"
-      });
+      const pIds = Array.isArray(proposalIds) ? proposalIds : (proposalIds ? [proposalIds] : []);
+      if (pIds.length === 0) return new Set();
 
-      const url = `${supabaseUrl}/rest/v1/votes?${queryParams.toString()}`;
+      const url = `${supabaseUrl}/rest/v1/rpc/get_user_votes`;
       try {
         const res = await doFetch(url, {
+          method: "POST",
           headers: {
             apikey: supabaseAnonKey,
             Authorization: `Bearer ${supabaseAnonKey}`,
             "Content-Type": "application/json"
-          }
+          },
+          body: JSON.stringify({
+            p_voter_token: voterToken,
+            p_proposal_ids: pIds
+          })
         });
         if (!res.ok) return new Set();
         const data = await res.json();
-        return new Set(data.map((v) => v.proposal_id));
+        if (!Array.isArray(data)) return new Set();
+        return new Set(data.map((item) => (typeof item === "string" ? item : item.proposal_id)));
       } catch (err) {
-        console.warn("[VotingModule] Błąd pobierania głosów użytkownika:", err.message);
+        console.warn("[VotingModule] Błąd pobierania głosów użytkownika przez RPC:", err.message);
         return new Set();
       }
     },
 
     async submitProposal(proposalData, clientOpts = {}) {
-      const { supabaseUrl, supabaseAnonKey, doFetch } = _resolveClient(clientOpts);
+      const resolvedClientOpts = (clientOpts && clientOpts.supabaseUrl)
+        ? clientOpts
+        : (proposalData && proposalData.client) ? proposalData.client : clientOpts;
+
+      const { supabaseUrl, supabaseAnonKey, doFetch } = _resolveClient(resolvedClientOpts);
       if (!supabaseUrl || !supabaseAnonKey) {
         throw new Error("Brak konfiguracji Supabase");
       }
       if (!doFetch) throw new Error("Brak funkcji fetch");
 
+      const scope = proposalData.scope || proposalData.proposedScope || "single";
+      const targetDate = scope === "single" ? (proposalData.target_date || proposalData.proposedDate || null) : null;
+
       const payload = {
-        tenant_id: proposalData.tenant_id,
-        plan_id: proposalData.plan_id,
-        group_name: proposalData.group_name,
-        lesson_id: proposalData.lesson_id,
-        subject: proposalData.subject,
-        scope: proposalData.scope || "single",
-        target_date: proposalData.scope === "single" ? proposalData.target_date : null,
-        original_day_of_week: proposalData.original_day_of_week,
-        original_start_time: proposalData.original_start_time,
-        original_end_time: proposalData.original_end_time,
-        new_day_of_week: proposalData.new_day_of_week,
-        new_start_time: proposalData.new_start_time,
-        new_end_time: proposalData.new_end_time,
-        new_room: proposalData.new_room || null,
-        reason: (proposalData.reason || "").substring(0, 500),
-        plan_version_token: proposalData.plan_version_token || null,
+        tenant_id: proposalData.tenant_id || proposalData.tenantId,
+        plan_id: proposalData.plan_id || proposalData.planId,
+        group_name: proposalData.group_name || proposalData.groupName,
+        lesson_id: proposalData.lesson_id || proposalData.lessonId,
+        subject: proposalData.subject || proposalData.proposedSubject || "Zajęcia",
+        scope: scope,
+        target_date: targetDate,
+        original_day_of_week: proposalData.original_day_of_week || proposalData.originalDay || "MON",
+        original_start_time: proposalData.original_start_time || proposalData.originalStart || "08:00",
+        original_end_time: proposalData.original_end_time || proposalData.originalEnd || "09:30",
+        new_day_of_week: proposalData.new_day_of_week || proposalData.proposedNewDay || "MON",
+        new_start_time: proposalData.new_start_time || proposalData.proposedStart || "08:00",
+        new_end_time: proposalData.new_end_time || proposalData.proposedEnd || "09:30",
+        new_room: proposalData.new_room || proposalData.proposedRoom || null,
+        reason: (proposalData.reason || proposalData.proposedReason || "").substring(0, 500),
+        plan_version_token: proposalData.plan_version_token || proposalData.sourceVersionToken || null,
         status: "pending",
         votes_count: 0
       };
@@ -179,7 +189,7 @@
       if (!supabaseUrl || !supabaseAnonKey) throw new Error("Brak konfiguracji Supabase");
       if (!doFetch) throw new Error("Brak funkcji fetch");
 
-      const url = `${supabaseUrl}/rest/v1/votes`;
+      const url = `${supabaseUrl}/rest/v1/rpc/cast_vote`;
       const res = await doFetch(url, {
         method: "POST",
         headers: {
@@ -188,14 +198,18 @@
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          proposal_id: proposalId,
-          voter_token: voterToken
+          p_proposal_id: proposalId,
+          p_voter_token: voterToken
         })
       });
 
-      if (!res.ok && res.status !== 409) {
+      if (!res.ok) {
         const text = await res.text();
         throw new Error(`Błąd oddawania głosu (HTTP ${res.status}): ${text}`);
+      }
+      const data = await res.json();
+      if (data && data.ok === false) {
+        throw new Error(data.error || "Nie udało się zapisać głosu");
       }
       return true;
     },
@@ -206,18 +220,18 @@
       if (!supabaseUrl || !supabaseAnonKey) throw new Error("Brak konfiguracji Supabase");
       if (!doFetch) throw new Error("Brak funkcji fetch");
 
-      const queryParams = new URLSearchParams({
-        proposal_id: `eq.${proposalId}`,
-        voter_token: `eq.${voterToken}`
-      });
-
-      const url = `${supabaseUrl}/rest/v1/votes?${queryParams.toString()}`;
+      const url = `${supabaseUrl}/rest/v1/rpc/retract_vote`;
       const res = await doFetch(url, {
-        method: "DELETE",
+        method: "POST",
         headers: {
           apikey: supabaseAnonKey,
-          Authorization: `Bearer ${supabaseAnonKey}`
-        }
+          Authorization: `Bearer ${supabaseAnonKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          p_proposal_id: proposalId,
+          p_voter_token: voterToken
+        })
       });
 
       if (!res.ok) {
@@ -328,15 +342,23 @@
       return cloned;
     },
 
-    renderProposalsList(elements, appState) {
+    renderProposalsList(arg1, arg2) {
+      let elements = arg1;
+      let appState = arg2;
+      if (elements && !elements.proposalsList && appState && appState.proposalsList) {
+        elements = appState;
+        appState = arg1;
+      }
+
       const listEl = elements && elements.proposalsList;
       if (!listEl) return;
 
       const proposals = (appState && Array.isArray(appState.proposals)) ? appState.proposals : [];
       const threshold = (appState && appState.tenantConfig && appState.tenantConfig.features && appState.tenantConfig.features.voting && appState.tenantConfig.features.voting.threshold) || 10;
+      const userVotes = (appState && appState.userVotes) || new Set();
 
       if (proposals.length === 0) {
-        listEl.innerHTML = `<p class="subtext" style="text-align: center; padding: 1rem 0;">Brak zgłoszonych propozycji zmian dla aktualnie wybranej grupy.</p>`;
+        listEl.innerHTML = `<p class="subtext" style="text-align: center; padding: 1.25rem 0;">Brak zgłoszonych propozycji zmian dla aktualnie wybranej grupy.</p>`;
         return;
       }
 
@@ -344,23 +366,27 @@
       listEl.innerHTML = proposals
         .map((p) => {
           const isApproved = p.status === "approved";
+          const hasVoted = userVotes.has(p.id);
           const statusBadge = isApproved
-            ? `<span class="proposal-overlay-badge">✓ Zatwierdzona (${p.votes_count || 0}/${threshold})</span>`
+            ? `<span class="proposal-overlay-badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4); padding: 2px 8px; border-radius: 999px; font-weight: 700; font-size: 0.78rem;">✓ Zatwierdzona (${p.votes_count || 0}/${threshold})</span>`
             : `<span class="subtext">Głosy: <strong>${p.votes_count || 0} / ${threshold}</strong></span>`;
           const scopeLabel = p.scope === "permanent" ? "Stała (cały semestr)" : `Jednorazowa (${escapeHtml(p.target_date || "")})`;
           const newDay = dayLabels[p.new_day_of_week] || p.new_day_of_week || "";
+          const voteBtnText = hasVoted ? "✓ Poparto (cofnij)" : "👍 Popieram";
+          const voteBtnStyle = hasVoted ? "background: rgba(2, 132, 199, 0.25); border-color: #0284c7; color: #38bdf8;" : "";
+
           return `
-            <div class="proposal-item" data-proposal-id="${escapeHtml(p.id)}">
-              <div>
+            <div class="proposal-item" data-proposal-id="${escapeHtml(p.id)}" style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--border-subtle); gap: 0.75rem;">
+              <div style="flex: 1;">
                 <strong>${escapeHtml(p.subject || "Zajęcia")}</strong>
-                <div class="subtext" style="font-size: 0.8rem;">
+                <div class="subtext" style="font-size: 0.8rem; margin-top: 2px;">
                   ${scopeLabel} → <strong>${escapeHtml(newDay)} ${escapeHtml(p.new_start_time)}–${escapeHtml(p.new_end_time)}</strong>${p.new_room ? ` (${escapeHtml(p.new_room)})` : ""}
                 </div>
-                ${p.reason ? `<div class="subtext" style="font-size: 0.76rem; font-style: italic;">„${escapeHtml(p.reason)}”</div>` : ""}
+                ${p.reason ? `<div class="subtext" style="font-size: 0.76rem; font-style: italic; margin-top: 2px;">„${escapeHtml(p.reason)}”</div>` : ""}
               </div>
-              <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <div style="display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0;">
                 ${statusBadge}
-                <button type="button" class="btn-secondary btn-vote-proposal" data-proposal-id="${escapeHtml(p.id)}" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">👍 Popieram</button>
+                ${isApproved ? "" : `<button type="button" class="btn-secondary btn-vote-proposal" data-proposal-id="${escapeHtml(p.id)}" data-voted="${hasVoted ? "true" : "false"}" style="padding: 0.35rem 0.75rem; font-size: 0.82rem; border-radius: var(--radius-sm); ${voteBtnStyle}">${voteBtnText}</button>`}
               </div>
             </div>
           `;
@@ -368,7 +394,14 @@
         .join("");
     },
 
-    populateProposeLessonSelect(elements, appState) {
+    populateProposeLessonSelect(arg1, arg2) {
+      let elements = arg1;
+      let appState = arg2;
+      if (elements && !elements.proposeLessonSelect && appState && appState.proposeLessonSelect) {
+        elements = appState;
+        appState = arg1;
+      }
+
       const sel = elements && elements.proposeLessonSelect;
       if (!sel) return;
       sel.innerHTML = "";
@@ -390,7 +423,14 @@
       }
     },
 
-    openProposeModal(elements, appState) {
+    openProposeModal(arg1, arg2) {
+      let elements = arg1;
+      let appState = arg2;
+      if (elements && !elements.proposeDialog && appState && appState.proposeDialog) {
+        elements = arg2;
+        appState = arg1;
+      }
+
       const dialog = elements && elements.proposeDialog;
       if (!dialog) return;
       this.renderProposalsList(elements, appState);

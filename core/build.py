@@ -733,6 +733,15 @@ def build_tenant(
 
     data_dir = os.path.join(target_dist, "data")
     os.makedirs(data_dir, exist_ok=True)
+
+    # Wstrzykniecie konfiguracji Supabase ze zmiennych srodowiskowych platformy (Opcja A)
+    env_supabase_url = os.environ.get("UNIPLANER_SUPABASE_URL")
+    env_supabase_anon_key = os.environ.get("UNIPLANER_SUPABASE_ANON_KEY")
+    if env_supabase_url and not config.get("supabase_url"):
+        config["supabase_url"] = env_supabase_url
+    if env_supabase_anon_key and not config.get("supabase_anon_key"):
+        config["supabase_anon_key"] = env_supabase_anon_key
+
     with open(os.path.join(data_dir, "tenant_config.json"), "w", encoding="utf-8") as f:
         json.dump(config, f, ensure_ascii=False, indent=2)
 
