@@ -2,40 +2,41 @@
 
 Platforma **Uniplaner** dba o spójny, profesjonalny i responsywny wygląd każdej wdrożonej wtyczki wydziałowej.
 
-Silnik budowania (`core/build.py`) automatycznie przetwarza pliki dostarczone przez autora wtyczki i generuje z nich pełen zestaw ikon PWA dla systemów Android, iOS, Windows i macOS.
+Aby zapewnić pełną standaryzację wizualną oraz maksymalną prostotę dla twórców adapterów, każda wtyczka dostarcza **dokładnie jeden plik graficzny**: `icon.png`.
+
+Silnik budowania (`core/build.py`) automatycznie przetwarza ten plik i generuje z niego pełen zestaw ikon PWA dla systemów Android, iOS, Windows i macOS. Strona natomiast sama nakłada jednolite maskowanie (20% zaokrąglenia) we wszystkich miejscach interfejsu.
 
 ---
 
-## 1. Zestawienie wymaganych plików graficznych
+## 1. Zestawienie wymaganego pliku graficznego
 
-Pliki graficzne umieszcza się bezpośrednio w folderze konfiguracyjnym tenanta:  
+Plik graficzny umieszcza się bezpośrednio w folderze konfiguracyjnym tenanta:  
 📁 `tenants/<id_uczelni>/<id_wydzialu>/`
 
 | Plik | Status | Wymiary | Format | Zastosowanie |
 | :--- | :---: | :---: | :---: | :--- |
-| **`icon.png`** | **OBOWIĄZKOWY** | **512×512 px** | PNG z kanałem alfa | Główna ikona PWA, maskable icon, favicon, kafelek aplikacji |
-| **`logo.svg`** | *Zalecany* | Dowolny (proporcjonalny) | Czysty wektor SVG | Nagłówek aplikacji PWA, modal „O aplikacji” |
+| **`icon.png`** | **OBOWIĄZKOWY (jedyny)** | **512×512 px** | PNG | Główna ikona PWA, maskable icon, favicon, logo w pasku nawigacji, modal „O aplikacji” i portal |
 
 ---
 
-## 2. Główna ikona aplikacji: `icon.png`
+## 2. Standard pliku: `icon.png`
 
-Plik `icon.png` jest kluczowym elementem identyfikacji wizualnej wtyczki.
+Plik `icon.png` jest kompletnym i jedynym elementem identyfikacji wizualnej wtyczki.
 
 ### Wytyczne techniczne:
 - **Rozdzielczość**: Dokładnie `512×512` pikseli (kwadrat w proporcjach 1:1).
-- **Format**: PNG-24 z kanałem alfa (przezroczystość).
-- **Tło (Transparency)**:
-  - 🛑 **NIE dodawaj sztucznego, kwadratowego tła w ciemnym kolorze** (np. ciemnoniebieskim czy szarym).
-  - Tło ikony powinno być przezroczyste, chyba że sam oficjalny herb lub tarcza uczelni ma geometryczny kształt (np. okrąg, tarcza herbowa).
-  - PWA automatycznie osadza ikonę na transparentnym tle w modalu oraz dynamicznie generuje maskowalną ikonę z kolorem motywu.
+- **Format**: PNG (24-bit / 32-bit).
+- **Kształt i tło (Brak rounded corners w pliku!)**:
+  - 🛑 **NIE zaokrąglaj rogów w pliku graficznym!** Plik dostarczany przez twórcę adaptera musi być **pełnym kwadratem** (512×512 px) bez przyciętych rogów.
+  - Tło powinno wypełniać cały obszar kwadratu (kolor marki/uczelni lub biały).
+  - **Maska jest nakładana przez platformę**: Strona Uniplaner w CSS automatycznie nakłada identyczną dla wszystkich maskę `border-radius: 20%` (squircle) z subtelnym obrysem kontrastowym w nagłówku, modalu i kafelkach.
 
 ### Bezpieczny margines (Safe Zone):
-Systemy operacyjne (zwłaszcza Android i iOS) automatycznie przycinają ikony aplikacji do kształtu tzw. *squircle* (zaokrąglony kwadrat) lub koła.
+Systemy operacyjne (zwłaszcza Android i iOS) oraz maska platformy przycinają rogi ikony:
 
 > [!WARNING]
-> **Zasada Safe Zone (15% marginesu)**:  
-> Główny symbol graficzny (herb/logo) powinien zajmować centralny obszar ikony (ok. **70–80%** szerokości i wysokości). Pozostaw minimum **10–15% wolnej przestrzeni (marginesu)** od krawędzi obrazu, aby żaden element herbu nie został ucięty po zainstalowaniu PWA na telefonie.
+> **Zasada Safe Zone (10–15% marginesu)**:  
+> Główny symbol graficzny (herb/logo) powinien zajmować centralny obszar ikony (ok. **70–80%** szerokości i wysokości). Pozostaw minimum **10–15% wolnej przestrzeni (marginesu)** od krawędzi obrazu, aby żaden kluczowy element herbu nie został ucięty po nałożeniu maski lub zainstalowaniu PWA na telefonie.
 
 ```
 +---------------------------------------+
@@ -51,29 +52,16 @@ Systemy operacyjne (zwłaszcza Android i iOS) automatycznie przycinają ikony ap
 ```
 
 ### Co generuje kompilator z `icon.png`:
-Podczas uruchomienia polecenia `python -m core.build`, silnik platformy automatycznie skaluje i generuje:
+Podczas uruchomienia polecenia `python -m core.build`, silnik platformy automatycznie przygotowuje:
 - `icon-192.png` (192×192 px)
 - `icon-512.png` (512×512 px)
-- `apple-touch-icon.png` (180×180 px dla iOS)
-- `favicon.png` oraz wpisy w `manifest.json`
+- `apple-touch-icon.png` (dla iOS)
+- `favicon.png` oraz wpisy w `manifest.json` z obsługą `any maskable`
+- Podmianę grafiki w nagłówku i oknie „O aplikacji” na `icon.png`
 
 ---
 
-## 3. Wektorowe logo: `logo.svg` (zalecane)
-
-Plik `logo.svg` jest wykorzystywany w miejscach wymagających idealnej ostrości przy skalowaniu:
-1. **Pasek nawigacji u góry aplikacji** (renderowany w rozmiarze `32×32 px`).
-2. **Karta wtyczki w oknie dialogowym „O aplikacji”** (renderowany w rozmiarze `64×64 px`).
-
-### Wytyczne techniczne:
-- **Format**: Czysty plik wektorowy SVG (kod XML z atrybutem `viewBox="0 0 W H"`).
-- **Brak zagnieżdżonych bitmap**: SVG nie może zawierać zaszytych obrazów rastrowych Base64.
-- **Przezroczyste tło**: Brak tła (`background: transparent`).
-- **Skalowalność**: Grafika powinna być czytelna zarówno w małym rozmiarze (32 px), jak i większym (64 px).
-
----
-
-## 4. Motyw kolorystyczny: `theme.css`
+## 3. Motyw kolorystyczny: `theme.css`
 
 Aby interfejs PWA odzwierciedlał barwy Twojej uczelni, w pliku `tenants/<uczelnia>/<wydzial>/theme.css` zdefiniuj zmienne CSS:
 

@@ -172,7 +172,10 @@ input, select, textarea, button {
   display: block;
   flex-shrink: 0;
   user-select: none;
-  object-fit: contain;
+  object-fit: cover;
+  border-radius: 20%;
+  border: 1px solid var(--border-color);
+  box-sizing: border-box;
 }
 
 .logo {
@@ -3309,8 +3312,11 @@ iframe[src*="tally.so"] {
 .about-logo-badge img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   display: block;
+  border-radius: 20%;
+  border: 1px solid var(--border-color);
+  box-sizing: border-box;
 }
 
 .about-intro-details {

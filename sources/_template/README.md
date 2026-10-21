@@ -18,7 +18,7 @@ Kompletna specyfikacja tworzenia wtyczki znajduje się w dokumencie:
    - Utwórz katalog `tenants/<uczelnia_id>/<wydzial_id>/`.
    - Dodaj plik `config.json` z konfiguracją uczelni, form i modułów.
    - Dodaj plik `academic_calendar.json` z oficjalnym kalendarzem akademickim (początek semestru, zamiany dni, święta).
-   - Dodaj plik `icon.png` (512×512 px, przezroczyste tło) oraz opcjonalnie `logo.svg`.
+   - Dodaj plik `icon.png` (dokładnie 512×512 px, pełny kwadrat bez zaokrąglonych rogów – platforma sama nakłada maskę 20%).
    - Dodaj dedykowany arkusz barw `theme.css`.
 
 3. **Budowanie i testowanie**:

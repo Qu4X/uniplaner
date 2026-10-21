@@ -498,10 +498,10 @@ body {
 .faculty-logo-img {
   width: 42px;
   height: 42px;
-  object-fit: contain;
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.04);
-  padding: 2px;
+  object-fit: cover;
+  border-radius: 20%;
+  border: 1px solid var(--border-subtle);
+  box-sizing: border-box;
 }
 
 .faculty-icon-emoji {

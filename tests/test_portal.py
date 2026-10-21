@@ -61,9 +61,9 @@ class TestPortalGeneration(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(assets_dir, "uniplaner.svg")))
         self.assertTrue(os.path.exists(os.path.join(self.temp_dist, "uniplaner.svg")))
 
-        # Logo UMG WN
-        umg_logo = os.path.join(assets_dir, "tenants", "umg_wn", "logo.svg")
-        self.assertTrue(os.path.exists(umg_logo))
+        # Ikona / logo UMG WN
+        umg_icon = os.path.join(assets_dir, "tenants", "umg_wn", "icon.png")
+        self.assertTrue(os.path.exists(umg_icon))
 
     def test_build_portal(self):
         build_portal(dist_dir=self.temp_dist, repo_root=_REPO_ROOT)

@@ -463,7 +463,7 @@ def discover_all_tenants(repo_root: Optional[str] = None) -> List[Dict[str, Any]
                 faculty = cfg.get("faculty", "")
                 faculty_full = cfg.get("faculty_full", faculty)
 
-                logo_rel_path = f"assets/tenants/{tenant_id}/logo.svg" if has_logo else None
+                logo_rel_path = f"assets/tenants/{tenant_id}/logo.svg" if has_logo else (f"assets/tenants/{tenant_id}/icon.png" if has_icon else None)
                 icon_rel_path = f"assets/tenants/{tenant_id}/icon.png" if has_icon else None
 
                 results.append({
@@ -635,17 +635,22 @@ def build_tenant(
             with open(target_style, "a", encoding="utf-8") as sf:
                 sf.write("\n/* Tenant Theme Overrides */\n" + theme_css)
 
-    # Modularne ikony tenanta i branding
+    # Modularne ikony tenanta i branding (standard: 1 plik icon.png 512x512)
     tenant_icon = os.path.join(tenant_dir, "icon.png")
     tenant_logo = os.path.join(tenant_dir, "logo.svg")
     has_icon = os.path.exists(tenant_icon)
     has_logo = os.path.exists(tenant_logo)
 
+    if not has_icon and not has_logo:
+        logger.warning(
+            f"Brak wymaganego pliku icon.png (512x512) dla tenanta {tenant_id}. "
+            "Użyty zostanie fallback (domyślna ikona platformy / emoji)."
+        )
+
     if has_icon:
         for target_name in ["icon.png", "apple-touch-icon.png", "favicon.png", "icon-192.png", "icon-512.png"]:
             shutil.copy2(tenant_icon, os.path.join(target_dist, target_name))
-
-    if has_logo:
+    elif has_logo:
         shutil.copy2(tenant_logo, os.path.join(target_dist, "logo.svg"))
 
     index_html_path = os.path.join(target_dist, "index.html")
@@ -658,10 +663,9 @@ def build_tenant(
                 '<link rel="icon" type="image/png" href="icon.png">',
                 html_text
             )
-        if has_logo:
-            html_text = html_text.replace('src="planwn.svg"', 'src="logo.svg"')
-        elif has_icon:
             html_text = html_text.replace('src="planwn.svg"', 'src="icon.png"')
+        elif has_logo:
+            html_text = html_text.replace('src="planwn.svg"', 'src="logo.svg"')
         with open(index_html_path, "w", encoding="utf-8") as hf:
             hf.write(html_text)
 
@@ -682,13 +686,13 @@ def build_tenant(
                 "src": "icon.png" if has_icon else "icon-192.png",
                 "sizes": "192x192",
                 "type": "image/png",
-                "purpose": "any"
+                "purpose": "any maskable"
             },
             {
                 "src": "icon.png" if has_icon else "icon-512.png",
                 "sizes": "512x512",
                 "type": "image/png",
-                "purpose": "any"
+                "purpose": "any maskable"
             }
         ]
     }

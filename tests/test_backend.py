@@ -1076,6 +1076,60 @@ with tempfile.TemporaryDirectory() as tmp_dist_dir:
 
 
 
+# ── 34. Standaryzacja ikon tenanta (icon.png 512x512, maska 20%, brak logo.svg) ─
+print("\n-- 34. Standaryzacja ikon tenanta (icon.png 512x512, maska 20%) --")
+
+from unittest.mock import patch
+from core.build import discover_all_tenants, build_tenant
+discovered_tenants = discover_all_tenants(repo_root=REPO_ROOT)
+check("Wykryto tenanty", len(discovered_tenants) >= 3)
+for t in discovered_tenants:
+    t_id = t["tenant_id"]
+    check(f"Tenant {t_id} posiada has_icon=True", t.get("has_icon") is True)
+    check(f"Tenant {t_id} nie posiada logo.svg (has_logo=False)", t.get("has_logo") is False)
+    check(f"Tenant {t_id} icon_url wskazuje na icon.png", t.get("icon_url") == f"assets/tenants/{t_id}/icon.png")
+
+class MockEmptySource(ScheduleSource):
+    source_id = "mock_empty"
+    def discover(self) -> List[PlanMetadata]:
+        return []
+    def fetch_schedule(self, plan_id: str) -> Dict[str, List[RawLesson]]:
+        return {}
+
+with tempfile.TemporaryDirectory() as tmp_dist_dir:
+    with patch("core.build.get_tenant_sources", return_value=[MockEmptySource()]):
+        build_tenant("umg_wn", dist_dir=tmp_dist_dir, force=True, limit=0)
+    check("icon.png został wygenerowany w dist/", os.path.exists(os.path.join(tmp_dist_dir, "icon.png")))
+    check("apple-touch-icon.png został wygenerowany", os.path.exists(os.path.join(tmp_dist_dir, "apple-touch-icon.png")))
+    check("icon-192.png został wygenerowany", os.path.exists(os.path.join(tmp_dist_dir, "icon-192.png")))
+    check("icon-512.png został wygenerowany", os.path.exists(os.path.join(tmp_dist_dir, "icon-512.png")))
+
+    # Weryfikacja manifest.json
+    manifest_p = os.path.join(tmp_dist_dir, "manifest.json")
+    check("manifest.json istnieje", os.path.exists(manifest_p))
+    with open(manifest_p, "r", encoding="utf-8") as mf:
+        m_data = json.load(mf)
+        check("manifest.json ma ikony", len(m_data.get("icons", [])) >= 2)
+        for ic in m_data.get("icons", []):
+            check("ikona manifestu ma purpose 'any maskable'", ic.get("purpose") == "any maskable")
+
+    # Weryfikacja index.html
+    index_p = os.path.join(tmp_dist_dir, "index.html")
+    with open(index_p, "r", encoding="utf-8") as ihf:
+        index_src = ihf.read()
+        check("index.html zawiera odwołanie do icon.png w .brand-logo", 'src="icon.png"' in index_src)
+        check("index.html nie odwołuje się do logo.svg", 'src="logo.svg"' not in index_src)
+
+# Weryfikacja maski w stylach CSS
+with open(os.path.join(REPO_ROOT, "web", "style.css"), "r", encoding="utf-8") as sf:
+    web_css = sf.read()
+    check("style.css zawiera border-radius: 20% dla .brand-logo", "border-radius: 20%;" in web_css)
+
+with open(os.path.join(REPO_ROOT, "portal", "portal.css"), "r", encoding="utf-8") as pf:
+    portal_css = pf.read()
+    check("portal.css zawiera border-radius: 20% dla .faculty-logo-img", "border-radius: 20%;" in portal_css)
+
+
 # ── Summary ───────────────────────────────────────────────────────────────────
 print("\n" + "="*60)
 passed = sum(1 for ok,_ in results if ok)
