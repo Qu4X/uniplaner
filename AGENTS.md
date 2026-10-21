@@ -11,7 +11,7 @@ Projekt ma budowę modułową i multi-tenantową. **W `core/` oraz `web/` obowi�
 
 ```
 core/                     Rdzeń niezależny od uczelni (Contract v1, expand, validate, ics, diff, cross_ref, build, writer)
-sources/base.py           Protokół ScheduleSource (discover_plans, fetch_schedule) + modele RawLesson / PlanMetadata
+sources/base.py           Protokół ScheduleSource (discover, fetch_schedule) + modele RawLesson / PlanMetadata
 sources/umg/wn/           Adaptery źródłowe UMG Wydział Nawigacyjny (Arktur HTML + NST PDF)
 sources/sggw/weta/        Adapter źródłowy SGGW Wydział Medycyny Weterynaryjnej (SharePoint XLSX)
 sources/_template/        Szablon startowy dla nowego adaptera uczelni

@@ -1,31 +1,31 @@
-# Pliki i struktura katalogu tenanta (`tenants/...`) 📁
+# Pliki i struktura katalogu tenanta (`tenants/...`)
 
-W architekturze platformy **Uniplaner** każdy wydział lub uczelnia posiada własny, odizolowany katalog konfiguracyjny:  
-📁 `tenants/<id_uczelni>/<id_wydzialu>/`
+W platformie **Uniplaner** każdy wydział lub uczelnia ma własny, odizolowany katalog konfiguracyjny:  
+`tenants/<id_uczelni>/<id_wydzialu>/`
 
-Katalog ten zawiera wszystkie elementy tożsamości wizualnej, motyw CSS, oficjalny kalendarz akademicki, słowniki oraz ustawienia funkcjonalne.
+Katalog zawiera elementy identyfikacji wizualnej, motyw CSS, oficjalny kalendarz akademicki, słowniki oraz ustawienia funkcjonalne.
 
 ---
 
-## 1. Zestawienie wszystkich plików tenanta
+## 1. Zestawienie plików tenanta
 
-W katalogu tenanta może znajdować się łącznie **7 plików**:
+W katalogu tenanta może znajdować się **siedem plików**:
 
-| Plik | Status | Wymagany format | Rola i przeznaczenie |
+| Plik | Status | Format | Rola |
 | :--- | :---: | :---: | :--- |
-| **`config.json`** | **OBOWIĄZKOWY** | JSON | Główne metadane, przełączniki modułów (`features`), definicje form i kolorów (`forms`), routing feedbacku, rejestracja adapterów. |
-| **`academic_calendar.json`** | **OBOWIĄZKOWY** | JSON | Kalendarz akademicki: okresy zajęć (`periods`), dni wolne (`holidays`), zamiany dni rektorskie (`daySwaps`), granica połówek semestru (`half_boundaries`). |
-| **`icon.png`** | **OBOWIĄZKOWY (1 plik)** | PNG (512×512) | Główna ikona aplikacji PWA i logo tenanta. Pełny kwadrat **bez przyciętych rogów** (maska 20% nakładana jest automatycznie przez platformę). |
-| **`theme.css`** | **OBOWIĄZKOWY** | CSS | Zmienne kolorystyczne uczelni (`--accent`, `--bg-primary`, `--text-primary` itp.) dla trybu jasnego i ciemnego. |
-| **`aliases.json`** | *Opcjonalny* | JSON | Słownik normalizujący nazwy przedmiotów i wykładowców (usuwa literówki dziekanatu, scala warianty nazw w wyszukiwarce). |
-| **`changelog.json`** | *Opcjonalny* | JSON | Historia zmian i aktualizacji planów dla tego wydziału (automatycznie scalana z changelogiem globalnym). |
+| **`config.json`** | **Obowiązkowy** | JSON | Metadane, przełączniki modułów (`features`), definicje form i kolorów (`forms`), kierowanie zgłoszeń błędów, rejestracja adapterów. |
+| **`academic_calendar.json`** | **Obowiązkowy** | JSON | Kalendarz akademicki: okresy zajęć (`periods`), dni wolne (`holidays`), zamiany dni (`daySwaps`), granica połów semestru (`half_boundaries`). |
+| **`icon.png`** | **Obowiązkowy** | PNG (512×512) | Ikona aplikacji PWA i logo tenanta. Pełny kwadrat **bez zaokrąglonych rogów** (maskę 20% nakłada platforma). |
+| **`theme.css`** | **Obowiązkowy** | CSS | Zmienne kolorystyczne uczelni (`--accent`, `--bg-primary`, `--text-primary` itp.) dla trybu jasnego i ciemnego. |
+| **`aliases.json`** | *Opcjonalny* | JSON | Słownik ujednolicający nazwy przedmiotów i prowadzących (poprawia literówki dziekanatu, scala warianty nazw w wyszukiwarce). |
+| **`changelog.json`** | *Opcjonalny* | JSON | Historia zmian w planach wydziału (automatycznie łączona z globalnym dziennikiem zmian). |
 | **`events.json`** | *Opcjonalny* | JSON | Kalendarium wydarzeń wydziałowych (ogłoszenia kół naukowych, webinary, dni otwarte, terminy rekrutacji). |
 
 ---
 
-## 2. Plik 1: `config.json` (Konfiguracja główna)
+## 2. `config.json` — konfiguracja główna
 
-Plik `config.json` określa tożsamość wydziału oraz włącza lub wyłącza moduły interfejsu.
+Plik `config.json` określa tożsamość wydziału oraz włącza i wyłącza moduły interfejsu.
 
 ```json
 {
@@ -79,17 +79,17 @@ Plik `config.json` określa tożsamość wydziału oraz włącza lub wyłącza m
 }
 ```
 
-### Kluczowe sekcje:
-- **`source_adapters`**: Lista pełnych ścieżek klas adapterów w Pythonie (np. `sources.pw.mini.adapter.ScheduleSource`).
-- **`forms`**: Konfiguracja etykiet i kolorów krawędzi kart zajęć dla poszczególnych form.
-- **`features`**: Włączanie/wyłączanie wyszukiwarki sal/prowadzących (`cross_reference`), wolnych sal (`free_rooms`), ukrywania zajęć (`lesson_hiding`), głosowania (`voting`) i changeloga.
-- **`feedback`**: Routing zgłoszeń błędów w planie (np. formularz [Tally.so](https://tally.so/) otwierany w oknie dialogowym).
+### Najważniejsze sekcje
+- **`source_adapters`**: lista pełnych ścieżek klas adapterów w Pythonie (np. `sources.pw.mini.adapter.ScheduleSource`).
+- **`forms`**: etykiety i kolory krawędzi kart dla poszczególnych form zajęć.
+- **`features`**: włączanie i wyłączanie wyszukiwarki sal i prowadzących (`cross_reference`), wolnych sal (`free_rooms`), ukrywania zajęć (`lesson_hiding`), głosowania (`voting`) i dziennika zmian.
+- **`feedback`**: kierowanie zgłoszeń błędów w planie (np. formularz [Tally.so](https://tally.so/) otwierany w oknie dialogowym).
 
 ---
 
-## 3. Plik 2: `academic_calendar.json` (Kalendarz akademicki)
+## 3. `academic_calendar.json` — kalendarz akademicki
 
-Kalendarz akademicki określa ramy czasowe semestru, przerwy świąteczne oraz zarządzenia rektorskie o zamianach dni tygodnia.
+Kalendarz określa ramy czasowe semestru, przerwy dydaktyczne oraz zarządzenia rektorskie o zamianach dni.
 
 ```json
 {
@@ -115,27 +115,27 @@ Kalendarz akademicki określa ramy czasowe semestru, przerwy świąteczne oraz z
 }
 ```
 
-### Elementy kalendarza:
-- **`periods`**: Przedziały dat dla okresów dydaktycznych (`teaching`), przerw (`break`) oraz sesji egzaminacyjnych (`exam`).
-- **`holidays`**: Słownik pojedynczych dni wolnych od zajęć (`"YYYY-MM-DD": "Nazwa święta"`).
-- **`daySwaps`**: Zarządzenia rektorskie zmieniające dzień tygodnia realizacji zajęć. Kody dni: `"PON"`, `"WT"`, `"ŚR"`, `"CZW"`, `"PT"`, `"SOB"`, `"ND"`.
-- **`half_boundaries`**: Klucz `half_2_start` wskazuje datę rozpoczęcia II połowy semestru. Zajęcia oznaczone `half_semester=2` automatycznie startują od tego tygodnia!
+### Elementy kalendarza
+- **`periods`**: przedziały dat dla okresów dydaktycznych (`teaching`), przerw (`break`) i sesji egzaminacyjnych (`exam`).
+- **`holidays`**: słownik pojedynczych dni wolnych od zajęć (`"YYYY-MM-DD": "Nazwa święta"`).
+- **`daySwaps`**: zarządzenia rektorskie zmieniające dzień realizacji zajęć. Kody dni: `"PON"`, `"WT"`, `"ŚR"`, `"CZW"`, `"PT"`, `"SOB"`, `"ND"`.
+- **`half_boundaries`**: klucz `half_2_start` wskazuje datę rozpoczęcia II połowy semestru. Zajęcia oznaczone `half_semester=2` są planowane od tego tygodnia.
 
 ---
 
-## 4. Plik 3: `icon.png` (Jednolity zasób graficzny)
+## 4. `icon.png` — zasób graficzny
 
-- **Wymiary**: Dokładnie `512×512 px` (PNG).
-- **Tło**: Pełny kwadrat wypełniony kolorem uczelni lub białym.
-- **Brak zaokrągleń w pliku**: 🛑 **Nie zaokrąglaj rogów w pliku PNG!** Strona Uniplaner w CSS sama nakłada identyczną dla wszystkich maskę `border-radius: 20%` (squircle) z obrysem kontrastowym.
-- **Bezpieczny margines (Safe Zone)**: Pozostaw 10–15% odstępu od krawędzi, aby herb/symbol nie został ucięty po zaokrągleniu na telefonie lub w aplikacji.
-- **Działanie buildu**: Z tego jednego pliku kompilator generuje `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, `favicon.png` oraz logo w nagłówku i oknie „O aplikacji”.
+- **Wymiary**: dokładnie `512×512 px` (PNG).
+- **Tło**: pełny kwadrat wypełniony kolorem uczelni lub białym.
+- **Bez zaokrągleń w pliku**: nie zaokrąglaj rogów w pliku PNG. Aplikacja sama nakłada jednakową dla wszystkich maskę `border-radius: 20%` z kontrastowym obrysem.
+- **Strefa bezpieczna**: zachowaj 10–15% marginesu od krawędzi, aby herb lub symbol nie został ucięty po zaokrągleniu na telefonie lub w aplikacji.
+- **Działanie kompilatora**: z tego jednego pliku kompilator generuje `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, `favicon.png` oraz logo w nagłówku i w oknie „O aplikacji”.
 
 ---
 
-## 5. Plik 4: `theme.css` (Motyw kolorystyczny)
+## 5. `theme.css` — motyw kolorystyczny
 
-Definiuje paletę kolorów interfejsu PWA dopasowaną do identyfikacji wizualnej uczelni:
+Plik definiuje paletę kolorów interfejsu dopasowaną do identyfikacji wizualnej uczelni:
 
 ```css
 :root {
@@ -153,7 +153,7 @@ Definiuje paletę kolorów interfejsu PWA dopasowaną do identyfikacji wizualnej
   --text-secondary: #718096;
 }
 
-/* Tryb ciemny (Dark Mode) */
+/* Tryb ciemny */
 [data-theme="dark"] {
   --accent: #3182ce;
   --accent-hover: #4299e1;
@@ -168,9 +168,9 @@ Definiuje paletę kolorów interfejsu PWA dopasowaną do identyfikacji wizualnej
 
 ---
 
-## 6. Plik 5: `aliases.json` (Normalizacja nazw i prowadzących)
+## 6. `aliases.json` — ujednolicanie nazw przedmiotów i prowadzących
 
-*Opcjonalny plik słownika.* Jeśli system dziekanatu publikuje niespójne nazwy (np. skróty, literówki, różne formy zapisu nazwiska wykładowcy), `aliases.json` automatycznie je czyści i ujednolica:
+*Plik opcjonalny.* Jeśli system dziekanatu publikuje niespójne nazwy (skróty, literówki, różne zapisy nazwiska prowadzącego), `aliases.json` ujednolica je automatycznie:
 
 ```json
 {
@@ -185,15 +185,15 @@ Definiuje paletę kolorów interfejsu PWA dopasowaną do identyfikacji wizualnej
 }
 ```
 
-- Podczas kompilacji pole `lesson["subject"]` i `lesson["teacher"]` zostają zamienione na czystą, pełną nazwę.
-- Oryginalna nazwa ze źródła zostaje zachowana w polu `raw_subject` do wglądu.
-- Dzięki temu wyszukiwarka powiązań (cross-reference) bezbłędnie scala wszystkie grupy danego wykładowcy w jeden spójny plan!
+- Podczas kompilacji pola `lesson["subject"]` i `lesson["teacher"]` są zastępowane pełną, ujednoliconą nazwą.
+- Oryginalna nazwa ze źródła pozostaje w polu `raw_subject`.
+- Dzięki temu wyszukiwarka powiązań (cross-reference) łączy wszystkie grupy danego prowadzącego w jeden spójny plan.
 
 ---
 
-## 7. Plik 6: `changelog.json` (Lokalna historia zmian)
+## 7. `changelog.json` — lokalna historia zmian
 
-*Opcjonalny plik.* Pozwala autorom wtyczki informować studentów swojego wydziału o specyficznych zmianach w planach (np. dodaniu nowych grup czy poprawkach sal):
+*Plik opcjonalny.* Pozwala autorom adaptera informować studentów wydziału o zmianach w planach (np. o nowych grupach lub poprawionych salach):
 
 ```json
 [
@@ -205,13 +205,13 @@ Definiuje paletę kolorów interfejsu PWA dopasowaną do identyfikacji wizualnej
 ]
 ```
 
-Podczas budowania kompilator automatycznie scala ten plik z changelogiem globalnym Uniplanera i dodaje prefiks wydziału (np. `[MiNI] Aktualizacja sal laboratoryjnych`).
+Podczas budowania kompilator łączy ten plik z globalnym dziennikiem zmian Uniplanera i dodaje prefiks wydziału (np. `[MiNI] Aktualizacja sal laboratoryjnych`).
 
 ---
 
-## 8. Plik 7: `events.json` (Kalendarium wydarzeń)
+## 8. `events.json` — kalendarium wydarzeń
 
-*Opcjonalny plik.* Wykorzystywany, gdy w `config.json` włączono flagę `"events": true`. Wyświetla studentom karty nadchodzących wydarzeń wydziałowych:
+*Plik opcjonalny.* Jest używany, gdy w `config.json` włączono flagę `"events": true`. Wyświetla studentom karty nadchodzących wydarzeń wydziałowych:
 
 ```json
 [

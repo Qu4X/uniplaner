@@ -5,79 +5,82 @@
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/)
 [![PWA](https://img.shields.io/badge/PWA-offline--ready-brightgreen)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
 
-**Uniplaner** to nowoczesna, szybka i otwarta platforma planu zajęć dla studentów uczelni wyższych, działająca jako Progressive Web App (PWA) w trybie offline.
+**Uniplaner** to otwarta platforma planu zajęć dla studentów. Działa jako progresywna aplikacja internetowa (PWA), także bez dostępu do sieci.
 
-Projekt powstał w architekturze **multi-tenant (Platforma + Wtyczki)** — uniwersalny rdzeń aplikacji może obsłużyć dowolny wydział lub uczelnię za pomocą lekkich adapterów danych.
-
----
-
-## 🌟 Kluczowe Możliwości Platformy
-
-* 📱 **PWA & Offline First**: Błyskawiczne ładowanie bez internetu, możliwość instalacji na ekranie głównym (Android, iOS, macOS, Windows) z dedykowaną ikoną wydziału.
-* 🔢 **Liczenie i numeracja spotkań**: Automatyczne wyliczanie postępu realizacji przedmiotu (np. *spotkanie 3 z 7*).
-* 📅 **Integracja z kalendarzem akademickim**: Automatyczne uwzględnianie zarządzeń rektorskich (zamiany dni tygodnia, święta, przerwy świąteczne i sesje).
-* 🎨 **Wizualne formy zajęć (WCAG)**: Czytelne kodowanie kolorystyczne form (wykłady, ćwiczenia, laboratoria, symulatory, kliniki, seminaria, projekty, fakultety) wraz z dynamiczną legendą.
-* 🗓️ **Eksport do kalendarza**: Subskrypcja na żywo przez `webcal://` oraz pobieranie plików `.ics` z precyzyjną strefą czasową.
-* 🔍 **Wyszukiwarka i Cross-Reference**: Przeglądanie całotygodniowych planów dowolnego wykładowcy, sali lub przedmiotu.
-* 🚪 **Wyszukiwarka wolnych sal**: Sprawdzanie dostępności sal dydaktycznych w czasie rzeczywistym.
-* 👁️ **Ukrywanie zajęć fakultatywnych**: Możliwość personalizacji widoku poprzez ukrywanie grup wyboru i lektoratów, do których student nie należy.
+Projekt ma architekturę wielodzierżawczą (*multi-tenant*): uniwersalny rdzeń obsługuje dowolny wydział lub uczelnię, o ile zostanie dla niej przygotowany lekki adapter źródła danych.
 
 ---
 
-## 🏛️ Dostępne Wtyczki Wydziałowe (Out-of-the-box)
+## Funkcje
 
-Platforma posiada gotowe adaptery dla:
+* **PWA z pracą offline** — szybkie ładowanie bez połączenia z internetem oraz instalacja na ekranie głównym (Android, iOS, macOS, Windows) z ikoną wydziału.
+* **Numeracja spotkań** — automatyczne wyliczanie postępu realizacji przedmiotu (np. *spotkanie 3 z 7*).
+* **Kalendarz akademicki** — uwzględnianie zarządzeń rektorskich: zamian dni, świąt, przerw dydaktycznych i sesji.
+* **Formy zajęć** — wykłady, ćwiczenia, laboratoria, symulatory, kliniki, seminaria, projekty i fakultety są oznaczone kolorami zgodnymi z wytycznymi WCAG i opisane dynamiczną legendą.
+* **Eksport do kalendarza** — subskrypcja przez `webcal://` oraz pobieranie plików `.ics` z poprawną strefą czasową.
+* **Wyszukiwanie powiązań (cross-reference)** — podgląd tygodniowego planu dowolnego prowadzącego, sali lub przedmiotu.
+* **Wyszukiwarka wolnych sal** — sprawdzanie dostępności sal dydaktycznych.
+* **Ukrywanie zajęć fakultatywnych** — możliwość ukrycia grup wyboru i lektoratów, do których student nie należy.
 
-| Uczelnia | Wydział | Akronim PWA | Źródło danych |
+---
+
+## Obsługiwane wydziały
+
+Repozytorium zawiera gotowe adaptery dla następujących jednostek:
+
+| Uczelnia | Wydział | Nazwa PWA | Źródło danych |
 | :--- | :--- | :---: | :--- |
-| **Uniwersytet Morski w Gdyni** | Wydział Nawigacyjny | `Plan WN` | System Arktur (HTML) + zjazdy NST (PDF) |
-| **Szkoła Główna Gospodarstwa Wiejskiego** | Wydział Medycyny Weterynaryjnej | `Plan WMW` | Harmonogramy roczników (SharePoint Excel) |
+| **Uniwersytet Morski w Gdyni** | Wydział Nawigacyjny | `Plan WN` | System Arktur (HTML) oraz zjazdy NST (PDF) |
+| **Szkoła Główna Gospodarstwa Wiejskiego** | Wydział Medycyny Weterynaryjnej | `Plan WMW` | Harmonogramy roczników (Excel w SharePoint) |
 
 ---
 
-## 🏗️ Architektura Modularna
+## Architektura
 
-W projekcie obowiązuje ścisły podział odpowiedzialności:
+Obowiązuje ścisły podział odpowiedzialności:
 
 ```
-core/                                 # Silnik niezależny od uczelni (Kontrakt v1, walidacja, build, ICS)
+core/                                 # Rdzeń niezależny od uczelni (Kontrakt v1, walidacja, build, ICS)
 sources/base.py                       # Protokół ScheduleSource oraz modele RawLesson / PlanMetadata
-sources/<uczelnia>/<wydzial>/         # Adapter źródła (kod w Pythonie parsujący plan)
-sources/_template/                    # Szablon startowy dla nowego adaptera
+sources/<uczelnia>/<wydzial>/         # Adapter źródła (kod w Pythonie pobierający i parsujący plan)
+sources/_template/                    # Szablon startowy nowego adaptera
 tenants/<uczelnia>/<wydzial>/         # Konfiguracja tenanta (config.json, theme.css, kalendarz, ikony)
-web/                                  # Uniwersalny frontend PWA (vanilla JS, CSS variables)
+web/                                  # Uniwersalny frontend PWA (vanilla JS, zmienne CSS)
 docs/specs/                           # Specyfikacje techniczne Kontraktu v1 i przewodniki
 ```
 
 ---
 
-## 🚀 Jak Dodać Swój Wydział lub Uczelnię?
+## Dodawanie wydziału lub uczelni
 
-Stworzenie wtyczki dla nowej uczelni zajmuje zazwyczaj jeden wieczór!
+Przygotowanie adaptera dla nowej jednostki zajmuje zwykle kilka godzin.
 
-👉 **Pełna instrukcja krok po kroku znajduje się w [GitHub Wiki](https://github.com/Qu4X/uniplaner/wiki) oraz w dokumencie [`docs/specs/adapter-guide.md`](docs/specs/adapter-guide.md)**.
+Pełna instrukcja znajduje się w [Wiki projektu](https://github.com/Qu4X/uniplaner/wiki) oraz w dokumencie [`docs/specs/adapter-guide.md`](docs/specs/adapter-guide.md).
 
-### Szybki zarys procesu:
-1. Skopiuj katalog `sources/_template/` do `sources/<twoja_uczelnia>/<twoj_wydzial>/`.
-2. Zaimplementuj adapter w Pythonie dziedziczący po `ScheduleSource`:
-   - `discover()` — zwraca listę dostępnych kierunków i wersji planów.
+### Przebieg w skrócie
+
+1. Skopiuj katalog `sources/_template/` do `sources/<uczelnia>/<wydzial>/`.
+2. Zaimplementuj adapter w Pythonie zgodnie z protokołem `ScheduleSource`:
+   - `discover()` — zwraca listę dostępnych kierunków i wersji planów,
    - `fetch_schedule()` — parsuje plan (HTML, PDF, Excel, API) i zwraca obiekty `RawLesson`.
-3. Utwórz konfigurację w `tenants/<twoja_uczelnia>/<twoj_wydzial>/`:
-   - `config.json` — metadane wydziału, włączone moduły i kolory form zajęć.
-   - `academic_calendar.json` — daty semestru, zamiany dni i dni wolne.
-   - `icon.png` — kwadratowa ikona wydziału (512×512 px z przezroczystością).
+3. Utwórz konfigurację w `tenants/<uczelnia>/<wydzial>/`:
+   - `config.json` — metadane wydziału, włączone moduły i kolory form zajęć,
+   - `academic_calendar.json` — daty semestru, zamiany dni i dni wolne,
+   - `icon.png` — kwadratowa ikona wydziału (512×512 px, bez zaokrąglonych rogów),
    - `theme.css` — kolory wiodące uczelni.
-4. Uruchom testy i otwórz **Pull Request**!
+4. Uruchom testy i otwórz Pull Request.
 
 ---
 
-## 💻 Uruchomienie Lokalne i Testy
+## Uruchamianie lokalne i testy
 
-### Wymagania:
+### Wymagania
+
 * Python 3.11+
-* Node.js 18+
+* Node.js 20+
 
-### Instalacja środowiska:
+### Instalacja środowiska
+
 ```powershell
 python -m venv .venv
 .venv\Scripts\activate
@@ -85,33 +88,37 @@ pip install -r requirements.txt
 npm install
 ```
 
-### Budowanie dystrybucji statycznej:
+### Budowanie wersji statycznej
+
 ```powershell
-# Kompilacja dla UMG WN
+# Budowa dla UMG WN
 python -m core.build --tenant umg/wn --out dist
 
-# Kompilacja dla SGGW WETA
+# Budowa dla SGGW WETA
 python -m core.build --tenant sggw/weta --out dist_sggw
 ```
 
-### Uruchomienie lokalnego serwera deweloperskiego:
+### Lokalny serwer deweloperski
+
 ```powershell
 python -m http.server 8080 --directory dist
 ```
 
-### Uruchomienie testów:
+### Testy
+
 ```powershell
-# Testy regresyjne backendu Python (Contract v1, walidacja, expand)
+# Testy regresyjne backendu (Kontrakt v1, walidacja, wyliczanie spotkań)
 .venv\Scripts\python.exe tests/test_backend.py
 .venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py"
 
-# Testy jednostkowe frontendu JavaScript
+# Testy jednostkowe frontendu
 npm test
 ```
 
 ---
 
-## 📄 Licencja
+## Licencja
 
-Projekt udostępniany jest na licencji **MIT**. Szczegóły w pliku [LICENSE](LICENSE).
-Wszelkie prawa do nazw uczelni, wydziałów oraz oficjalnych znaków towarowych należą do ich prawnych właścicieli i zostały użyte wyłącznie w celach identyfikacyjnych w projektach studenckich open-source.
+Projekt jest udostępniany na licencji **MIT**. Szczegóły znajdują się w pliku [LICENSE](LICENSE).
+
+Prawa do nazw uczelni, wydziałów i znaków towarowych należą do ich właścicieli. Nazwy te użyto wyłącznie w celach identyfikacyjnych, w studenckim projekcie open source.

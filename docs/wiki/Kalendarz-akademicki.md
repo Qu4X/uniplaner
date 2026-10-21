@@ -1,87 +1,71 @@
-# Kalendarz akademicki (`academic_calendar.json`) 📅
+# Kalendarz akademicki (`academic_calendar.json`)
 
-Plik `academic_calendar.json` w katalogu `tenants/<id_uczelni>/<id_wydzialu>/` definiuje ramy czasowe semestru, dni wolne od zajęć, przerwy świąteczne oraz zarządzenia rektorskie o zamianach dni tygodnia.
+Plik `academic_calendar.json` w katalogu `tenants/<id_uczelni>/<id_wydzialu>/` określa okresy zajęć, dni wolne, przerwy dydaktyczne, sesje oraz zarządzenia rektorskie dotyczące zamian dni.
 
-Dzięki temu kalendarzowi Uniplaner precyzyjnie wylicza numery spotkań (np. *„spotkanie 3 z 7”*) i ostrzega studenta przed dniami wolnymi.
+Na jego podstawie Uniplaner wylicza numery spotkań (np. *„spotkanie 3 z 7”*) i informuje studenta o dniach wolnych.
+
+> [!NOTE]
+> Plik jest interpretowany niezależnie w kompilatorze (`core/expand.py`, `core/ics.py`) i we frontendzie (`web/js/schedule-engine.js`). Zmiany reguł interpretacji dat należy zawsze sprawdzać w obu miejscach.
 
 ---
 
-## 1. Kompletna struktura `academic_calendar.json`
+## 1. Struktura pliku
 
 ```json
 {
-  "semester": "zimowy_2026_2027",
-  "teaching_period": {
-    "start": "2026-10-01",
-    "end": "2027-01-29"
-  },
-
-  "holidays": [
-    "2026-11-01",
-    "2026-11-11",
-    "2027-01-01",
-    "2027-01-06"
-  ],
-
-  "breaks": [
-    {
-      "name": "Przerwa świąteczna",
-      "from": "2026-12-23",
-      "to": "2027-01-03"
-    },
-    {
-      "name": "Przerwa międzysemestralna",
-      "from": "2027-02-13",
-      "to": "2027-02-19"
-    }
-  ],
-
   "daySwaps": {
-    "2026-11-10": "FRI",
-    "2027-01-05": "MON"
+    "2026-11-10": { "replaceWith": "PT", "note": "Wtorek 10.11 – zajęcia z piątku" },
+    "2027-01-05": { "replaceWith": "PON", "note": "Wtorek 05.01 – zajęcia z poniedziałku" }
   },
 
-  "exam_sessions": [
-    {
-      "name": "Zimowa sesja egzaminacyjna",
-      "from": "2027-01-30",
-      "to": "2027-02-12"
-    }
+  "holidays": {
+    "2026-11-01": "Wszystkich Świętych",
+    "2026-11-11": "Święto Niepodległości",
+    "2027-01-01": "Nowy Rok",
+    "2027-01-06": "Święto Trzech Króli"
+  },
+
+  "periods": [
+    { "name": "Okres zajęć dydaktycznych – semestr zimowy", "type": "teaching", "start": "2026-10-01", "end": "2027-01-29" },
+    { "name": "Zimowa przerwa świąteczna", "type": "break", "start": "2026-12-21", "end": "2027-01-03" },
+    { "name": "Sesja egzaminacyjna zimowa", "type": "exam", "start": "2027-01-30", "end": "2027-02-12" }
   ]
 }
 ```
 
+Szczegółowy opis pozostałych kluczy (np. `half_boundaries`) znajduje się na stronie [Pliki i konfiguracja tenanta](Pliki-i-konfiguracja-tenanta).
+
 ---
 
-## 2. Kluczowe sekcje kalendarza
+## 2. Sekcje kalendarza
 
-### Okres zajęć dydaktycznych (`teaching_period`)
-Określa pierwszy i ostatni dzień, w którym odbywają się regularne zajęcia z siatki.
-- Po dacie `end` licznik spotkań jest automatycznie zamrażany — aplikacja wie, że rozpoczął się okres sesyjny i nie dodaje fałszywych spotkań.
+### Okresy (`periods`)
+Lista przedziałów dat. Pole `type` przyjmuje wartości:
+- `teaching` — okres zajęć dydaktycznych (pierwszy i ostatni dzień, w którym odbywają się zajęcia z siatki),
+- `break` — przerwa dydaktyczna (wielodniowy okres bez zajęć, np. przerwa świąteczna),
+- `exam` — sesja egzaminacyjna.
+
+Daty `start` i `end` obejmują oba dni graniczne. Po zakończeniu okresu `teaching` licznik spotkań jest zatrzymywany i aplikacja nie dodaje kolejnych spotkań.
 
 ### Dni wolne (`holidays`)
-Pojedyncze daty (`YYYY-MM-DD`) wolne od zajęć (święta państwowe, kościelne, Dzień Rektorski).
-W te dni zajęcia nie są planowane, a numeracja spotkań dla danego przedmiotu nie ulega zwiększeniu.
+Słownik pojedynczych dni wolnych od zajęć w formacie `"YYYY-MM-DD": "Nazwa"`: święta państwowe i kościelne oraz dni wolne ustanowione przez rektora.
+W te dni zajęcia nie są planowane, a numeracja spotkań danego przedmiotu nie zwiększa się.
 
-### Przerwy dydaktyczne (`breaks`)
-Wielodniowe okresy bez zajęć (np. ferie zimowe, przerwa wielkanocna, przerwa bożonarodzeniowa).
-Zakres definiuje się od `from` do `to` (włącznie).
+### Zamiany dni (`daySwaps`)
+Mechanizm odwzorowujący zarządzenia rektorskie o zmianie dnia realizacji zajęć. Pole `replaceWith` wskazuje dzień bazowy planu, według którego odbywają się zajęcia. Dopuszczalne kody dni: `"PON"`, `"WT"`, `"ŚR"`, `"CZW"`, `"PT"`, `"SOB"`, `"ND"`. Pole `note` zawiera opis widoczny dla studenta.
 
-### Zamiany dni rektorskie (`daySwaps`)
-Najważniejsza i najbardziej unikalna funkcja platformy **Uniplaner**!
+Przykład zarządzenia:
+> *„We wtorek 10 listopada zajęcia odbywają się według planu piątkowego”*
 
-Gdy rektor ogłasza zarządzenie:  
-> *„W czwartek 10 listopada zajęcia odbywają się według planu piątkowego”*
-
-Definiujesz wpis w obiekcie `daySwaps`:
+Odpowiada mu wpis:
 ```json
 "daySwaps": {
-  "2026-11-10": "FRI"
+  "2026-11-10": { "replaceWith": "PT", "note": "Wtorek 10.11 – zajęcia z piątku" }
 }
 ```
 
-**Co dzieje się automatycznie:**
-1. W dniu 10 listopada studenci widzą w aplikacji siatkę zajęć z piątku.
-2. Zostaje naliczony numer spotkania dla przedmiotów piątkowych.
-3. Przedmioty czwartkowe nie tracą kolejki.
-4. Eksport kalendarza `.ics` oraz subskrypcja na żywo `webcal://` natychmiast uwzględniają tę zamianę w kalendarzach Google i Apple!
+**Skutki zamiany:**
+1. W dniu 10 listopada aplikacja pokazuje siatkę zajęć z piątku.
+2. Numer spotkania zwiększa się dla przedmiotów piątkowych.
+3. Przedmioty wtorkowe nie tracą numeracji.
+4. Eksport `.ics` oraz subskrypcja `webcal://` od razu uwzględniają zamianę w kalendarzach Google i Apple.

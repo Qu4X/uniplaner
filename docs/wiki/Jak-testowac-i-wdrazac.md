@@ -1,30 +1,30 @@
-# Jak testować i wdrażać adapter (Testing & Quality Gates) 🧪
+# Jak testować i wdrażać adapter
 
-Jakość i stabilność to filary platformy **Uniplaner**. Każda zmiana i każdy nowy adapter przechodzi przez rygorystyczny zestaw testów automatycznych, zapobiegający awariom w produkcji.
+Jakość i stabilność są podstawą platformy **Uniplaner**. Każda zmiana i każdy nowy adapter przechodzą przez zestaw testów automatycznych, który chroni środowisko produkcyjne przed awariami.
 
-Ten poradnik wyjaśnia, jak napisać test jednostkowy dla Twojej nowej wtyczki oraz jak poprawnie otworzyć Pull Request.
-
----
-
-## 1. Dlaczego test jednostkowy z fixture'em jest kluczowy?
-
-Strony i pliki uczelniane mogą z dnia na dzień zmienić strukturę lub przestać odpowiadać z powodu awarii serwera uczelni.
-
-Aby testy nie zależały od dostępu do internetu ani od działania serwerów uczelni w trakcie kompilacji w CI (GitHub Actions), tworzymy tzw. **hermetyczny test jednostkowy na pliku testowym (fixture)**.
+Ten poradnik opisuje, jak napisać test jednostkowy dla nowego adaptera i jak poprawnie zgłosić Pull Request.
 
 ---
 
-## 2. Przygotowanie pliku fixture
+## 1. Dlaczego test na pliku testowym (fixture)
 
-1. Pobierz przykładowy plik z planem z Twojej uczelni (np. jedną stronę HTML, jeden arkusz `.xlsx` lub fragment odpowiedzi JSON).
+Strony i pliki uczelni mogą zmienić strukturę bez uprzedzenia albo być niedostępne z powodu awarii serwera.
+
+Aby testy nie zależały od internetu ani od serwerów uczelni podczas kompilacji w CI (GitHub Actions), piszemy **test jednostkowy działający na lokalnym pliku testowym (fixture)**. Taki test jest powtarzalny i odizolowany od świata zewnętrznego.
+
+---
+
+## 2. Przygotowanie pliku testowego
+
+1. Pobierz przykładowy plik z planem swojej uczelni (np. jedną stronę HTML, jeden arkusz `.xlsx` lub fragment odpowiedzi JSON).
 2. Zapisz go w katalogu:  
-   📁 `tests/fixtures/<twoja_uczelnia>_sample.<ext>`
+   `tests/fixtures/<twoja_uczelnia>_sample.<rozszerzenie>`
 
 ---
 
 ## 3. Przykładowy test w Pythonie
 
-Utwórz plik testowy: `tests/test_<twoja_uczelnia>_adapter.py`:
+Utwórz plik `tests/test_<twoja_uczelnia>_adapter.py`:
 
 ```python
 import os
@@ -78,12 +78,12 @@ if __name__ == "__main__":
 
 ---
 
-## 4. Uruchomienie zestawu testów lokalnie
+## 4. Uruchamianie testów lokalnie
 
 Przed zgłoszeniem zmian uruchom wszystkie testy platformy:
 
 ```powershell
-# 1. Testy modułowe Pythona (Twój nowy test zostanie automatycznie wykryty):
+# 1. Testy modułowe Pythona (nowy test zostanie wykryty automatycznie):
 python -m unittest discover -s tests -p "test_*.py"
 
 # 2. Testy regresyjne platformy:
@@ -93,23 +93,24 @@ python tests/test_backend.py
 npm test
 ```
 
-Wszystkie testy muszą zakończyć się statusem **OK / PASS** (zielone).
+Wszystkie testy muszą zakończyć się wynikiem **OK / PASS**.
 
 ---
 
-## 5. Jak otworzyć Pull Request?
+## 5. Zgłaszanie Pull Requesta
 
 1. **Sformatuj commity zgodnie z [Conventional Commits](https://www.conventionalcommits.org/)**:
    ```
    feat(adapter): add timetable parser for PW MiNI
    test(adapter): add unit tests and fixtures for PW MiNI
    ```
-2. **Wypchnij zmiany na swoją gałąź na GitHubie**:
+2. **Wypchnij zmiany na swoją gałąź**:
    ```bash
    git checkout -b feat/add-pw-mini-adapter
    git push origin feat/add-pw-mini-adapter
    ```
 3. **Otwórz Pull Request do `Qu4X/uniplaner` (gałąź `main`)**:
-   - W opisie wklej link do oficjalnej strony z planami Twojej uczelni.
-   - Załącz zrzut ekranu z lokalnego podglądu `http://localhost:8080`.
-   - Automatyczny pipeline GitHub Actions uruchomi testy i po krótkim review wtyczka zostanie dołączona do oficjalnej platformy!
+   - w opisie podaj link do oficjalnej strony z planami Twojej uczelni,
+   - dołącz zrzut ekranu z lokalnego podglądu `http://localhost:8080`.
+   
+   Pipeline GitHub Actions uruchomi testy automatycznie. Po pomyślnej recenzji adapter zostanie włączony do platformy.

@@ -1,69 +1,70 @@
-# Wymagania dotyczące grafik i ikon (Asset Guidelines) 🎨
+# Wymagania dotyczące grafik i ikon
 
-Platforma **Uniplaner** dba o spójny, profesjonalny i responsywny wygląd każdej wdrożonej wtyczki wydziałowej.
+Platforma **Uniplaner** zapewnia spójny i czytelny wygląd każdego wdrożonego adaptera wydziałowego.
 
-Aby zapewnić pełną standaryzację wizualną oraz maksymalną prostotę dla twórców adapterów, każda wtyczka dostarcza **dokładnie jeden plik graficzny**: `icon.png`.
+Aby ujednolicić oprawę wizualną i uprościć pracę autorom adapterów, każdy adapter dostarcza **dokładnie jeden plik graficzny**: `icon.png`.
 
-Silnik budowania (`core/build.py`) automatycznie przetwarza ten plik i generuje z niego pełen zestaw ikon PWA dla systemów Android, iOS, Windows i macOS. Strona natomiast sama nakłada jednolite maskowanie (20% zaokrąglenia) we wszystkich miejscach interfejsu.
+Kompilator (`core/build.py`) przetwarza ten plik i generuje komplet ikon PWA dla systemów Android, iOS, Windows i macOS. Zaokrąglenie narożników (20%) jest nakładane przez aplikację jednolicie w całym interfejsie.
 
 ---
 
-## 1. Zestawienie wymaganego pliku graficznego
+## 1. Wymagany plik graficzny
 
-Plik graficzny umieszcza się bezpośrednio w folderze konfiguracyjnym tenanta:  
-📁 `tenants/<id_uczelni>/<id_wydzialu>/`
+Plik umieszcza się w katalogu konfiguracyjnym tenanta:  
+`tenants/<id_uczelni>/<id_wydzialu>/`
 
 | Plik | Status | Wymiary | Format | Zastosowanie |
 | :--- | :---: | :---: | :---: | :--- |
-| **`icon.png`** | **OBOWIĄZKOWY (jedyny)** | **512×512 px** | PNG | Główna ikona PWA, maskable icon, favicon, logo w pasku nawigacji, modal „O aplikacji” i portal |
+| **`icon.png`** | **Obowiązkowy (jedyny)** | **512×512 px** | PNG | Ikona PWA (także maskable), favicon, logo w pasku nawigacji, okno „O aplikacji” i portal |
 
 ---
 
-## 2. Standard pliku: `icon.png`
+## 2. Wymagania dla `icon.png`
 
-Plik `icon.png` jest kompletnym i jedynym elementem identyfikacji wizualnej wtyczki.
+Plik `icon.png` jest jedynym elementem identyfikacji wizualnej adaptera.
 
-### Wytyczne techniczne:
-- **Rozdzielczość**: Dokładnie `512×512` pikseli (kwadrat w proporcjach 1:1).
-- **Format**: PNG (24-bit / 32-bit).
-- **Kształt i tło (Brak rounded corners w pliku!)**:
-  - 🛑 **NIE zaokrąglaj rogów w pliku graficznym!** Plik dostarczany przez twórcę adaptera musi być **pełnym kwadratem** (512×512 px) bez przyciętych rogów.
-  - Tło powinno wypełniać cały obszar kwadratu (kolor marki/uczelni lub biały).
-  - **Maska jest nakładana przez platformę**: Strona Uniplaner w CSS automatycznie nakłada identyczną dla wszystkich maskę `border-radius: 20%` (squircle) z subtelnym obrysem kontrastowym w nagłówku, modalu i kafelkach.
+### Wymagania techniczne
+- **Rozdzielczość**: dokładnie `512×512` pikseli (kwadrat 1:1).
+- **Format**: PNG (24 lub 32 bity).
+- **Kształt i tło**:
+  - **Nie zaokrąglaj rogów w pliku.** Grafika musi być pełnym kwadratem 512×512 px z nieprzyciętymi narożnikami.
+  - Tło powinno wypełniać cały kwadrat (kolor uczelni lub biały).
+  - **Maskę nakłada platforma**: aplikacja stosuje w CSS jednakowe dla wszystkich zaokrąglenie `border-radius: 20%` z delikatnym, kontrastowym obrysem w nagłówku, oknach i kafelkach.
 
-### Bezpieczny margines (Safe Zone):
-Systemy operacyjne (zwłaszcza Android i iOS) oraz maska platformy przycinają rogi ikony:
+### Strefa bezpieczna (safe zone)
+Systemy operacyjne (zwłaszcza Android i iOS) oraz maska platformy przycinają narożniki ikony:
 
 > [!WARNING]
-> **Zasada Safe Zone (10–15% marginesu)**:  
-> Główny symbol graficzny (herb/logo) powinien zajmować centralny obszar ikony (ok. **70–80%** szerokości i wysokości). Pozostaw minimum **10–15% wolnej przestrzeni (marginesu)** od krawędzi obrazu, aby żaden kluczowy element herbu nie został ucięty po nałożeniu maski lub zainstalowaniu PWA na telefonie.
+> **Zasada strefy bezpiecznej (margines 10–15%)**:  
+> Główny symbol (herb lub logo) powinien zajmować środkowy obszar ikony (ok. **70–80%** szerokości i wysokości). Zachowaj co najmniej **10–15% wolnego marginesu** od krawędzi, aby żaden istotny element nie został ucięty po nałożeniu maski lub instalacji aplikacji na telefonie.
 
 ```
 +---------------------------------------+
-|            10-15% Margines            |
+|            Margines 10-15%            |
 |     +---------------------------+     |
 |     |                           |     |
 |     |     Główny symbol / herb  |     |
-|     |        (Safe Zone)        |     |
+|     |      (strefa bezpieczna)  |     |
 |     |                           |     |
 |     +---------------------------+     |
-|            10-15% Margines            |
+|            Margines 10-15%            |
 +---------------------------------------+
 ```
 
-### Co generuje kompilator z `icon.png`:
-Podczas uruchomienia polecenia `python -m core.build`, silnik platformy automatycznie przygotowuje:
-- `icon-192.png` (192×192 px)
-- `icon-512.png` (512×512 px)
-- `apple-touch-icon.png` (dla iOS)
-- `favicon.png` oraz wpisy w `manifest.json` z obsługą `any maskable`
-- Podmianę grafiki w nagłówku i oknie „O aplikacji” na `icon.png`
+### Co kompilator generuje z `icon.png`
+Polecenie `python -m core.build` automatycznie tworzy:
+- `icon-192.png` (192×192 px),
+- `icon-512.png` (512×512 px),
+- `apple-touch-icon.png` (dla iOS),
+- `favicon.png` oraz wpisy w `manifest.json` z obsługą `any maskable`,
+
+a także podmienia grafikę w nagłówku i oknie „O aplikacji”.
 
 ---
 
 ## 3. Motyw kolorystyczny: `theme.css`
 
-Aby interfejs PWA odzwierciedlał barwy Twojej uczelni, w pliku `tenants/<uczelnia>/<wydzial>/theme.css` zdefiniuj zmienne CSS:
+Aby interfejs odzwierciedlał barwy uczelni, zdefiniuj zmienne CSS w pliku `tenants/<uczelnia>/<wydzial>/theme.css`:
 
 ```css
 :root {
@@ -81,7 +82,7 @@ Aby interfejs PWA odzwierciedlał barwy Twojej uczelni, w pliku `tenants/<uczeln
   --text-secondary: #718096;
 }
 
-/* Wariant trybu ciemnego (Dark Mode) */
+/* Wariant trybu ciemnego */
 [data-theme="dark"] {
   --accent: #3182ce;
   --accent-hover: #4299e1;
@@ -96,4 +97,4 @@ Aby interfejs PWA odzwierciedlał barwy Twojej uczelni, w pliku `tenants/<uczeln
 
 > [!TIP]
 > **Dostępność i kontrast (WCAG 2.1 AA)**:  
-> Upewnij się, że wybrany kolor `--accent` zapewnia współczynnik kontrastu co najmniej **4.5:1** w stosunku do tła, aby tekst na przyciskach i nagłówkach był czytelny dla wszystkich studentów.
+> Dobierz kolor `--accent` tak, aby współczynnik kontrastu względem tła wynosił co najmniej **4,5:1**. Dzięki temu tekst na przyciskach i w nagłówkach pozostanie czytelny dla wszystkich studentów.
