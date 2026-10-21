@@ -12,9 +12,9 @@ Platforma powstała w oparciu o architekturę **multi-tenant**, która rozdziela
    *Kompletny poradnik krok po kroku jak dodać swój wydział lub uczelnię do Uniplanera.*
 2. 🎨 **[Wymagania dotyczące grafik i ikon](Wymagania-dotyczace-grafik)**  
    *Wymiary, formaty, safe-zone i wytyczne dla ikony 512×512 px oraz wektorowego logotypu SVG.*
-3. 📋 **[Specyfikacja Kontraktu v1](Specyfikacja-Kontraktu-v1)**  
+3. 📋 **[Specyfikacja danych harmonogramu (v1)](Specyfikacja-danych-harmonogramu-(v1))**  
    *Szczegółowy opis formatu danych `RawLesson`, standardowych form zajęć i generowania wystąpień.*
-4. ⚙️ **[Konfiguracja tenanta (config.json)](Konfiguracja-tenanta-(config.json))**  
+4. ⚙️ **[Konfiguracja tenanta (config.json)](Pliki-i-konfiguracja-tenanta)**  
    *Ustawienia wtyczki, włączanie modułów i konfiguracja routingu zgłoszeń błędów do autora wtyczki.*
 5. 📅 **[Kalendarz akademicki](Kalendarz-akademicki)**  
    *Zarządzenia rektorskie, zamiany dni tygodnia (`daySwaps`), przerwy dydaktyczne i sesje.*

@@ -44,23 +44,16 @@ Każda wtyczka wydziałowa musi dostarczyć zestaw plików w katalogu `tenants/<
 
 Silnik platformy automatycznie przetwarza i dystrybuuje pliki graficzne wtyczki do wynikowej aplikacji PWA.
 
-### A. Główna ikona rastrowa: `icon.png`
+### A. Główna ikona rastrowa: `icon.png` (jedyny plik graficzny)
 * **Rozmiar**: Dokładnie **512×512 px** (kwadrat 1:1).
-* **Format**: PNG z kanałem alfa (przezroczystością).
+* **Format**: PNG.
 * **Stylistyka**:
-  * Wyśrodkowany symbol lub herb uczelni/wydziału.
-  * **Brak sztucznego ciemnego tła / ramki** — ikona powinna mieć przezroczyste tło (chyba że samo logo ma wpisany kształt koła/tarczy).
-  * Zachowaj bezpieczny margines (padding) ok. 10-15% od krawędzi, aby ikona nie została ucięta przy zaokrąglaniu w systemach Android/iOS.
-* **Automatyczne działanie buildu**: Z pliku `icon.png` build generuje wszystkie warianty PWA: `icon-192.png`, `icon-512.png`, `favicon.png` oraz `apple-touch-icon.png`.
+  * **Pełny kwadrat BEZ zaokrąglonych rogów** (tło uczelni lub białe wypełniające całe 512×512 px).
+  * Platforma Uniplaner sama nakłada jednolitą maskę zaokrąglenia 20% (squircle) w nagłówku, modalu oraz portalu.
+  * Zachowaj bezpieczny margines (Safe Zone) ok. 10-15% od krawędzi, aby symbol nie został ucięty przy zaokrąglaniu w systemach Android/iOS.
+* **Automatyczne działanie buildu**: Z pliku `icon.png` build generuje wszystkie warianty PWA (`icon-192.png`, `icon-512.png`, `favicon.png`, `apple-touch-icon.png`), rejestruje je w `manifest.json` oraz podmienia logo w nagłówku i modalu.
 
-### B. Logo wektorowe: `logo.svg` (zalecane)
-* **Format**: Czysty wektor SVG z atrybutem `viewBox="0 0 W H"`.
-* **Przezroczystość**: Tło przezroczyste.
-* **Wykorzystanie w interfejsie**:
-  * **Nagłówek aplikacji (`.brand-logo`)**: skalowane do `32×32 px`.
-  * **Karta w oknie „O aplikacji” (`.about-logo-badge`)**: skalowane do `64×64 px` z `object-fit: contain`.
-
-### C. Zapasowe emoji: `icon` w `config.json`
+### B. Zapasowe emoji: `icon` w `config.json`
 * W polu `"icon"` w `config.json` należy podać pojedyncze emoji (np. `"🐾"`, `"⚓"`, `"🏛️"`, `"🔬"`).
 * Służy wyłącznie jako bezpieczny fallback, jeśli w środowisku developerskim nie ma plików graficznych.
 

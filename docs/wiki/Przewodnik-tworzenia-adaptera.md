@@ -79,11 +79,12 @@ class MyFacultyScheduleSource:
 ```
 
 ### Format obiektu `RawLesson`:
-Każda lekcja musi być zmapowana do modelu `RawLesson` zgodnego z **[Kontraktem v1](Specyfikacja-Kontraktu-v1)**:
+Każda lekcja musi być zmapowana do modelu `RawLesson` zgodnego z **[Specyfikacją danych harmonogramu (v1)](Specyfikacja-danych-harmonogramu-(v1))**:
 
 ```python
 RawLesson(
     subject="Matematyka Dyskretna",
+    raw_subject="MAT-DYS",  # Oryginalny skrót z dziekanatu
     start_time="08:15",
     end_time="09:45",
     duration_minutes=90,
@@ -91,7 +92,12 @@ RawLesson(
     room="Aula 101",
     form="lecture",         # lecture | exercise | lab | simulator | project | seminar | clinic | elective | other
     day_of_week="MON",      # MON | TUE | WED | THU | FRI | SAT | SUN
-    hideable=False          # True dla zajęć fakultatywnych/wybieralnych
+    hideable=False,         # True dla zajęć fakultatywnych/wybieralnych
+
+    # Opcjonalne reguły cykli (zajęcia co 2 tygodnie lub połówki semestru):
+    interval_weeks=1,       # 1 = co tydzień, 2 = co dwa tygodnie
+    start_week=1,           # 1 = tydzień nieparzysty (A), 2 = tydzień parzysty (B)
+    half_semester=None      # 1 = I połowa semestru, 2 = II połowa semestru, None = cały semestr
 )
 ```
 
@@ -101,7 +107,7 @@ RawLesson(
 
 W katalogu `tenants/<id_uczelni>/<id_wydzialu>/` przygotuj następujące pliki:
 
-1. **`config.json`** — Nazwa uczelni, wydziału, włączone moduły i routing zgłaszania błędów. Zobacz: **[Konfiguracja tenanta](Konfiguracja-tenanta-(config.json))**.
+1. **`config.json`** — Nazwa uczelni, wydziału, włączone moduły i routing zgłaszania błędów. Zobacz: **[Konfiguracja tenanta](Pliki-i-konfiguracja-tenanta)**.
 2. **`theme.css`** — Kolory uczelni w formacie CSS variables (`--accent`, `--bg-primary` itd.).
 3. **`academic_calendar.json`** — Początek i koniec semestru, święta, dni wolne i zamiany dni. Zobacz: **[Kalendarz akademicki](Kalendarz-akademicki)**.
 4. **`icon.png`** (512×512 px) oraz opcjonalnie **`logo.svg`** — Zobacz: **[Wymagania dotyczące grafik](Wymagania-dotyczace-grafik)**.

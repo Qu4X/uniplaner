@@ -2,9 +2,9 @@
 
 - 🏠 **[Strona Główna](Home)**
 - 🚀 **[Przewodnik tworzenia adaptera](Przewodnik-tworzenia-adaptera)**
+- 📋 **[Specyfikacja danych harmonogramu (v1)](Specyfikacja-danych-harmonogramu-(v1))**
+- 📁 **[Pliki i konfiguracja tenanta](Pliki-i-konfiguracja-tenanta)**
 - 🎨 **[Wymagania dotyczące grafik](Wymagania-dotyczace-grafik)**
-- 📋 **[Specyfikacja Kontraktu v1](Specyfikacja-Kontraktu-v1)**
-- ⚙️ **[Konfiguracja tenanta](Konfiguracja-tenanta-(config.json))**
 - 📅 **[Kalendarz akademicki](Kalendarz-akademicki)**
 - 🧪 **[Jak testować i wdrażać](Jak-testowac-i-wdrazac)**
 
