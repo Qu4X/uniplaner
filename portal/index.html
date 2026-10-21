@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Uniplaner — Wybierz swoją uczelnię i wydział</title>
   <meta name="description" content="Nowoczesna, modularna i otwarta platforma planu zajęć dla studentów polskich uczelni wyższych.">
-  <meta name="theme-color" content="#0d233a">
+  <meta name="theme-color" content="#060b14">
   <meta name="color-scheme" content="dark light">
   <link rel="icon" type="image/svg+xml" href="assets/uniplaner.svg">
   <link rel="alternate icon" type="image/png" href="icon-192.png">
@@ -33,7 +33,7 @@
 <body>
   <div class="portal-container">
     <header class="portal-header">
-      <div class="logo-wrapper">
+      <div class="logo-card">
         <img
           src="assets/uniplaner.svg"
           alt="Uniplaner Logo"
@@ -43,8 +43,10 @@
           fetchpriority="high"
         >
       </div>
-      <h1 class="portal-title">Uniplaner</h1>
-      <p class="portal-subtitle">Nowoczesna, szybka platforma planu zajęć dla Twojej uczelni</p>
+      <div class="header-text">
+        <h1 class="portal-title">Uniplaner</h1>
+        <p class="portal-subtitle">Nowoczesny i szybki plan dla Twojej uczelni.</p>
+      </div>
     </header>
 
     <main id="portal-app" class="portal-main">
@@ -53,7 +55,7 @@
         <div class="last-visited-content">
           <div class="last-visited-label">
             <span class="pulse-dot" aria-hidden="true"></span>
-            Ostatnio przeglądany plan:
+            <span>Ostatnio przeglądany plan:</span>
           </div>
           <div class="last-visited-title" id="last-visited-text">Ładowanie...</div>
         </div>
@@ -125,7 +127,7 @@
           </div>
 
           <!-- Krok 2: Wybór Wydziału (Adaptera) -->
-          <div class="form-step" id="step-faculty" hidden>
+          <div class="form-step" id="step-faculty">
             <label id="faculty-label" class="step-label">
               <span class="step-badge">2</span>
               <span>Wybierz wydział i adapter planu</span>
@@ -140,12 +142,12 @@
           </div>
 
           <!-- Krok 3: Przycisk przejścia do wybranego adaptera -->
-          <div class="form-step form-step-action" id="step-action" hidden>
+          <div class="form-step form-step-action" id="step-action">
             <a
               id="launch-plan-btn"
-              class="btn-launch"
-              href="#"
+              class="btn-launch is-disabled"
               role="button"
+              aria-disabled="true"
             >
               <span>Przejdź do planu zajęć</span>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -159,7 +161,11 @@
     </main>
 
     <footer class="portal-footer">
-      <p>
+      <p class="footer-callout">
+        Nie widzisz swojej uczelni / wydziału? &mdash; napisz do nich własną
+        <a href="https://github.com/Qu4X/uniplaner" target="_blank" rel="noopener noreferrer" class="footer-plugin-link">wtyczkę!</a>
+      </p>
+      <p class="footer-meta">
         <strong>Uniplaner</strong> &mdash; Otwarty projekt studencki na licencji MIT.
       </p>
       <div class="footer-links">

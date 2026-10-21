@@ -130,6 +130,7 @@ class PortalApp {
 
   async init() {
     this.renderLastVisited();
+    this.renderFacultyPlaceholder();
     this.bindEvents();
 
     try {
@@ -161,6 +162,33 @@ class PortalApp {
       PortalDomain.saveLastVisited(last);
     });
     this.lastVisitedCard.hidden = false;
+  }
+
+  renderFacultyPlaceholder() {
+    if (!this.facultyList) return;
+    this.facultyList.innerHTML = `
+      <div class="faculty-empty-placeholder">
+        <span class="faculty-empty-icon" aria-hidden="true">🏛️</span>
+        <span>Wybierz najpierw uczelnię powyżej, aby wyświetlić dostępne wydziały.</span>
+      </div>
+    `;
+    this.disableLaunchBtn();
+  }
+
+  enableLaunchBtn(url, title) {
+    if (!this.launchBtn) return;
+    this.launchBtn.classList.remove("is-disabled");
+    this.launchBtn.removeAttribute("aria-disabled");
+    this.launchBtn.href = url;
+    if (title) this.launchBtn.setAttribute("title", `Otwórz ${title}`);
+  }
+
+  disableLaunchBtn() {
+    if (!this.launchBtn) return;
+    this.launchBtn.classList.add("is-disabled");
+    this.launchBtn.setAttribute("aria-disabled", "true");
+    this.launchBtn.removeAttribute("href");
+    this.launchBtn.removeAttribute("title");
   }
 
   bindEvents() {
@@ -200,7 +228,7 @@ class PortalApp {
     // Kliknięcie w przycisk przejścia
     if (this.launchBtn) {
       this.launchBtn.addEventListener("click", (e) => {
-        if (!this.selectedTenant) {
+        if (!this.selectedTenant || this.launchBtn.classList.contains("is-disabled")) {
           e.preventDefault();
           return;
         }
@@ -328,9 +356,9 @@ class PortalApp {
   renderFaculties(faculties) {
     this.facultyList.innerHTML = "";
     this.selectedTenant = null;
-    this.actionStep.hidden = true;
+    this.disableLaunchBtn();
 
-    faculties.forEach((tenant, idx) => {
+    faculties.forEach((tenant) => {
       const card = document.createElement("div");
       card.className = "faculty-card";
       card.setAttribute("role", "radio");
@@ -418,8 +446,6 @@ class PortalApp {
       this.facultyList.appendChild(card);
     });
 
-    this.facultyStep.hidden = false;
-
     // Jeśli jest tylko jeden wydział na danej uczelni, zaznacz go automatycznie dla wygody
     if (faculties.length === 1) {
       const firstCard = this.facultyList.firstElementChild;
@@ -437,13 +463,7 @@ class PortalApp {
     cardEl.setAttribute("aria-checked", "true");
 
     // Zaktualizuj przycisk przejścia
-    if (this.launchBtn) {
-      this.launchBtn.href = tenant.url || `./${tenant.path}/`;
-      this.launchBtn.setAttribute("title", `Otwórz ${tenant.name || tenant.faculty_full}`);
-    }
-
-    this.actionStep.hidden = false;
-    this.actionStep.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    this.enableLaunchBtn(tenant.url || `./${tenant.path}/`, tenant.name || tenant.faculty_full);
   }
 }
 
