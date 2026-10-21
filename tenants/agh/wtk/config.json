@@ -3,7 +3,7 @@
   "name": "Akademia Górniczo-Hutnicza — Wydział Technologii Kosmicznych",
   "short_name": "Plan WTK AGH",
   "icon": "🚀",
-  "theme_color": "#a71930",
+  "theme_color": "#00693c",
   "institution": "AGH",
   "institution_full": "Akademia Górniczo-Hutnicza w Krakowie (AGH)",
   "faculty": "WTK",
@@ -27,8 +27,9 @@
     "exercise":  { "label": "Ćwiczenia",    "abbr": "Ćw",   "badge_color": "#059669" },
     "lab":       { "label": "Laboratorium", "abbr": "Lab",  "badge_color": "#7c3aed" },
     "project":   { "label": "Projekt",      "abbr": "Pr",   "badge_color": "#8b5cf6" },
-    "seminar":   { "label": "Seminarium",   "abbr": "Sem",  "badge_color": "#6366f1" },
-    "other":     { "label": "Inne",         "abbr": "Inne", "badge_color": "#d97706" }
+    "seminar":   { "label": "Seminarium",   "abbr": "Sem",  "badge_color": "#0891b2" },
+    "elective":  { "label": "Lektorat",     "abbr": "Lekt", "badge_color": "#0284c7" },
+    "other":     { "label": "Teren / Inne", "abbr": "Ter",  "badge_color": "#d97706" }
   },
   "features": {
     "cross_reference": true,
