@@ -98,31 +98,21 @@ body {
   width: 76px;
   height: 76px;
   flex-shrink: 0;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 20px;
-  background: linear-gradient(135deg, rgba(16, 33, 62, 0.9) 0%, rgba(8, 17, 34, 0.95) 100%);
+  display: block;
+  border-radius: 20%;
+  overflow: hidden;
   border: 1.5px solid rgba(0, 210, 255, 0.25);
   box-shadow: 
     0 10px 25px -4px rgba(0, 0, 0, 0.5), 
     0 0 20px -2px rgba(0, 210, 255, 0.2);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: transform var(--transition);
-}
-
-.logo-card:hover {
-  transform: translateY(-2px);
+  box-sizing: border-box;
 }
 
 .portal-logo {
-  width: 48px;
-  height: 48px;
-  aspect-ratio: 1;
+  width: 100%;
+  height: 100%;
   display: block;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 8px rgba(0, 210, 255, 0.35));
+  object-fit: cover;
 }
 
 .header-text {
@@ -664,11 +654,11 @@ body {
   .logo-card {
     width: 64px;
     height: 64px;
-    border-radius: 16px;
+    border-radius: 20%;
   }
   .portal-logo {
-    width: 40px;
-    height: 40px;
+    width: 100%;
+    height: 100%;
   }
   .last-visited-card {
     flex-direction: column;
