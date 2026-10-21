@@ -262,13 +262,11 @@
     </div>
 
     <div class="sidebar-footer">
-      <span class="subtext" id="last-updated">Ładowanie danych...</span>
-      <a href="../../" class="browser-only-nav back-to-portal-link" title="Wróć do wyboru uczelni i wydziału">
-        <svg class="icon" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"></polyline>
-        </svg>
-        <span>Wybór uczelni</span>
+      <a href="../../" class="browser-only-nav btn-sidebar-change-tenant back-to-portal-link" title="Wróć do wyboru uczelni i wydziału">
+        <span class="tenant-btn-icon" aria-hidden="true">🏛️</span>
+        <span>Zmień uczelnię / wydział</span>
       </a>
+      <span class="subtext" id="last-updated">Ładowanie danych...</span>
     </div>
   </aside>
 
@@ -733,7 +731,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <div class="modal-header-titles">
-          <span class="cross-modal-badge">Informacja</span>
+          <span class="about-modal-badge">INFORMACJA</span>
           <h3 id="about-modal-title">O aplikacji Uniplaner</h3>
         </div>
         <button id="close-about-modal" class="btn-close" aria-label="Zamknij">
@@ -743,9 +741,10 @@
         </button>
       </div>
       <div class="modal-body about-modal-body">
+        <!-- Wizytówka platformy Uniplaner -->
         <div class="about-card about-intro">
           <div class="about-logo-badge" id="about-logo-badge">
-            <img src="planwn.svg" width="64" height="64" alt="" aria-hidden="true" style="display: block;">
+            <img src="uniplaner.svg" width="60" height="60" alt="Uniplaner Logo" aria-hidden="true" style="display: block;">
           </div>
           <div class="about-intro-details">
             <div class="about-platform-header">
@@ -761,25 +760,34 @@
         <!-- Aktywna wtyczka -->
         <div class="about-plugin-card">
           <div class="about-plugin-header">
-            <span class="about-plugin-tag">Aktywna wtyczka</span>
-            <span class="about-plugin-ver-badge" id="about-plugin-version">v3.11.0</span>
+            <span class="about-plugin-tag">AKTYWNA WTYCZKA</span>
+            <span class="about-plugin-ver-badge" id="about-plugin-version">v1.0.0</span>
           </div>
-          <h5 id="about-plugin-name" class="about-plugin-title">Uniwersytet Morski w Gdyni — Wydział Nawigacyjny</h5>
-          <div class="about-plugin-meta-grid">
-            <div class="about-plugin-meta-item">
-              <span class="meta-label">Źródło danych:</span>
-              <span class="meta-value"><a id="about-plugin-source" href="https://arktur.umg.edu.pl/planyzaj/strpza5.php" target="_blank" rel="noopener">arktur.umg.edu.pl</a></span>
+          <div class="about-plugin-body">
+            <div class="about-plugin-logo-badge" id="about-plugin-logo-badge">
+              <img id="about-plugin-logo" src="planwn.svg" width="56" height="56" alt="" aria-hidden="true">
             </div>
-            <div class="about-plugin-meta-item">
-              <span class="meta-label">Utrzymanie:</span>
-              <span class="meta-value" id="about-plugin-author">Społeczność studentów WN</span>
+            <div class="about-plugin-content">
+              <h5 id="about-plugin-name" class="about-plugin-title">Uniwersytet Morski w Gdyni — Wydział Nawigacyjny</h5>
+              <div class="about-plugin-meta-grid">
+                <div class="about-plugin-meta-item">
+                  <span class="meta-label">Źródło danych:</span>
+                  <span class="meta-value"><a id="about-plugin-source" href="https://arktur.umg.edu.pl/planyzaj/strpza5.php" target="_blank" rel="noopener">arktur.umg.edu.pl</a></span>
+                </div>
+                <div class="about-plugin-meta-item">
+                  <span class="meta-label">Utrzymanie:</span>
+                  <span class="meta-value" id="about-plugin-author">Społeczność studentów WN</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="browser-only-nav about-change-tenant-wrapper" style="margin: 0.75rem 0 0.5rem; text-align: center;">
-          <a href="../../" class="btn-secondary" style="display: inline-flex; width: 100%; justify-content: center; gap: 8px; text-decoration: none; padding: 10px 16px; font-size: 0.9rem;">
-            <span>🏛️ Zmień uczelnię / wydział</span>
+        <!-- Przycisk zmiany uczelni / wydziału -->
+        <div class="browser-only-nav about-change-tenant-wrapper">
+          <a href="../../" class="btn-change-tenant" title="Wróć do wyboru uczelni i wydziału">
+            <span class="tenant-btn-icon" aria-hidden="true">🏛️</span>
+            <span>Zmień uczelnię / wydział</span>
           </a>
         </div>
 
@@ -828,7 +836,7 @@
         </div>
 
         <div class="about-disclaimer" id="about-disclaimer">
-          <h6>Zastrzeżenie prawne (Nota prawna)</h6>
+          <h6>ZASTRZEŻENIE PRAWNE (NOTA PRAWNA)</h6>
           <p>Niniejsza aplikacja jest <strong>nieoficjalnym projektem studenckim / open-source</strong> i nie jest w
             żaden sposób powiązana, autoryzowana, wspierana ani prowadzona przez <strong id="about-disclaimer-inst">Uniwersytet Morski w Gdyni
               (UMG)</strong>.</p>

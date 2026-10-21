@@ -101,9 +101,9 @@
         if (brandLogo) {
           brandLogo.setAttribute("src", svgIconUri);
         }
-        const aboutLogo = document.querySelector("#about-logo-badge img");
-        if (aboutLogo) {
-          aboutLogo.setAttribute("src", svgIconUri);
+        const pluginLogo = document.getElementById("about-plugin-logo");
+        if (pluginLogo) {
+          pluginLogo.setAttribute("src", svgIconUri);
         }
       }
     }
