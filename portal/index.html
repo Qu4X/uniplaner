@@ -1,15 +1,26 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="pl" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Uniplaner — Wybierz swoją uczelnię i wydział</title>
-  <meta name="description" content="Nowoczesna, modularna i otwarta platforma planu zajęć dla studentów polskich uczelni wyższych.">
-  <meta name="theme-color" content="#060b14">
+  <meta name="description" content="Plan zajęć z Twojej uczelni. Bez logowania, bez instalacji i bez reklam.">
+  <meta name="theme-color" content="#17181b">
   <meta name="color-scheme" content="dark light">
   <link rel="icon" type="image/svg+xml" href="assets/uniplaner.svg">
   <link rel="alternate icon" type="image/png" href="icon-192.png">
-  <link rel="stylesheet" href="portal.css">
+  <link rel="stylesheet" href="portal.css?v=3.11.0">
+  <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('uniplaner_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', saved);
+        document.documentElement.style.colorScheme = saved;
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', saved === 'dark' ? '#17181b' : '#fbf9f4');
+      } catch(e) {}
+    })();
+  </script>
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -38,44 +49,69 @@
           src="assets/uniplaner.svg"
           alt="Uniplaner Logo"
           class="portal-logo"
-          width="512"
-          height="512"
+          width="44"
+          height="44"
           fetchpriority="high"
         >
       </div>
-      <div class="header-text">
+      <div class="header-title-wrap">
         <h1 class="portal-title">Uniplaner</h1>
-        <p class="portal-subtitle">Nowoczesny i szybki plan dla Twojej uczelni.</p>
       </div>
+      <div class="header-actions">
+        <button
+          type="button"
+          id="theme-toggle-btn"
+          class="theme-toggle-btn"
+          aria-label="Przełącz motyw"
+          aria-pressed="false"
+          title="Przełącz motyw"
+        >
+          <svg class="theme-icon icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="theme-icon icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+      <p class="portal-tagline">Plan zajęć z Twojej uczelni. Bez logowania, bez instalacji i bez reklam.</p>
     </header>
 
     <main id="portal-app" class="portal-main">
-      <!-- Sekcja ostatnio odwiedzanego wydziału (renderowana przez JS) -->
+      <!-- Ostatnio przeglądany plan (najważniejszy element) -->
       <section id="last-visited-card" class="last-visited-card" aria-label="Ostatnio przeglądany plan" hidden>
         <div class="last-visited-content">
-          <div class="last-visited-label">
-            <span class="pulse-dot" aria-hidden="true"></span>
-            <span>Ostatnio przeglądany plan:</span>
-          </div>
+          <span class="last-visited-label">Ostatnio przeglądany plan</span>
           <div class="last-visited-title" id="last-visited-text">Ładowanie...</div>
         </div>
         <div class="last-visited-actions">
           <a id="last-visited-link" href="#" class="btn-fast-forward" title="Przejdź bezpośrednio do ostatnio wybranego planu">
-            Otwórz plan &rarr;
+            <span>Otwórz plan</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
           </a>
         </div>
       </section>
 
       <!-- Karta wyboru uczelni i wydziału -->
       <section class="portal-card" aria-labelledby="form-heading">
-        <h2 id="form-heading" class="sr-only">Formularz wyboru uczelni i wydziału</h2>
+        <h2 id="form-heading" class="sr-only">Wybór uczelni i wydziału</h2>
 
         <div class="form-flow">
-          <!-- Krok 1: Wyszukiwalny Dropdown (Combobox) Uczelni -->
+          <!-- Wyszukiwarka Uczelni -->
           <div class="form-step" id="step-university">
             <label for="uni-search-input" id="uni-label" class="step-label">
-              <span class="step-badge">1</span>
-              <span>Wybierz lub wyszukaj uczelnię</span>
+              Uczelnia
             </label>
 
             <div class="combobox-container">
@@ -95,7 +131,7 @@
                   aria-expanded="false"
                   aria-controls="uni-listbox"
                   aria-labelledby="uni-label"
-                  placeholder="Wpisz nazwę uczelni lub skrót (np. UMG, SGGW)..."
+                  placeholder="Wpisz nazwę lub skrót uczelni (np. UMG, SGGW)..."
                   autocomplete="off"
                   spellcheck="false"
                 >
@@ -106,7 +142,7 @@
                   aria-label="Pokaż listę wszystkich uczelni"
                   aria-expanded="false"
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <polyline points="6 9 12 15 18 9"></polyline>
                   </svg>
                 </button>
@@ -126,11 +162,10 @@
             </div>
           </div>
 
-          <!-- Krok 2: Wybór Wydziału (Adaptera) -->
+          <!-- Wybór Wydziału (Adaptera) -->
           <div class="form-step" id="step-faculty">
             <label id="faculty-label" class="step-label">
-              <span class="step-badge">2</span>
-              <span>Wybierz wydział i adapter planu</span>
+              Wydział i adapter planu
             </label>
 
             <div
@@ -141,8 +176,11 @@
             ></div>
           </div>
 
-          <!-- Krok 3: Przycisk przejścia do wybranego adaptera -->
+          <!-- Przycisk przejścia do wybranego adaptera -->
           <div class="form-step form-step-action" id="step-action">
+            <p id="action-helper" class="action-helper" aria-live="polite">
+              Wybierz wydział powyżej, aby otworzyć plan zajęć.
+            </p>
             <a
               id="launch-plan-btn"
               class="btn-launch is-disabled"
@@ -150,7 +188,7 @@
               aria-disabled="true"
             >
               <span>Przejdź do planu zajęć</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <line x1="5" y1="12" x2="19" y2="12"></line>
                 <polyline points="12 5 19 12 12 19"></polyline>
               </svg>
@@ -158,27 +196,34 @@
           </div>
         </div>
       </section>
+
+      <!-- Sekcja społecznościowa / Open source -->
+      <section class="portal-community-card" aria-label="Wtyczki i społeczność">
+        <div class="community-content">
+          <div class="community-badge">Licencja MIT • Społeczność akademicka</div>
+          <h2 class="community-title">Nie widzisz swojej uczelni?</h2>
+          <p class="community-desc">
+            Uniplaner to niezależna, otwarta platforma stworzona przez studentów. Każdy wydział działa w oparciu o autonomiczny adapter w Pythonie &mdash; możesz dopisać obsługę swojej uczelni lub pomóc w rozwoju projektu.
+          </p>
+        </div>
+        <div class="community-actions">
+          <a href="https://github.com/Qu4X/uniplaner" target="_blank" rel="noopener noreferrer" class="btn-community">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+            <span>Napisz wtyczkę na GitHubie</span>
+          </a>
+        </div>
+      </section>
     </main>
 
     <footer class="portal-footer">
-      <p class="footer-callout">
-        Nie widzisz swojej uczelni / wydziału? &mdash; napisz do nich własną
-        <a href="https://github.com/Qu4X/uniplaner" target="_blank" rel="noopener noreferrer" class="footer-plugin-link">wtyczkę!</a>
-      </p>
       <p class="footer-meta">
-        <strong>Uniplaner</strong> &mdash; Otwarty projekt studencki na licencji MIT.
+        <strong>Uniplaner</strong> &mdash; Otwarty projekt studencki.
       </p>
-      <div class="footer-links">
-        <a href="https://github.com/Qu4X/uniplaner" target="_blank" rel="noopener noreferrer">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-          </svg>
-          <span>GitHub</span>
-        </a>
-      </div>
     </footer>
   </div>
 
-  <script src="portal.js" defer></script>
+  <script src="portal.js?v=3.11.0" defer></script>
 </body>
 </html>

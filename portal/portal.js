@@ -126,9 +126,12 @@ class PortalApp {
     this.lastVisitedCard = document.getElementById("last-visited-card");
     this.lastVisitedText = document.getElementById("last-visited-text");
     this.lastVisitedLink = document.getElementById("last-visited-link");
+    this.themeToggleBtn = document.getElementById("theme-toggle-btn");
+    this.actionHelper = document.getElementById("action-helper");
   }
 
   async init() {
+    this.initThemeToggle();
     this.renderLastVisited();
     this.renderFacultyPlaceholder();
     this.bindEvents();
@@ -164,12 +167,45 @@ class PortalApp {
     this.lastVisitedCard.hidden = false;
   }
 
+  initThemeToggle() {
+    if (!this.themeToggleBtn) return;
+
+    const applyTheme = (theme) => {
+      document.documentElement.setAttribute("data-theme", theme);
+      document.documentElement.style.colorScheme = theme;
+      const isDark = theme === "dark";
+      this.themeToggleBtn.setAttribute("aria-pressed", isDark ? "true" : "false");
+      this.themeToggleBtn.setAttribute("title", isDark ? "Przełącz na jasny motyw" : "Przełącz na ciemny motyw");
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute("content", isDark ? "#17181b" : "#fbf9f4");
+      try {
+        localStorage.setItem("uniplaner_theme", theme);
+      } catch (e) {}
+    };
+
+    let currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
+    applyTheme(currentTheme);
+
+    this.themeToggleBtn.addEventListener("click", () => {
+      currentTheme = currentTheme === "dark" ? "light" : "dark";
+      applyTheme(currentTheme);
+    });
+  }
+
   renderFacultyPlaceholder() {
     if (!this.facultyList) return;
     this.facultyList.innerHTML = `
       <div class="faculty-empty-placeholder">
-        <span class="faculty-empty-icon" aria-hidden="true">🏛️</span>
-        <span>Wybierz najpierw uczelnię powyżej, aby wyświetlić dostępne wydziały.</span>
+        <div class="placeholder-icon-wrap" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+        </div>
+        <p class="placeholder-title">Wybierz uczelnię powyżej</p>
+        <p class="placeholder-hint">Wpisz skrót uczelni (np. <strong>UMG</strong>, <strong>SGGW</strong>) lub rozwiń listę, aby zobaczyć dostępne wydziały.</p>
       </div>
     `;
     this.disableLaunchBtn();
@@ -181,6 +217,10 @@ class PortalApp {
     this.launchBtn.removeAttribute("aria-disabled");
     this.launchBtn.href = url;
     if (title) this.launchBtn.setAttribute("title", `Otwórz ${title}`);
+    if (this.actionHelper) {
+      this.actionHelper.textContent = "Wydział wybrany. Kliknij poniżej, aby otworzyć plan zajęć.";
+      this.actionHelper.classList.add("is-ready");
+    }
   }
 
   disableLaunchBtn() {
@@ -189,6 +229,10 @@ class PortalApp {
     this.launchBtn.setAttribute("aria-disabled", "true");
     this.launchBtn.removeAttribute("href");
     this.launchBtn.removeAttribute("title");
+    if (this.actionHelper) {
+      this.actionHelper.textContent = "Wybierz wydział powyżej, aby otworzyć plan zajęć.";
+      this.actionHelper.classList.remove("is-ready");
+    }
   }
 
   bindEvents() {
