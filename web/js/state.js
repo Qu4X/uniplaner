@@ -90,6 +90,13 @@
     getStorageItem("study_mode", "umg_study_mode", DEFAULT_TENANT_ID) || "stacjonarne";
 
   const savedTheme = getStorageItem("theme", "umg_theme", DEFAULT_TENANT_ID);
+  const themeMode = (savedTheme === "light" || savedTheme === "dark") ? savedTheme : "system";
+  const systemPrefersDark =
+    typeof window !== "undefined" &&
+    window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const effectiveTheme =
+    themeMode === "system" ? (systemPrefersDark ? "dark" : "light") : themeMode;
 
   const state = {
     tenantId: DEFAULT_TENANT_ID,
@@ -110,13 +117,8 @@
     dismissedHiddenLessonsBanner: false,
     proposals: [],
     userVotes: new Set(),
-    theme:
-      savedTheme ||
-      (typeof window !== "undefined" &&
-      window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light")
+    themeMode,
+    theme: effectiveTheme
   };
 
   return {

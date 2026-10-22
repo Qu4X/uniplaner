@@ -16,6 +16,32 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#0d233a">
+  <script>
+    (function () {
+      try {
+        var tid = "umg_wn";
+        try {
+          var match = window.location.pathname.match(/\/tenants\/([a-zA-Z0-9_-]+)/);
+          if (match && match[1]) tid = match[1];
+        } catch (_) {}
+        var saved = null;
+        try {
+          saved = localStorage.getItem(tid + "_theme") || (tid === "umg_wn" ? localStorage.getItem("umg_theme") : null);
+        } catch (_) {}
+        var theme = (saved === "light" || saved === "dark") ? saved : null;
+        if (!theme) {
+          var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+          theme = prefersDark ? "dark" : "light";
+        }
+        document.documentElement.setAttribute("data-theme", theme);
+        document.documentElement.style.colorScheme = theme;
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) {
+          meta.setAttribute("content", theme === "dark" ? "#0b1828" : "#0d233a");
+        }
+      } catch (_) {}
+    })();
+  </script>
   <meta name="description" content="Szybki, nowoczesny i czytelny plan zajęć dla studentów Wydziału Nawigacyjnego.">
   <script>
     window.deferredPrompt = null;
@@ -41,6 +67,10 @@
     <symbol id="icon-search" viewBox="0 -960 960 960">
       <path
         d="M380-320q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l224 224q11 11 11 28t-11 28q-11 11-28 11t-28-11L532-372q-30 24-69 38t-83 14Zm0-80q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
+    </symbol>
+    <symbol id="icon-desktop_windows" viewBox="0 -960 960 960">
+      <path
+        d="M320-120v-80H160q-33 0-56.5-23.5T80-280v-480q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-200H640v80H320ZM160-280h640v-440H160v440Z" />
     </symbol>
     <symbol id="icon-dark_mode" viewBox="0 -960 960 960">
       <path
@@ -139,11 +169,43 @@
             <use href="#icon-search"></use>
           </svg>
         </button>
-        <button id="theme-toggle" class="btn-icon" title="Przełącz motyw" aria-label="Przełącz motyw">
-          <svg class="icon" aria-hidden="true">
-            <use href="#icon-dark_mode"></use>
-          </svg>
-        </button>
+        <div class="theme-switcher-wrapper" id="theme-switcher-wrapper">
+          <!-- Segmented control for wide screens (>= 600px) -->
+          <div class="theme-segmented-group" role="radiogroup" aria-label="Motyw">
+            <button type="button" class="theme-seg-btn" data-theme-mode="light" role="radio" aria-checked="false" tabindex="-1" title="Motyw: jasny" aria-label="Motyw: jasny">
+              <svg class="icon" aria-hidden="true"><use href="#icon-light_mode"></use></svg>
+            </button>
+            <button type="button" class="theme-seg-btn" data-theme-mode="system" role="radio" aria-checked="true" tabindex="0" title="Motyw: systemowy" aria-label="Motyw: systemowy">
+              <svg class="icon" aria-hidden="true"><use href="#icon-desktop_windows"></use></svg>
+            </button>
+            <button type="button" class="theme-seg-btn" data-theme-mode="dark" role="radio" aria-checked="false" tabindex="-1" title="Motyw: ciemny" aria-label="Motyw: ciemny">
+              <svg class="icon" aria-hidden="true"><use href="#icon-dark_mode"></use></svg>
+            </button>
+          </div>
+
+          <!-- Mobile dropdown button for narrow screens (< 600px) -->
+          <div class="theme-dropdown-container">
+            <button type="button" id="theme-toggle" class="btn-icon theme-dropdown-btn" aria-haspopup="menu" aria-expanded="false" title="Motyw: systemowy" aria-label="Motyw: systemowy">
+              <svg class="icon" aria-hidden="true">
+                <use href="#icon-desktop_windows"></use>
+              </svg>
+            </button>
+            <div id="theme-dropdown-menu" class="theme-dropdown-menu hidden" role="menu" aria-label="Motyw">
+              <button type="button" class="theme-dropdown-item" role="menuitemradio" data-theme-mode="light" aria-checked="false" tabindex="-1">
+                <svg class="icon" aria-hidden="true"><use href="#icon-light_mode"></use></svg>
+                <span>Jasny</span>
+              </button>
+              <button type="button" class="theme-dropdown-item" role="menuitemradio" data-theme-mode="system" aria-checked="true" tabindex="0">
+                <svg class="icon" aria-hidden="true"><use href="#icon-desktop_windows"></use></svg>
+                <span>System</span>
+              </button>
+              <button type="button" class="theme-dropdown-item" role="menuitemradio" data-theme-mode="dark" aria-checked="false" tabindex="-1">
+                <svg class="icon" aria-hidden="true"><use href="#icon-dark_mode"></use></svg>
+                <span>Ciemny</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </header>

@@ -10,7 +10,7 @@ const getMonday = (...args) => engine.getMonday(...args);
 const getRoomOccupancyAt = (...args) => engine.getRoomOccupancyAt(...args);
 const isTeachingDay = (...args) => engine.isTeachingDay(...args);
 
-const { getSafeGroupName, parsePlanInfo, getAcademicInfoForWeek, updateCalendarNotice, renderSchedule, renderLessonCard, shouldShowChangelog, openChangelogModal, closeChangelogModal, checkChangelogNotification, comparePlans, getPlanSortKey, populatePlanSelect, onStudyModeChange, getDuplicatePlanInfo, getPlanModificationInfo, updateDayTabsUI, initTheme, toggleTheme, setupThemeListener, withViewTransition, openAboutModal, closeAboutModal, openEventsModal, closeEventsModal, formatEventFullDate, renderEventsModalList, _EventsService, setAcademicCalendar, state, elements, getLessonProgress } = require(path.join(ROOT_DIR, "web/app.js"));
+const { getSafeGroupName, parsePlanInfo, getAcademicInfoForWeek, updateCalendarNotice, renderSchedule, renderLessonCard, shouldShowChangelog, openChangelogModal, closeChangelogModal, checkChangelogNotification, comparePlans, getPlanSortKey, populatePlanSelect, onStudyModeChange, getDuplicatePlanInfo, getPlanModificationInfo, updateDayTabsUI, initTheme, toggleTheme, setThemeMode, setupThemeListener, withViewTransition, openAboutModal, closeAboutModal, openEventsModal, closeEventsModal, formatEventFullDate, renderEventsModalList, _EventsService, setAcademicCalendar, state, elements, getLessonProgress } = require(path.join(ROOT_DIR, "web/app.js"));
 if (typeof setAcademicCalendar === "function") {
   setAcademicCalendar(academicCalendar);
 }
@@ -1085,6 +1085,24 @@ toggleTheme();
 assert.strictEqual(state.theme, "light");
 assert.strictEqual(mockMeta.getAttribute("content"), "#0d233a");
 assert.strictEqual(global.localStorage.getItem("umg_theme"), "light");
+
+// Test 3-state setThemeMode: system, dark, light
+setThemeMode("dark");
+assert.strictEqual(state.themeMode, "dark");
+assert.strictEqual(state.theme, "dark");
+assert.strictEqual(global.localStorage.getItem("umg_theme"), "dark");
+assert.strictEqual(mockDocElement.getAttribute("data-theme"), "dark");
+
+setThemeMode("light");
+assert.strictEqual(state.themeMode, "light");
+assert.strictEqual(state.theme, "light");
+assert.strictEqual(global.localStorage.getItem("umg_theme"), "light");
+assert.strictEqual(mockDocElement.getAttribute("data-theme"), "light");
+
+// Setting "system" must remove the theme key from localStorage
+setThemeMode("system");
+assert.strictEqual(state.themeMode, "system");
+assert.strictEqual(global.localStorage.getItem("umg_theme"), null, "Wybór 'system' musi usunąć wpis z localStorage");
 
 // Cleanup
 global.document.querySelector = origQuerySelector;
