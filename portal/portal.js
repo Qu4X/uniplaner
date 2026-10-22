@@ -60,6 +60,14 @@ const PortalDomain = {
   },
 
   /**
+   * Zwraca podzbiór popularnych uczelni do szybkich chipów (np. UMG, SGGW).
+   */
+  getPopularInstitutions(institutions, limit = 4) {
+    if (!Array.isArray(institutions)) return [];
+    return institutions.slice(0, limit);
+  },
+
+  /**
    * Zapisuje ostatnio wybrany wydział w podanym storage (domyślnie localStorage).
    */
   saveLastVisited(tenant, storage = window.localStorage) {
@@ -119,6 +127,11 @@ class PortalApp {
     this.toggleBtn = document.getElementById("uni-toggle-btn");
     this.listbox = document.getElementById("uni-listbox");
     this.statusEl = document.getElementById("uni-status");
+    this.comboboxField = document.getElementById("combobox-field");
+    this.errorContainer = document.getElementById("uni-error-container");
+    this.errorText = document.getElementById("uni-error-text");
+    this.retryBtn = document.getElementById("uni-retry-btn");
+    this.loadingBadge = document.getElementById("uni-loading-badge");
     this.facultyStep = document.getElementById("step-faculty");
     this.facultyList = document.getElementById("faculty-list");
     this.actionStep = document.getElementById("step-action");
@@ -135,24 +148,92 @@ class PortalApp {
     this.renderLastVisited();
     this.renderFacultyPlaceholder();
     this.bindEvents();
+    await this.loadTenants();
+  }
 
-    try {
-      const res = await fetch("./tenants.json");
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      this.tenants = await res.json();
-    } catch (err) {
-      console.error("Błąd ładowania tenants.json:", err);
-      if (this.statusEl) {
-        this.statusEl.textContent = "Nie udało się załadować listy uczelni. Sprawdź połączenie i odśwież stronę.";
+  async loadTenants() {
+    this.setLoading(true);
+    this.hideError();
+
+    const candidatePaths = [
+      "./tenants.json",
+      "../dist/tenants.json",
+      "./dist/tenants.json"
+    ];
+
+    let loadedData = null;
+    let lastError = null;
+
+    for (const p of candidatePaths) {
+      try {
+        const res = await fetch(p);
+        if (res.ok) {
+          loadedData = await res.json();
+          break;
+        }
+      } catch (e) {
+        lastError = e;
       }
-      if (this.searchInput) {
-        this.searchInput.placeholder = "Błąd pobierania listy uczelni...";
-      }
-      this.tenants = [];
     }
 
-    this.institutions = PortalDomain.groupTenantsByInstitution(this.tenants);
-    this.filteredInstitutions = [...this.institutions];
+    this.setLoading(false);
+
+    if (Array.isArray(loadedData) && loadedData.length > 0) {
+      this.tenants = loadedData;
+      this.institutions = PortalDomain.groupTenantsByInstitution(this.tenants);
+      this.filteredInstitutions = [...this.institutions];
+      this.renderFacultyPlaceholder();
+      if (this.searchInput) {
+        this.searchInput.placeholder = "Wpisz nazwę lub skrót uczelni (np. UMG, SGGW)...";
+      }
+    } else {
+      console.error("Błąd ładowania tenants.json:", lastError);
+      this.showError("Nie udało się pobrać listy uczelni. Sprawdź połączenie i spróbuj ponownie.");
+      this.tenants = [];
+      this.institutions = [];
+      this.filteredInstitutions = [];
+      this.renderFacultyPlaceholder();
+    }
+  }
+
+  setLoading(isLoading) {
+    if (this.loadingBadge) {
+      this.loadingBadge.hidden = !isLoading;
+    }
+    if (this.comboboxField) {
+      this.comboboxField.classList.toggle("is-loading", isLoading);
+    }
+    if (this.searchInput) {
+      this.searchInput.setAttribute("aria-busy", isLoading ? "true" : "false");
+      if (isLoading) {
+        this.searchInput.placeholder = "Wczytywanie listy uczelni...";
+      }
+    }
+  }
+
+  showError(message) {
+    if (this.errorContainer) {
+      if (this.errorText) this.errorText.textContent = message;
+      this.errorContainer.hidden = false;
+    }
+    if (this.statusEl) {
+      this.statusEl.textContent = message;
+    }
+    if (this.comboboxField) {
+      this.comboboxField.classList.add("has-error");
+    }
+  }
+
+  hideError() {
+    if (this.errorContainer) {
+      this.errorContainer.hidden = true;
+    }
+    if (this.statusEl) {
+      this.statusEl.textContent = "";
+    }
+    if (this.comboboxField) {
+      this.comboboxField.classList.remove("has-error");
+    }
   }
 
   renderLastVisited() {
@@ -177,7 +258,7 @@ class PortalApp {
       this.themeToggleBtn.setAttribute("aria-pressed", isDark ? "true" : "false");
       this.themeToggleBtn.setAttribute("title", isDark ? "Przełącz na jasny motyw" : "Przełącz na ciemny motyw");
       const meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.setAttribute("content", isDark ? "#17181b" : "#fbf9f4");
+      if (meta) meta.setAttribute("content", isDark ? "#17181c" : "#fbf9f4");
       try {
         localStorage.setItem("uniplaner_theme", theme);
       } catch (e) {}
@@ -194,20 +275,50 @@ class PortalApp {
 
   renderFacultyPlaceholder() {
     if (!this.facultyList) return;
+    const popular = PortalDomain.getPopularInstitutions(this.institutions, 4);
+
+    let chipsHtml = "";
+    if (popular.length > 0) {
+      chipsHtml = `
+        <div class="quick-chips-section">
+          <span class="quick-chips-label">Popularne uczelnie:</span>
+          <div class="quick-chips-wrapper" role="group" aria-label="Szybki wybór uczelni">
+            ${popular.map(p => `
+              <button
+                type="button"
+                class="chip-btn"
+                data-institution="${p.institution}"
+                aria-label="Wybierz uczelnię ${p.institution_full || p.institution}"
+              >
+                ${p.institution}
+              </button>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
     this.facultyList.innerHTML = `
       <div class="faculty-empty-placeholder">
-        <div class="placeholder-icon-wrap" aria-hidden="true">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="16" y1="2" x2="16" y2="6"></line>
-            <line x1="8" y1="2" x2="8" y2="6"></line>
-            <line x1="3" y1="10" x2="21" y2="10"></line>
-          </svg>
-        </div>
         <p class="placeholder-title">Wybierz uczelnię powyżej</p>
-        <p class="placeholder-hint">Wpisz skrót uczelni (np. <strong>UMG</strong>, <strong>SGGW</strong>) lub rozwiń listę, aby zobaczyć dostępne wydziały.</p>
+        <p class="placeholder-hint">Wpisz skrót lub nazwę uczelni w wyszukiwarce${popular.length > 0 ? " albo wybierz jedną z popularnych poniżej:" : ", aby zobaczyć dostępne wydziały."}</p>
+        ${chipsHtml}
       </div>
     `;
+
+    if (popular.length > 0) {
+      const chipButtons = this.facultyList.querySelectorAll(".chip-btn");
+      chipButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const instCode = btn.getAttribute("data-institution");
+          const targetInst = this.institutions.find(i => i.institution === instCode);
+          if (targetInst) {
+            this.selectInstitution(targetInst);
+          }
+        });
+      });
+    }
+
     this.disableLaunchBtn();
   }
 
@@ -259,6 +370,13 @@ class PortalApp {
           this.openDropdown();
           this.searchInput.focus();
         }
+      });
+    }
+
+    // Przycisk ponowienia po błędzie
+    if (this.retryBtn) {
+      this.retryBtn.addEventListener("click", () => {
+        this.loadTenants();
       });
     }
 
@@ -342,10 +460,10 @@ class PortalApp {
 
   closeDropdown() {
     this.listbox.hidden = true;
+    this.activeIndex = -1;
     this.searchInput.setAttribute("aria-expanded", "false");
     this.searchInput.removeAttribute("aria-activedescendant");
     if (this.toggleBtn) this.toggleBtn.setAttribute("aria-expanded", "false");
-    this.activeIndex = -1;
   }
 
   isOpen() {
@@ -421,76 +539,61 @@ class PortalApp {
       const meta = document.createElement("div");
       meta.className = "faculty-meta";
 
-      if (tenant.plugin_version) {
-        const verBadge = document.createElement("span");
-        verBadge.className = "meta-badge";
-        verBadge.textContent = `v${tenant.plugin_version}`;
-        meta.appendChild(verBadge);
-      }
+      const authorBadge = document.createElement("span");
+      authorBadge.className = "meta-item";
+      authorBadge.textContent = tenant.plugin_author ? `Autor: ${tenant.plugin_author}` : "Oficjalny adapter";
 
-      if (tenant.plugin_author) {
-        const author = document.createElement("span");
-        author.className = "meta-author";
-        author.textContent = `Autor: ${tenant.plugin_author}`;
-        meta.appendChild(author);
-      }
+      const versionBadge = document.createElement("span");
+      versionBadge.className = "meta-item";
+      versionBadge.textContent = `v${tenant.plugin_version || "1.0.0"}`;
+
+      meta.appendChild(authorBadge);
+      meta.appendChild(versionBadge);
 
       info.appendChild(name);
       info.appendChild(meta);
 
-      // Prawa strona: Logo/ikona i wskaźnik radiowy
+      // Prawa strona: Logo/Ikona i radio indicator
       const right = document.createElement("div");
       right.className = "faculty-right";
 
       const visualUrl = PortalDomain.getTenantVisualUrl(tenant);
       if (visualUrl) {
-        const logo = document.createElement("img");
-        logo.src = visualUrl;
-        logo.alt = `Logo ${tenant.faculty_full}`;
-        logo.className = "faculty-logo-img";
-        logo.loading = "lazy";
-        logo.onerror = () => {
-          // Fallback do ikony/emoji jeśli plik graficzny nie istnieje lub wystąpił błąd
-          logo.remove();
-          if (tenant.icon) {
-            const emoji = document.createElement("span");
-            emoji.className = "faculty-icon-emoji";
-            emoji.textContent = tenant.icon;
-            right.prepend(emoji);
-          }
-        };
-        right.appendChild(logo);
-      } else if (tenant.icon) {
-        const emoji = document.createElement("span");
-        emoji.className = "faculty-icon-emoji";
-        emoji.textContent = tenant.icon;
-        right.appendChild(emoji);
+        const visual = document.createElement("div");
+        visual.className = "faculty-logo-box";
+        const img = document.createElement("img");
+        img.src = visualUrl;
+        img.alt = `Logo ${tenant.faculty_full || tenant.faculty}`;
+        img.className = "faculty-logo-img";
+        img.setAttribute("loading", "lazy");
+        visual.appendChild(img);
+        right.appendChild(visual);
       }
 
       const radio = document.createElement("div");
-      radio.className = "radio-indicator";
+      radio.className = "faculty-radio-indicator";
       radio.setAttribute("aria-hidden", "true");
       right.appendChild(radio);
 
       card.appendChild(info);
       card.appendChild(right);
 
-      const selectCard = () => {
+      // Zdarzenia wyboru
+      card.addEventListener("click", () => {
         this.selectFaculty(tenant, card);
-      };
+      });
 
-      card.addEventListener("click", selectCard);
       card.addEventListener("keydown", (e) => {
         if (e.key === " " || e.key === "Enter") {
           e.preventDefault();
-          selectCard();
+          this.selectFaculty(tenant, card);
         }
       });
 
       this.facultyList.appendChild(card);
     });
 
-    // Jeśli jest tylko jeden wydział na danej uczelni, zaznacz go automatycznie dla wygody
+    // Jeśli uczelnia ma tylko 1 wydział, zaznacz go automatycznie dla wygody
     if (faculties.length === 1) {
       const firstCard = this.facultyList.firstElementChild;
       if (firstCard) this.selectFaculty(faculties[0], firstCard);
@@ -516,6 +619,7 @@ if (typeof document !== "undefined") {
   document.addEventListener("DOMContentLoaded", () => {
     const app = new PortalApp();
     app.init();
+    window.__portalApp = app;
   });
 }
 
