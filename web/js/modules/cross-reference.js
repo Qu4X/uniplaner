@@ -422,8 +422,13 @@
         primaryParts.push(`<span class="groups-nowrap"${titleAttr}>${escapeHtml(grpObj.text)}</span>`);
       }
 
+      const primaryChunksHtml = primaryParts.map((part, idx) => {
+        const sep = idx < primaryParts.length - 1 ? "\u00a0·\u00a0" : "";
+        return `<span class="meta-chunk">${part}${sep}</span>`;
+      }).join("");
+
       const subtitleHtml = `
-        <span class="meta-primary-info">${primaryParts.join(' · ')}</span>
+        <span class="meta-primary-info"${actionBtnHtml ? ' data-has-action="true"' : ''}>${primaryChunksHtml}</span>
         ${actionBtnHtml ? `<span class="meta-secondary-action"><span class="meta-action-sep" aria-hidden="true"> · </span>${actionBtnHtml}</span>` : ''}
       `;
 

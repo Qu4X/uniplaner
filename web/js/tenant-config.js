@@ -140,8 +140,11 @@
   ];
 
   function resolveMotifs(config) {
-    if (config && Array.isArray(config.motifs) && config.motifs.length > 0) {
-      const valid = config.motifs
+    const rawMotifs = (config && config.branding && Array.isArray(config.branding.motifs) && config.branding.motifs.length > 0)
+      ? config.branding.motifs
+      : (config && Array.isArray(config.motifs) ? config.motifs : []);
+    if (rawMotifs.length > 0) {
+      const valid = rawMotifs
         .map(m => String(m).toLowerCase().trim())
         .filter(m => CURATED_MOTIFS.includes(m))
         .slice(0, 3);
@@ -161,20 +164,23 @@
   function renderBackgroundPattern(motifs) {
     if (typeof document === "undefined" || !document.body) return;
 
+    const motifList = Array.isArray(motifs) && motifs.length > 0 ? motifs : ["general"];
     let iconKeys = [];
-    for (const m of motifs) {
+    for (const m of motifList) {
       if (MOTIF_ICONS[m]) {
         iconKeys.push(...MOTIF_ICONS[m]);
       }
     }
+    iconKeys = iconKeys.filter(k => Boolean(ICON_PATHS[k]));
     if (iconKeys.length === 0) {
-      iconKeys = [...MOTIF_ICONS.general];
+      iconKeys = MOTIF_ICONS.general.filter(k => Boolean(ICON_PATHS[k]));
     }
-    if (!iconKeys.includes("calendar")) iconKeys.push("calendar");
-    if (!iconKeys.includes("book")) iconKeys.push("book");
+    if (!iconKeys.includes("calendar") && ICON_PATHS.calendar) iconKeys.push("calendar");
+    if (!iconKeys.includes("book") && ICON_PATHS.book) iconKeys.push("book");
 
+    const uniqueKeys = [...new Set(iconKeys)];
     let defsHtml = "";
-    for (const key of Object.keys(ICON_PATHS)) {
+    for (const key of uniqueKeys) {
       defsHtml += `<g id="pat-icon-${key}"><g transform="translate(-32 -32)">${ICON_PATHS[key]}</g></g>`;
     }
 

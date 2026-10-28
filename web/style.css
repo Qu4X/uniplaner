@@ -529,11 +529,14 @@ input, select, textarea, button {
   display: flex;
   flex-direction: column;
   transform: translateX(-100%);
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  visibility: hidden;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.25s;
 }
 
 .app-sidebar.open {
   transform: translateX(0);
+  visibility: visible;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0s;
 }
 
 .sidebar-header {
@@ -5518,7 +5521,6 @@ dialog.hidden,
   width: 100% !important;
   height: 100% !important;
   pointer-events: none !important;
-  z-index: -1 !important;
 }
 
 /* Point 3: Strictly hide closed dialogs */
@@ -5978,11 +5980,6 @@ a:focus:not(:focus-visible) {
 }
 
 /* Point 10: Desktop Today column */
-.grid-day-col.is-today {
-  background: var(--school-today-tint, rgba(47, 111, 235, 0.10)) !important;
-  border-radius: 12px !important;
-  padding: 12px !important;
-}
 .grid-day-col.is-today .grid-day-header {
   border-bottom: 2px solid var(--school-primary, #2F6FEB) !important;
 }
@@ -6027,19 +6024,6 @@ a:focus:not(:focus-visible) {
 /* Point 2: Desktop Today column styling */
 .grid-day-col {
   position: relative !important;
-}
-.grid-day-col.is-today::before {
-  content: "" !important;
-  position: absolute !important;
-  inset: -6px -6px !important;
-  background: var(--school-today-tint, rgba(47, 111, 235, 0.10)) !important;
-  border-radius: 12px !important;
-  pointer-events: none !important;
-  z-index: 0 !important;
-}
-.grid-day-col.is-today > * {
-  position: relative !important;
-  z-index: 1 !important;
 }
 
 /* Point 3: Teacher button inline wrapping */
@@ -6216,7 +6200,14 @@ body.sidebar-open {
   width: 100% !important;
   flex: none !important;
 }
+.cross-modal-top-bar:has(.modal-back-btn.hidden) {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+
 .cross-modal-top-bar .btn-close {
+  pointer-events: auto;
   margin-left: auto !important;
   width: 44px !important;
   height: 44px !important;
@@ -6273,8 +6264,18 @@ body.sidebar-open {
   display: block !important;
   width: 100% !important;
   padding: 0 !important;
-  margin: 0 0 6px 0 !important;
+  margin-top: 0;
+  margin-right: 0 !important;
+  margin-bottom: 6px !important;
+  margin-left: 0 !important;
   flex: none !important;
+}
+.cross-modal-top-bar:has(.modal-back-btn.hidden) + .cross-modal-header {
+  margin-top: -50px;
+}
+.cross-modal-top-bar:has(.modal-back-btn.hidden) + .cross-modal-header .modal-header-titles {
+  padding-right: 36px;
+  box-sizing: border-box;
 }
 .cross-modal-header .modal-header-titles {
   display: flex !important;
@@ -6537,6 +6538,10 @@ body.sidebar-open {
 
 /* Helper line wrapping and tokens (Point 2) */
 .modal-slot-meta-subtitle {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  row-gap: 3px;
   font-size: 14px !important;
   line-height: 1.35 !important;
   color: var(--school-text-muted, #C9D6EE) !important;
@@ -6550,23 +6555,37 @@ body.sidebar-open {
   white-space: nowrap !important;
 }
 .modal-slot-meta-subtitle .meta-primary-info {
-  display: inline !important;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  row-gap: 2px;
+}
+.modal-slot-meta-subtitle .meta-chunk {
+  display: inline;
 }
 .modal-slot-meta-subtitle .meta-secondary-action {
-  display: block !important;
-  margin-top: 3px !important;
+  display: block;
+  margin-top: 0;
 }
 .modal-slot-meta-subtitle .meta-action-sep {
   display: none !important;
 }
 
 @media (min-width: 640px) {
-  .modal-slot-meta-subtitle .meta-secondary-action {
-    display: inline !important;
-    margin-top: 0 !important;
+  .modal-slot-meta-subtitle {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    row-gap: 2px;
   }
-  .modal-slot-meta-subtitle .meta-action-sep {
-    display: inline !important;
+  .modal-slot-meta-subtitle .meta-primary-info {
+    display: contents;
+  }
+  .modal-slot-meta-subtitle .meta-primary-info[data-has-action="true"] .meta-chunk:last-child::after {
+    content: "\00a0·\00a0";
+  }
+  .modal-slot-meta-subtitle .meta-secondary-action {
+    display: inline;
   }
 }
 
@@ -6574,11 +6593,12 @@ body.sidebar-open {
 .modal-slot-meta-subtitle .lesson-room-btn {
   font-family: inherit !important;
   font-size: inherit !important;
+  line-height: 1.35 !important;
   color: var(--school-text, #E8EEF9) !important;
   font-style: normal !important;
   text-decoration: underline dotted !important;
   text-decoration-thickness: 1.5px !important;
-  text-underline-offset: 4px !important;
+  text-underline-offset: 3.5px !important;
   cursor: pointer !important;
   background: transparent !important;
   border: none !important;

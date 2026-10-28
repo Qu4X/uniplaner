@@ -1,11 +1,14 @@
 /**
  * portal.js — Logika portalu wyboru uczelni i wydziału platformy Uniplaner.
  * Zapewnia pełną dostępność (ARIA 1.2 Combobox), nawigację klawiaturą,
- * asynchroniczne ładowanie rejestru tenants.json oraz pamięć ostatniego wyboru w localStorage.
+ * 3-stanowy motyw (Jasny/System/Ciemny), asynchroniczne ładowanie rejestru tenants.json
+ * oraz pamięć ostatniego wyboru w localStorage.
  */
 
 // Klucz localStorage dla ostatnio wybranego planu
 const LAST_VISITED_KEY = "uniplaner_last_visited";
+// Klucz localStorage dla wybranego motywu (w trybie System jest usuwany)
+const THEME_STORAGE_KEY = "uniplaner_theme";
 
 /**
  * Czysty silnik domenowy portalu (ułatwiający testowanie jednostkowe)
@@ -30,7 +33,7 @@ const PortalDomain = {
       map.get(instKey).faculties.push(t);
     }
 
-    return Array.from(map.values()).sort((a, b) => 
+    return Array.from(map.values()).sort((a, b) =>
       a.institution_full.localeCompare(b.institution_full, "pl")
     );
   },
@@ -52,7 +55,7 @@ const PortalDomain = {
       const full = norm(item.institution_full);
       const short = norm(item.institution);
       // Szukanie również po nazwach wydziałów danej uczelni (np. "Nawigacyjny")
-      const facultyMatch = item.faculties && item.faculties.some(f => 
+      const facultyMatch = item.faculties && item.faculties.some(f =>
         norm(f.faculty_full).includes(q) || norm(f.faculty).includes(q)
       );
       return full.includes(q) || short.includes(q) || facultyMatch;
@@ -60,7 +63,7 @@ const PortalDomain = {
   },
 
   /**
-   * Zwraca podzbiór popularnych uczelni do szybkich chipów (np. UMG, SGGW).
+   * Zwraca podzbiór popularnych uczelni do szybkich chipów (np. UMG, SGGW, AGH).
    */
   getPopularInstitutions(institutions, limit = 4) {
     if (!Array.isArray(institutions)) return [];
@@ -70,15 +73,15 @@ const PortalDomain = {
   /**
    * Zapisuje ostatnio wybrany wydział w podanym storage (domyślnie localStorage).
    */
-  saveLastVisited(tenant, storage = window.localStorage) {
+  saveLastVisited(tenant, storage = (typeof window !== "undefined" ? window.localStorage : null)) {
     if (!tenant || !storage) return;
     try {
       const payload = {
         tenant_id: tenant.tenant_id,
-        name: tenant.name || `${tenant.institution} - ${tenant.faculty_full}`,
+        name: tenant.name || `${tenant.institution} - ${tenant.faculty_full || tenant.faculty}`,
         institution: tenant.institution,
-        faculty_full: tenant.faculty_full,
-        url: tenant.url,
+        faculty_full: tenant.faculty_full || tenant.faculty,
+        url: tenant.url || `./${tenant.path}/`,
         timestamp: Date.now()
       };
       storage.setItem(LAST_VISITED_KEY, JSON.stringify(payload));
@@ -90,7 +93,7 @@ const PortalDomain = {
   /**
    * Odczytuje ostatnio wybrany wydział.
    */
-  loadLastVisited(storage = window.localStorage) {
+  loadLastVisited(storage = (typeof window !== "undefined" ? window.localStorage : null)) {
     if (!storage) return null;
     try {
       const raw = storage.getItem(LAST_VISITED_KEY);
@@ -107,6 +110,19 @@ const PortalDomain = {
   getTenantVisualUrl(tenant) {
     if (!tenant) return null;
     return tenant.logo_url || tenant.icon_url || null;
+  },
+
+  /**
+   * Zwraca poprawną formę gramatyczną liczby wydziałów po polsku.
+   */
+  formatFacultyCount(count) {
+    if (count === 1) return "1 wydział";
+    const mod10 = count % 10;
+    const mod100 = count % 100;
+    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) {
+      return `${count} wydziały`;
+    }
+    return `${count} wydziałów`;
   }
 };
 
@@ -139,17 +155,218 @@ class PortalApp {
     this.lastVisitedCard = document.getElementById("last-visited-card");
     this.lastVisitedText = document.getElementById("last-visited-text");
     this.lastVisitedLink = document.getElementById("last-visited-link");
-    this.themeToggleBtn = document.getElementById("theme-toggle-btn");
     this.actionHelper = document.getElementById("action-helper");
+
+    // Elementy przełącznika motywu
+    this.themeSegmentBtns = document.querySelectorAll(".theme-segment-btn");
+    this.themeDropdownBtn = document.getElementById("theme-dropdown-btn");
+    this.themeMenuDropdown = document.getElementById("theme-menu-dropdown");
+    this.themeDropdownItems = document.querySelectorAll(".theme-dropdown-item");
+    this.themeBtnIcon = document.getElementById("theme-btn-icon");
   }
 
   async init() {
-    this.initThemeToggle();
+    this.initTheme();
     this.renderLastVisited();
     this.renderFacultyPlaceholder();
     this.bindEvents();
     await this.loadTenants();
   }
+
+  // ==========================================
+  // 3-stanowy motyw: Jasny / System / Ciemny
+  // ==========================================
+
+  getThemeMode() {
+    try {
+      const saved = localStorage.getItem(THEME_STORAGE_KEY);
+      if (saved === "light" || saved === "dark") return saved;
+    } catch (_) {}
+    return "system";
+  }
+
+  getEffectiveTheme(mode = this.getThemeMode()) {
+    if (mode === "system") {
+      const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      return prefersDark ? "dark" : "light";
+    }
+    return mode;
+  }
+
+  setThemeMode(mode) {
+    try {
+      if (mode === "system") {
+        localStorage.removeItem(THEME_STORAGE_KEY);
+        document.documentElement.removeAttribute("data-theme");
+      } else {
+        localStorage.setItem(THEME_STORAGE_KEY, mode);
+        document.documentElement.setAttribute("data-theme", mode);
+      }
+    } catch (e) {
+      console.warn("Błąd zapisu preferencji motywu w localStorage:", e);
+    }
+
+    const effective = this.getEffectiveTheme(mode);
+    document.documentElement.style.colorScheme = effective;
+
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      meta.setAttribute("content", effective === "dark" ? "#151517" : "#F7EFDC");
+    }
+
+    this.updateThemeUI(mode, effective);
+  }
+
+  updateThemeUI(mode, effective) {
+    // 1. Desktop Segmented Control
+    if (this.themeSegmentBtns) {
+      this.themeSegmentBtns.forEach(btn => {
+        const val = btn.getAttribute("data-theme-val");
+        const isActive = val === mode;
+        btn.setAttribute("aria-checked", isActive ? "true" : "false");
+        btn.setAttribute("tabindex", isActive ? "0" : "-1");
+        btn.tabIndex = isActive ? 0 : -1;
+        btn.classList.toggle("is-active", isActive);
+      });
+    }
+
+    // 2. Mobile Dropdown Menu Items
+    if (this.themeDropdownItems) {
+      this.themeDropdownItems.forEach(item => {
+        const val = item.getAttribute("data-theme-val");
+        const isActive = val === mode;
+        item.setAttribute("aria-checked", isActive ? "true" : "false");
+        item.classList.toggle("is-active", isActive);
+      });
+    }
+
+    // 3. Mobile Dropdown Trigger Button Icon & Label
+    if (this.themeDropdownBtn) {
+      const label = mode === "light" ? "jasny" : (mode === "dark" ? "ciemny" : "system");
+      this.themeDropdownBtn.setAttribute("aria-label", `Motyw: ${label}`);
+
+      if (this.themeBtnIcon) {
+        if (mode === "light") {
+          this.themeBtnIcon.innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          `;
+        } else if (mode === "dark") {
+          this.themeBtnIcon.innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          `;
+        } else {
+          this.themeBtnIcon.innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="12" rx="2"></rect>
+              <path d="M8 20h8M12 16v4"></path>
+            </svg>
+          `;
+        }
+      }
+    }
+  }
+
+  initTheme() {
+    const currentMode = this.getThemeMode();
+    this.setThemeMode(currentMode);
+
+    // Nasłuch kliknięć i klawiatury w segmented control
+    if (this.themeSegmentBtns) {
+      const btns = Array.from(this.themeSegmentBtns);
+      btns.forEach((btn, idx) => {
+        btn.addEventListener("click", () => {
+          const val = btn.getAttribute("data-theme-val");
+          if (val) this.setThemeMode(val);
+        });
+        btn.addEventListener("keydown", (e) => {
+          let nextIdx = -1;
+          if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+            nextIdx = (idx + 1) % btns.length;
+          } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+            nextIdx = (idx - 1 + btns.length) % btns.length;
+          } else if (e.key === "Home") {
+            nextIdx = 0;
+          } else if (e.key === "End") {
+            nextIdx = btns.length - 1;
+          }
+          if (nextIdx !== -1) {
+            e.preventDefault();
+            const targetBtn = btns[nextIdx];
+            const val = targetBtn.getAttribute("data-theme-val");
+            if (val) this.setThemeMode(val);
+            if (typeof targetBtn.focus === "function") targetBtn.focus();
+          }
+        });
+      });
+    }
+
+    // Nasłuch kliknięć w mobile dropdown
+    if (this.themeDropdownBtn && this.themeMenuDropdown) {
+      this.themeDropdownBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const isOpen = !this.themeMenuDropdown.hidden;
+        this.themeMenuDropdown.hidden = isOpen;
+        this.themeDropdownBtn.setAttribute("aria-expanded", !isOpen ? "true" : "false");
+      });
+
+      this.themeDropdownItems.forEach(item => {
+        item.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const val = item.getAttribute("data-theme-val");
+          if (val) this.setThemeMode(val);
+          this.themeMenuDropdown.hidden = true;
+          this.themeDropdownBtn.setAttribute("aria-expanded", "false");
+          this.themeDropdownBtn.focus();
+        });
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!this.themeDropdownBtn.contains(e.target) && !this.themeMenuDropdown.contains(e.target)) {
+          this.themeMenuDropdown.hidden = true;
+          this.themeDropdownBtn.setAttribute("aria-expanded", "false");
+        }
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !this.themeMenuDropdown.hidden) {
+          this.themeMenuDropdown.hidden = true;
+          this.themeDropdownBtn.setAttribute("aria-expanded", "false");
+          this.themeDropdownBtn.focus();
+        }
+      });
+    }
+
+    // Nasłuch zmian prefers-color-scheme w trybie System
+    if (window.matchMedia) {
+      const mq = window.matchMedia("(prefers-color-scheme: dark)");
+      const handler = () => {
+        if (this.getThemeMode() === "system") {
+          this.setThemeMode("system");
+        }
+      };
+      if (mq.addEventListener) {
+        mq.addEventListener("change", handler);
+      } else if (mq.addListener) {
+        mq.addListener(handler);
+      }
+    }
+  }
+
+  // ==========================================
+  // Ładowanie i stan listy uczelni
+  // ==========================================
 
   async loadTenants() {
     this.setLoading(true);
@@ -157,8 +374,12 @@ class PortalApp {
 
     const candidatePaths = [
       "./tenants.json",
+      "tenants.json",
+      "./portal/tenants.json",
+      "portal/tenants.json",
       "../dist/tenants.json",
-      "./dist/tenants.json"
+      "./dist/tenants.json",
+      "dist/tenants.json"
     ];
 
     let loadedData = null;
@@ -184,7 +405,7 @@ class PortalApp {
       this.filteredInstitutions = [...this.institutions];
       this.renderFacultyPlaceholder();
       if (this.searchInput) {
-        this.searchInput.placeholder = "Wpisz nazwę lub skrót uczelni (np. UMG, SGGW)...";
+        this.searchInput.placeholder = "Wpisz nazwę lub skrót uczelni (np. UMG, SGGW)…";
       }
     } else {
       console.error("Błąd ładowania tenants.json:", lastError);
@@ -248,31 +469,6 @@ class PortalApp {
     this.lastVisitedCard.hidden = false;
   }
 
-  initThemeToggle() {
-    if (!this.themeToggleBtn) return;
-
-    const applyTheme = (theme) => {
-      document.documentElement.setAttribute("data-theme", theme);
-      document.documentElement.style.colorScheme = theme;
-      const isDark = theme === "dark";
-      this.themeToggleBtn.setAttribute("aria-pressed", isDark ? "true" : "false");
-      this.themeToggleBtn.setAttribute("title", isDark ? "Przełącz na jasny motyw" : "Przełącz na ciemny motyw");
-      const meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.setAttribute("content", isDark ? "#17181c" : "#fbf9f4");
-      try {
-        localStorage.setItem("uniplaner_theme", theme);
-      } catch (e) {}
-    };
-
-    let currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
-    applyTheme(currentTheme);
-
-    this.themeToggleBtn.addEventListener("click", () => {
-      currentTheme = currentTheme === "dark" ? "light" : "dark";
-      applyTheme(currentTheme);
-    });
-  }
-
   renderFacultyPlaceholder() {
     if (!this.facultyList) return;
     const popular = PortalDomain.getPopularInstitutions(this.institutions, 4);
@@ -280,28 +476,25 @@ class PortalApp {
     let chipsHtml = "";
     if (popular.length > 0) {
       chipsHtml = `
-        <div class="quick-chips-section">
-          <span class="quick-chips-label">Popularne uczelnie:</span>
-          <div class="quick-chips-wrapper" role="group" aria-label="Szybki wybór uczelni">
-            ${popular.map(p => `
-              <button
-                type="button"
-                class="chip-btn"
-                data-institution="${p.institution}"
-                aria-label="Wybierz uczelnię ${p.institution_full || p.institution}"
-              >
-                ${p.institution}
-              </button>
-            `).join("")}
-          </div>
+        <div class="quick-chips-wrapper" role="group" aria-label="Szybki wybór uczelni">
+          ${popular.map(p => `
+            <button
+              type="button"
+              class="chip-btn"
+              data-institution="${p.institution}"
+              aria-label="Wybierz uczelnię ${p.institution_full || p.institution}"
+            >
+              ${p.institution}
+            </button>
+          `).join("")}
         </div>
       `;
     }
 
     this.facultyList.innerHTML = `
       <div class="faculty-empty-placeholder">
-        <p class="placeholder-title">Wybierz uczelnię powyżej</p>
-        <p class="placeholder-hint">Wpisz skrót lub nazwę uczelni w wyszukiwarce${popular.length > 0 ? " albo wybierz jedną z popularnych poniżej:" : ", aby zobaczyć dostępne wydziały."}</p>
+        <p class="placeholder-title" id="faculty-prompt">Najpierw wybierz uczelnię</p>
+        <p class="placeholder-hint">Wpisz nazwę albo wybierz jedną z popularnych:</p>
         ${chipsHtml}
       </div>
     `;
@@ -329,8 +522,7 @@ class PortalApp {
     this.launchBtn.href = url;
     if (title) this.launchBtn.setAttribute("title", `Otwórz ${title}`);
     if (this.actionHelper) {
-      this.actionHelper.textContent = "Wydział wybrany. Kliknij poniżej, aby otworzyć plan zajęć.";
-      this.actionHelper.classList.add("is-ready");
+      this.actionHelper.style.display = "none";
     }
   }
 
@@ -340,9 +532,9 @@ class PortalApp {
     this.launchBtn.setAttribute("aria-disabled", "true");
     this.launchBtn.removeAttribute("href");
     this.launchBtn.removeAttribute("title");
+    this.launchBtn.setAttribute("aria-describedby", "faculty-prompt");
     if (this.actionHelper) {
-      this.actionHelper.textContent = "Wybierz wydział powyżej, aby otworzyć plan zajęć.";
-      this.actionHelper.classList.remove("is-ready");
+      this.actionHelper.style.display = "none";
     }
   }
 
@@ -380,7 +572,7 @@ class PortalApp {
       });
     }
 
-    // Zamknięcie po kliknięciu na zewnątrz
+    // Zamknięcie listy po kliknięciu na zewnątrz
     document.addEventListener("click", (e) => {
       if (!this.searchInput.contains(e.target) && !this.listbox.contains(e.target) && (!this.toggleBtn || !this.toggleBtn.contains(e.target))) {
         this.closeDropdown();
@@ -494,8 +686,7 @@ class PortalApp {
 
       const secondary = document.createElement("span");
       secondary.className = "option-secondary";
-      const facultyCount = inst.faculties.length;
-      secondary.textContent = `${facultyCount} ${facultyCount === 1 ? "wydział" : "wydziały"}`;
+      secondary.textContent = PortalDomain.formatFacultyCount(inst.faculties.length);
 
       li.appendChild(primary);
       li.appendChild(secondary);
@@ -520,6 +711,12 @@ class PortalApp {
     this.selectedTenant = null;
     this.disableLaunchBtn();
 
+    const prompt = document.createElement("p");
+    prompt.id = "faculty-prompt";
+    prompt.className = "faculty-prompt-text";
+    prompt.textContent = "Wybierz wydział";
+    this.facultyList.appendChild(prompt);
+
     faculties.forEach((tenant) => {
       const card = document.createElement("div");
       card.className = "faculty-card";
@@ -528,7 +725,30 @@ class PortalApp {
       card.setAttribute("aria-checked", "false");
       card.id = `faculty-card-${tenant.tenant_id}`;
 
-      // Lewa strona: Nazwa i metadane
+      // Lewa strona: Logo/Ikona
+      const visual = document.createElement("div");
+      visual.className = "faculty-logo-box";
+      const visualUrl = PortalDomain.getTenantVisualUrl(tenant);
+      if (visualUrl) {
+        const img = document.createElement("img");
+        img.src = visualUrl;
+        img.alt = "";
+        img.className = "faculty-logo-img";
+        img.setAttribute("loading", "lazy");
+        visual.appendChild(img);
+      } else {
+        // Fallback: ikona kalendarza / akademicka
+        visual.innerHTML = `
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+        `;
+      }
+
+      // Środek: Nazwa i metadane
       const info = document.createElement("div");
       info.className = "faculty-info";
 
@@ -538,45 +758,25 @@ class PortalApp {
 
       const meta = document.createElement("div");
       meta.className = "faculty-meta";
-
-      const authorBadge = document.createElement("span");
-      authorBadge.className = "meta-item";
-      authorBadge.textContent = tenant.plugin_author ? `Autor: ${tenant.plugin_author}` : "Oficjalny adapter";
-
-      const versionBadge = document.createElement("span");
-      versionBadge.className = "meta-item";
-      versionBadge.textContent = `v${tenant.plugin_version || "1.0.0"}`;
-
-      meta.appendChild(authorBadge);
-      meta.appendChild(versionBadge);
+      const author = tenant.plugin_author ? `Autor: ${tenant.plugin_author}` : "Oficjalny adapter";
+      const version = `v${tenant.plugin_version || "1.0.0"}`;
+      meta.textContent = `${author} · ${version}`;
 
       info.appendChild(name);
       info.appendChild(meta);
 
-      // Prawa strona: Logo/Ikona i radio indicator
-      const right = document.createElement("div");
-      right.className = "faculty-right";
-
-      const visualUrl = PortalDomain.getTenantVisualUrl(tenant);
-      if (visualUrl) {
-        const visual = document.createElement("div");
-        visual.className = "faculty-logo-box";
-        const img = document.createElement("img");
-        img.src = visualUrl;
-        img.alt = `Logo ${tenant.faculty_full || tenant.faculty}`;
-        img.className = "faculty-logo-img";
-        img.setAttribute("loading", "lazy");
-        visual.appendChild(img);
-        right.appendChild(visual);
-      }
-
-      const radio = document.createElement("div");
-      radio.className = "faculty-radio-indicator";
+      // Prawa strona: Radio
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "faculty_choice";
+      radio.className = "faculty-radio";
+      radio.checked = false;
+      radio.tabIndex = -1;
       radio.setAttribute("aria-hidden", "true");
-      right.appendChild(radio);
 
+      card.appendChild(visual);
       card.appendChild(info);
-      card.appendChild(right);
+      card.appendChild(radio);
 
       // Zdarzenia wyboru
       card.addEventListener("click", () => {
@@ -603,11 +803,17 @@ class PortalApp {
   selectFaculty(tenant, cardEl) {
     this.selectedTenant = tenant;
 
-    // Odznacz pozostałe karty
+    // Odznacz pozostałe karty i radio
     const cards = this.facultyList.querySelectorAll(".faculty-card");
-    cards.forEach(c => c.setAttribute("aria-checked", "false"));
+    cards.forEach(c => {
+      c.setAttribute("aria-checked", "false");
+      const r = c.querySelector(".faculty-radio");
+      if (r) r.checked = false;
+    });
 
     cardEl.setAttribute("aria-checked", "true");
+    const activeRadio = cardEl.querySelector(".faculty-radio");
+    if (activeRadio) activeRadio.checked = true;
 
     // Zaktualizuj przycisk przejścia
     this.enableLaunchBtn(tenant.url || `./${tenant.path}/`, tenant.name || tenant.faculty_full);
@@ -627,6 +833,8 @@ if (typeof document !== "undefined") {
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
     PortalDomain,
-    LAST_VISITED_KEY
+    LAST_VISITED_KEY,
+    THEME_STORAGE_KEY,
+    PortalApp
   };
 }

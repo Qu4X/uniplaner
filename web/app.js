@@ -462,13 +462,48 @@ function closeThemeDropdown() {
 }
 
 function openSidebar() {
-  if (elements.appSidebar) elements.appSidebar.classList.add("open");
+  if (typeof document !== "undefined") {
+    if (document.body && document.body.classList) {
+      document.body.classList.add("sidebar-open");
+    }
+    if (typeof document.querySelector === "function") {
+      const mainEl = document.querySelector("main");
+      if (mainEl && typeof mainEl.setAttribute === "function") mainEl.setAttribute("inert", "");
+      const headerEl = document.querySelector(".app-header");
+      if (headerEl && typeof headerEl.setAttribute === "function") headerEl.setAttribute("inert", "");
+    }
+  }
+  if (elements.appSidebar) {
+    if (typeof elements.appSidebar.removeAttribute === "function") elements.appSidebar.removeAttribute("inert");
+    elements.appSidebar.classList.add("open");
+  }
   if (elements.sidebarBackdrop) elements.sidebarBackdrop.classList.remove("hidden");
+  if (elements.closeSidebarBtn && typeof elements.closeSidebarBtn.focus === "function") {
+    elements.closeSidebarBtn.focus();
+  }
 }
 
 function closeSidebar() {
-  if (elements.appSidebar) elements.appSidebar.classList.remove("open");
+  const wasOpen = Boolean(elements.appSidebar && elements.appSidebar.classList && elements.appSidebar.classList.contains("open"));
+  if (typeof document !== "undefined") {
+    if (document.body && document.body.classList) {
+      document.body.classList.remove("sidebar-open");
+    }
+    if (typeof document.querySelector === "function") {
+      const mainEl = document.querySelector("main");
+      if (mainEl && typeof mainEl.removeAttribute === "function") mainEl.removeAttribute("inert");
+      const headerEl = document.querySelector(".app-header");
+      if (headerEl && typeof headerEl.removeAttribute === "function") headerEl.removeAttribute("inert");
+    }
+  }
+  if (elements.appSidebar) {
+    elements.appSidebar.classList.remove("open");
+    if (typeof elements.appSidebar.setAttribute === "function") elements.appSidebar.setAttribute("inert", "");
+  }
   if (elements.sidebarBackdrop) elements.sidebarBackdrop.classList.add("hidden");
+  if (wasOpen && elements.menuToggleBtn && typeof elements.menuToggleBtn.focus === "function") {
+    elements.menuToggleBtn.focus();
+  }
 }
 
 function normalizePlansData(raw) {
@@ -1556,6 +1591,9 @@ function setupEventListeners() {
 
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
+      if (elements.appSidebar && elements.appSidebar.classList && elements.appSidebar.classList.contains("open")) {
+        closeSidebar();
+      }
       closeAboutModal();
       closeEventsModal();
       window.CrossRef?.UI?.handleEscape();
