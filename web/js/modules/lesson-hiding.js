@@ -188,7 +188,18 @@
     return `${count} ukrytych terminów zajęć`;
   }
 
-  function renderElectivesModalList(elements, appState) {
+  function _resolveArgs(arg1, arg2) {
+    let elements = arg1;
+    let appState = arg2;
+    if (elements && !elements.electivesDialog && !elements.electivesList && appState && (appState.electivesDialog || appState.electivesList)) {
+      elements = arg2;
+      appState = arg1;
+    }
+    return { elements, appState };
+  }
+
+  function renderElectivesModalList(arg1, arg2) {
+    const { elements, appState } = _resolveArgs(arg1, arg2);
     const listEl = elements && elements.electivesList;
     if (!listEl) return;
     const electives = getElectiveLessons(appState && appState.scheduleData);
@@ -222,7 +233,8 @@
       .join("");
   }
 
-  function openElectivesModal(elements, appState) {
+  function openElectivesModal(arg1, arg2) {
+    const { elements, appState } = _resolveArgs(arg1, arg2);
     const dialog = elements && elements.electivesDialog;
     if (!dialog) return;
     renderElectivesModalList(elements, appState);

@@ -1371,7 +1371,7 @@ function setupEventListeners() {
   const openElectives = () => {
     closeSidebar();
     if (_LessonHiding && typeof _LessonHiding.openElectivesModal === "function") {
-      _LessonHiding.openElectivesModal(state, elements, escapeHtml);
+      _LessonHiding.openElectivesModal(elements, state);
     }
   };
   if (elements.electivesBtn) elements.electivesBtn.addEventListener("click", openElectives);
@@ -1385,7 +1385,7 @@ function setupEventListeners() {
   if (elements.restoreAllElectivesBtn) {
     elements.restoreAllElectivesBtn.addEventListener("click", () => {
       restoreAllHiddenLessonSlots();
-      if (_LessonHiding) _LessonHiding.renderElectivesModalList(state, elements, escapeHtml);
+      if (_LessonHiding) _LessonHiding.renderElectivesModalList(elements, state);
     });
   }
   if (elements.electivesDialog) {

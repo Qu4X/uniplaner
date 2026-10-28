@@ -147,7 +147,7 @@ class PortalApp {
     this.errorContainer = document.getElementById("uni-error-container");
     this.errorText = document.getElementById("uni-error-text");
     this.retryBtn = document.getElementById("uni-retry-btn");
-    this.loadingBadge = document.getElementById("uni-loading-badge");
+    this.loadingBadge = null;
     this.facultyStep = document.getElementById("step-faculty");
     this.facultyList = document.getElementById("faculty-list");
     this.actionStep = document.getElementById("step-action");

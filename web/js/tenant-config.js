@@ -283,7 +283,11 @@
         }
         const pluginLogo = document.getElementById("about-plugin-logo");
         if (pluginLogo) {
-          pluginLogo.setAttribute("src", svgIconUri);
+          pluginLogo.setAttribute("src", "icon.png");
+          pluginLogo.onerror = function () {
+            this.onerror = null;
+            if (svgIconUri) this.setAttribute("src", svgIconUri);
+          };
         }
       }
     }

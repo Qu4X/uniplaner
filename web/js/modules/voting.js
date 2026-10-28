@@ -358,7 +358,7 @@
       const userVotes = (appState && appState.userVotes) || new Set();
 
       if (proposals.length === 0) {
-        listEl.innerHTML = `<p class="subtext" style="text-align: center; padding: 1.25rem 0;">Brak zgłoszonych propozycji zmian dla aktualnie wybranej grupy.</p>`;
+        listEl.innerHTML = `<p class="subtext" style="text-align: center; padding: 0.5rem 0;">Brak zgłoszonych propozycji zmian dla aktualnie wybranej grupy.</p>`;
         return;
       }
 

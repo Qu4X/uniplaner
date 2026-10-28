@@ -891,6 +891,13 @@ body.sidebar-open {
   box-sizing: border-box;
 }
 
+.search-sidebar-section .search-input-wrapper input:focus,
+.search-sidebar-section input:focus {
+  border: none;
+  box-shadow: none;
+  outline: none;
+}
+
 .search-sidebar-section input {
   flex: 1;
   min-width: 0;
@@ -1229,6 +1236,31 @@ body.sidebar-open {
   position: relative;
 }
 
+select option {
+  background-color: var(--school-surface, #111F38);
+  color: var(--school-text, #E8EEF9);
+}
+
+[data-theme="light"] select option {
+  background-color: #FFFFFF;
+  color: #0F1B33;
+}
+
+[data-theme="dark"] select option {
+  background-color: #111F38;
+  color: #E8EEF9;
+}
+
+select {
+  color-scheme: light dark;
+}
+[data-theme="dark"] select {
+  color-scheme: dark;
+}
+[data-theme="light"] select {
+  color-scheme: light;
+}
+
 .sidebar-field select {
   width: 100%;
   height: 100%;
@@ -1452,6 +1484,8 @@ body.sidebar-open {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
   width: 100%;
 }
 
@@ -1851,10 +1885,11 @@ body.sidebar-open {
   .schedule-week-grid {
     --grid-cols: repeat(5, 1fr);
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(170px, 1fr));
     gap: 8px;
     padding: 0 36px;
     align-items: start;
+    overflow-x: auto;
   }
 
   .grid-day-col {
@@ -2088,6 +2123,7 @@ body.sidebar-open {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   font-size: 13px;
   color: var(--school-text-muted);
 }
@@ -2096,6 +2132,7 @@ body.sidebar-open {
   display: inline-flex;
   align-items: center;
   gap: 7px;
+  flex-shrink: 0;
 }
 
 .lesson-type-dot {
@@ -2116,6 +2153,8 @@ body.sidebar-open {
   align-items: center;
   gap: 8px;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  margin-left: auto;
 }
 
 .lesson-title {
@@ -2126,7 +2165,9 @@ body.sidebar-open {
   font-size: 17px;
   line-height: 1.2;
   color: var(--school-text);
-  word-break: break-word;
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: none;
 }
 
 @media (max-width: 899px) {
@@ -3041,8 +3082,13 @@ iframe[src*="tally.so"] {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
-  flex: 1;
-  min-width: 140px;
+  flex: 1 1 200px;
+  min-width: 200px;
+}
+
+.free-rooms-control-group:first-child {
+  flex: 1.4 1 270px;
+  min-width: 270px;
 }
 
 .free-rooms-control-group label {
@@ -3336,6 +3382,11 @@ iframe[src*="tally.so"] {
   gap: 2px;
   width: 100%;
 }
+.cross-modal-badge,
+.about-modal-badge {
+  display: none !important;
+}
+
 .cross-modal-header .cross-modal-badge {
   font-size: 13px;
   font-weight: 400;
@@ -4138,7 +4189,7 @@ iframe[src*="tally.so"] {
   gap: 0.5rem;
   max-height: 360px;
   overflow-y: auto;
-  margin: 0.75rem 0;
+  margin: 0 0 0.5rem 0;
 }
 
 .proposal-item {
