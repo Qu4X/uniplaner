@@ -2300,7 +2300,7 @@ body.sidebar-open {
   color: #ffffff;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 639px) {
   .calendar-notice-item.notice-duplicate-plan .notice-actions {
     padding-left: 0;
   }
@@ -2676,7 +2676,7 @@ body.sidebar-open {
 
 /* Event Themes — Dark Mode (WCAG AA Contrast) */
 [data-theme="dark"] .event-theme-academic {
-  --event-accent-color: #60a5fa !important;
+  --event-accent-color: #60a5fa;
 }
 
 [data-theme="dark"] .event-theme-academic .event-badge,
@@ -2687,7 +2687,7 @@ body.sidebar-open {
 }
 
 [data-theme="dark"] .event-theme-party {
-  --event-accent-color: #a78bfa !important;
+  --event-accent-color: #a78bfa;
 }
 
 [data-theme="dark"] .event-theme-party .event-badge,
@@ -2698,7 +2698,7 @@ body.sidebar-open {
 }
 
 [data-theme="dark"] .event-theme-flanki {
-  --event-accent-color: #fbbf24 !important;
+  --event-accent-color: #fbbf24;
 }
 
 [data-theme="dark"] .event-theme-flanki .event-badge,
@@ -2709,7 +2709,7 @@ body.sidebar-open {
 }
 
 [data-theme="dark"] .event-theme-warning {
-  --event-accent-color: #fbbf24 !important;
+  --event-accent-color: #fbbf24;
 }
 
 [data-theme="dark"] .event-theme-warning .event-badge,
@@ -2720,7 +2720,7 @@ body.sidebar-open {
 }
 
 [data-theme="dark"] .event-theme-info {
-  --event-accent-color: #38bdf8 !important;
+  --event-accent-color: #38bdf8;
 }
 
 [data-theme="dark"] .event-theme-info .event-badge,
@@ -3221,7 +3221,7 @@ body.sidebar-open {
 [class*="tally-overlay"],
 [class*="tally-popup"],
 iframe[src*="tally.so"] {
-  z-index: 2147483647 !important;
+  z-index: 2147483647;
 }
 
 /* Calendar Modal */
@@ -3242,7 +3242,7 @@ iframe[src*="tally.so"] {
   gap: 0.85rem;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 639px) {
   .calendar-options-grid {
     grid-template-columns: 1fr;
   }
@@ -3317,7 +3317,7 @@ iframe[src*="tally.so"] {
 
 .btn-google {
   background: #1a73e8;
-  color: #ffffff !important;
+  color: #ffffff;
 }
 
 .btn-google:hover {
@@ -3326,12 +3326,12 @@ iframe[src*="tally.so"] {
 
 .btn-apple {
   background: #000000;
-  color: #ffffff !important;
+  color: #ffffff;
 }
 
 [data-theme="dark"] .btn-apple {
   background: #ffffff;
-  color: #000000 !important;
+  color: #000000;
 }
 
 .btn-apple:hover {
@@ -3444,6 +3444,24 @@ iframe[src*="tally.so"] {
 .app-footer a {
   color: var(--text-secondary);
   text-decoration: underline;
+}
+
+.footer-link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: var(--text-secondary);
+  text-decoration: underline;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  display: inline;
+  transition: color 0.15s;
+}
+
+.footer-link-btn:hover {
+  color: var(--brand-accent);
 }
 
 /* Free Room Finder Styles */
@@ -3655,25 +3673,6 @@ iframe[src*="tally.so"] {
   font-weight: 500;
   color: var(--text-secondary);
   line-height: 1.35;
-}
-
-/* Footer link button */
-.footer-link-btn {
-  background: none;
-  border: none;
-  padding: 0;
-  margin: 0;
-  color: var(--text-secondary);
-  text-decoration: underline;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: inherit;
-  display: inline;
-  transition: color 0.15s;
-}
-
-.footer-link-btn:hover {
-  color: var(--brand-accent);
 }
 
 /* About App Modal Styles */
@@ -4049,11 +4048,11 @@ iframe[src*="tally.so"] {
   box-sizing: border-box;
   padding: 0.65rem 1.25rem;
   background: #d97706;
-  color: #ffffff !important;
+  color: #ffffff;
   font-size: 0.88rem;
   font-weight: 700;
   border-radius: var(--radius);
-  text-decoration: none !important;
+  text-decoration: none;
   box-shadow: 0 2px 4px rgba(217, 119, 6, 0.25);
   transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
 }
@@ -4305,7 +4304,7 @@ a:focus:not(:focus-visible) {
   color: var(--school-text, #E8EEF9);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 899px) {
   .modal-dialog.cross-modal-dialog[open] {
     position: fixed;
     inset: auto 0 0 0;
@@ -4357,7 +4356,7 @@ a:focus:not(:focus-visible) {
   }
 }
 
-@media (min-width: 769px) {
+@media (min-width: 900px) {
   .modal-dialog.cross-modal-dialog[open] {
     position: fixed;
     top: 50%;
