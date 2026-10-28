@@ -5,10 +5,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Plan Zajęć WN</title>
-  <link rel="stylesheet" href="style.css?v=3.11.0">
+  <!-- Google Fonts: Bricolage Grotesque (opsz,wdth,wght) + DM Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap">
+  <link rel="stylesheet" href="tokens.css?v=3.12.0">
+  <link rel="stylesheet" href="style.css?v=3.12.0">
+  <link rel="stylesheet" href="theme.css?v=3.12.0">
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚓</text></svg>">
-  <link rel="manifest" href="manifest.json?v=3.11.0">
+  <link rel="manifest" href="manifest.json?v=3.12.0">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -140,6 +146,9 @@
     </symbol>
   </svg>
 
+  <!-- Tło dekoracyjne z patternem ikon uczelnianych (motifs) -->
+  <svg id="app-bg-pattern" class="app-bg-pattern" aria-hidden="true" preserveAspectRatio="none"></svg>
+
   <header class="app-header">
     <div class="header-content">
       <div class="header-left">
@@ -149,7 +158,9 @@
           </svg>
         </button>
         <div class="brand">
-          <img src="planwn.svg" class="brand-logo" width="32" height="32" alt="" aria-hidden="true" fetchpriority="high" decoding="async">
+          <div class="brand-logo-tile">
+            <img src="planwn.svg" class="brand-logo" width="24" height="24" alt="" aria-hidden="true" fetchpriority="high" decoding="async">
+          </div>
           <div class="brand-titles">
             <h1>Plan Zajęć WN</h1>
             <span class="header-group-badge" id="header-active-group">Wybierz grupę</span>
@@ -172,13 +183,13 @@
         <div class="theme-switcher-wrapper" id="theme-switcher-wrapper">
           <!-- Segmented control for wide screens (>= 600px) -->
           <div class="theme-segmented-group" role="radiogroup" aria-label="Motyw">
-            <button type="button" class="theme-seg-btn" data-theme-mode="light" role="radio" aria-checked="false" tabindex="-1" title="Motyw: jasny" aria-label="Motyw: jasny">
+            <button type="button" class="theme-seg-btn" data-theme-mode="light" role="radio" aria-checked="false" tabindex="-1" title="Motyw: jasny" aria-label="Jasny">
               <svg class="icon" aria-hidden="true"><use href="#icon-light_mode"></use></svg>
             </button>
-            <button type="button" class="theme-seg-btn" data-theme-mode="system" role="radio" aria-checked="true" tabindex="0" title="Motyw: systemowy" aria-label="Motyw: systemowy">
+            <button type="button" class="theme-seg-btn" data-theme-mode="system" role="radio" aria-checked="true" tabindex="0" title="Motyw: zgodnie z urządzeniem" aria-label="Zgodnie z urządzeniem">
               <svg class="icon" aria-hidden="true"><use href="#icon-desktop_windows"></use></svg>
             </button>
-            <button type="button" class="theme-seg-btn" data-theme-mode="dark" role="radio" aria-checked="false" tabindex="-1" title="Motyw: ciemny" aria-label="Motyw: ciemny">
+            <button type="button" class="theme-seg-btn" data-theme-mode="dark" role="radio" aria-checked="false" tabindex="-1" title="Motyw: ciemny" aria-label="Ciemny">
               <svg class="icon" aria-hidden="true"><use href="#icon-dark_mode"></use></svg>
             </button>
           </div>
@@ -189,6 +200,7 @@
               <svg class="icon" aria-hidden="true">
                 <use href="#icon-desktop_windows"></use>
               </svg>
+            <svg class="theme-chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
             </button>
             <div id="theme-dropdown-menu" class="theme-dropdown-menu hidden" role="menu" aria-label="Motyw">
               <button type="button" class="theme-dropdown-item" role="menuitemradio" data-theme-mode="light" aria-checked="false" tabindex="-1">
@@ -212,123 +224,124 @@
 
   <!-- Left Sidebar / Drawer Menu -->
   <div id="sidebar-backdrop" class="sidebar-backdrop hidden"></div>
-  <aside id="app-sidebar" class="app-sidebar">
+  <aside id="app-sidebar" class="app-sidebar" aria-label="Ustawienia planu">
     <div class="sidebar-header">
-      <h2>Ustawienia Planu</h2>
-      <button id="close-sidebar" class="btn-icon close-sidebar-btn" title="Zamknij" aria-label="Zamknij">
-        <svg class="icon" aria-hidden="true">
-          <use href="#icon-close"></use>
+      <h2>Ustawienia planu</h2>
+      <button id="close-sidebar" class="btn-icon close-sidebar-btn" title="Zamknij" aria-label="Zamknij menu">
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 6l12 12M18 6L6 18"></path>
         </svg>
       </button>
     </div>
 
     <div class="sidebar-body">
-      <!-- Quick Search -->
+      <!-- Szybkie wyszukiwanie -->
       <div class="sidebar-section search-sidebar-section">
-        <label for="sidebar-search-input" class="control-label">Szybkie wyszukiwanie:</label>
+        <label for="sidebar-search-input" class="sidebar-label">Szybkie wyszukiwanie</label>
         <div class="search-input-wrapper">
-          <svg class="icon search-icon" aria-hidden="true">
-            <use href="#icon-search"></use>
+          <svg class="search-icon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path>
           </svg>
-          <input type="text" id="sidebar-search-input" placeholder="Wykładowca, sala, przedmiot..." autocomplete="off">
+          <input type="text" id="sidebar-search-input" placeholder="Wykładowca, sala…" autocomplete="off">
           <button id="clear-search-btn" class="btn-icon clear-search-btn hidden" aria-label="Wyczyść">
-            <svg class="icon" aria-hidden="true">
-              <use href="#icon-close"></use>
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 6l12 12M18 6L6 18"></path>
             </svg>
           </button>
         </div>
         <div id="search-results" class="search-results-dropdown hidden"></div>
       </div>
 
-      <div class="sidebar-section">
-        <label for="plan-select" class="control-label">Kierunek / Semestr:</label>
-        <div class="select-wrapper">
-          <select id="plan-select">
-            <option value="">Wybierz kierunek studiów...</option>
-          </select>
-        </div>
-        <div id="plan-meta-info" class="plan-meta-info hidden">
-          <span id="plan-pub-date"></span>
-          <span id="plan-version-badge" class="badge-version"></span>
-        </div>
-      </div>
-
-      <div class="sidebar-section">
-        <label for="group-select" class="control-label">Grupa zajęciowa:</label>
-        <div class="select-wrapper">
-          <select id="group-select" disabled>
-            <option value="">Najpierw wybierz kierunek...</option>
-          </select>
-        </div>
-      </div>
-
+      <!-- Quick actions -->
       <div class="sidebar-section tools-sidebar-section">
-        <span class="control-label">Narzędzia:</span>
-        <button id="free-rooms-btn" class="btn-secondary btn-sidebar-tool" title="Znajdź wolną salę">
-          <svg class="icon btn-tool-icon" aria-hidden="true">
-            <use href="#icon-meeting_room"></use>
-          </svg> <span class="btn-text">Znajdź wolną salę</span>
+        <div class="sidebar-section-title">Narzędzia</div>
+        <button id="free-rooms-btn" class="sidebar-action-row" title="Znajdź wolną salę">
+          <svg class="action-icon" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4a1 1 0 0 1 1-1h8l5 3v15M3 21h18M12 12h.01"></path></svg>
+          <span class="action-text">Znajdź wolną salę</span>
+          <svg class="action-chevron" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
         </button>
-        <button id="electives-btn" class="btn-secondary btn-sidebar-tool hidden" title="Wybierz przedmioty do wyboru (fakultety)"
-          style="margin-top: 0.5rem;">
-          <svg class="icon btn-tool-icon" aria-hidden="true">
-            <use href="#icon-visibility"></use>
-          </svg> <span class="btn-text">Wybierz fakultety</span>
+        <button id="events-btn" class="sidebar-action-row" title="Wydarzenia">
+          <svg class="action-icon" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4M9 15h6"></path></svg>
+          <span class="action-text">Wydarzenia</span>
+          <svg class="action-chevron" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
         </button>
-        <button id="propose-btn" class="btn-secondary btn-sidebar-tool hidden" title="Propozycje zmian i głosowanie nad planem"
-          style="margin-top: 0.5rem;">
-          <svg class="icon btn-tool-icon" aria-hidden="true">
-            <use href="#icon-swap_horiz"></use>
-          </svg> <span class="btn-text">Propozycje zmian</span>
+        <button id="calendar-btn" class="sidebar-action-row" title="Dodaj do kalendarza">
+          <svg class="action-icon" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>
+          <span class="action-text">Dodaj do kalendarza</span>
+          <svg class="action-chevron" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
         </button>
-        <button id="events-btn" class="btn-secondary btn-sidebar-tool" title="Wydarzenia"
-          style="margin-top: 0.5rem;">
-          <svg class="icon btn-tool-icon" aria-hidden="true">
-            <use href="#icon-event_upcoming"></use>
-          </svg> <span class="btn-text">Wydarzenia</span>
+        <button id="electives-btn" class="sidebar-action-row hidden" title="Wybierz przedmioty do wyboru (fakultety)">
+          <svg class="action-icon" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          <span class="action-text">Wybierz fakultety</span>
+          <svg class="action-chevron" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
         </button>
-        <button id="calendar-btn" class="btn-secondary btn-sidebar-tool" title="Dodaj do kalendarza"
-          style="margin-top: 0.5rem;">
-          <svg class="icon btn-tool-icon" aria-hidden="true">
-            <use href="#icon-calendar_month"></use>
-          </svg> <span class="btn-text">Dodaj do kalendarza</span>
+        <button id="propose-btn" class="sidebar-action-row hidden" title="Propozycje zmian i głosowanie nad planem">
+          <svg class="action-icon" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"></path></svg>
+          <span class="action-text">Propozycje zmian</span>
+          <svg class="action-chevron" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
         </button>
-        <button id="about-app-btn" class="btn-secondary btn-sidebar-tool" title="O aplikacji"
-          style="margin-top: 0.5rem;">
-          <svg class="icon btn-tool-icon" aria-hidden="true">
-            <use href="#icon-info"></use>
-          </svg> <span class="btn-text">O aplikacji</span>
+        <button id="about-app-btn" class="sidebar-action-row" title="O aplikacji">
+          <svg class="action-icon" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5h.01"></path></svg>
+          <span class="action-text">O aplikacji</span>
+          <svg class="action-chevron" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
         </button>
       </div>
 
-      <div class="sidebar-section settings-sidebar-section">
-        <label for="days-view-select" class="control-label">Widok dni:</label>
-        <div class="select-wrapper">
-          <select id="days-view-select">
-            <option value="workdays">Dni robocze (Pon – Pt)</option>
-            <option value="active_only">Tylko dni z zajęciami</option>
-            <option value="all">Pełny tydzień (Pon – Nd)</option>
-          </select>
+      <!-- Mój plan -->
+      <div class="sidebar-plan-section">
+        <h3 class="sidebar-section-title">Mój plan</h3>
+
+        <div class="sidebar-field">
+          <label for="plan-select" class="sidebar-label">Kierunek i semestr</label>
+          <div class="select-wrapper">
+            <select id="plan-select">
+              <option value="">Wybierz kierunek studiów...</option>
+            </select>
+          </div>
+          <div id="plan-meta-info" class="plan-meta-info hidden">
+            <span id="plan-pub-date"></span>
+            <span id="plan-version-badge" class="badge-version"></span>
+          </div>
         </div>
-      </div>
 
-      <div class="sidebar-section settings-sidebar-section">
-        <label for="study-mode-select" class="control-label">Tryb studiów:</label>
-        <div class="select-wrapper">
-          <select id="study-mode-select">
-            <option value="stacjonarne">Stacjonarne</option>
-            <option value="niestacjonarne">Niestacjonarne</option>
-          </select>
+        <div class="sidebar-field">
+          <label for="group-select" class="sidebar-label">Grupa zajęciowa</label>
+          <div class="select-wrapper">
+            <select id="group-select" disabled>
+              <option value="">Najpierw wybierz kierunek...</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="sidebar-field">
+          <label for="study-mode-select" class="sidebar-label">Tryb studiów</label>
+          <div class="select-wrapper">
+            <select id="study-mode-select">
+              <option value="stacjonarne">Stacjonarne</option>
+              <option value="niestacjonarne">Niestacjonarne</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="sidebar-field">
+          <label for="days-view-select" class="sidebar-label">Widok dni</label>
+          <div class="select-wrapper">
+            <select id="days-view-select">
+              <option value="workdays">Dni robocze (Pon – Pt)</option>
+              <option value="active_only">Tylko dni z zajęciami</option>
+              <option value="all">Pełny tydzień (Pon – Nd)</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="sidebar-footer">
       <a href="../../" class="browser-only-nav btn-sidebar-change-tenant back-to-portal-link" title="Wróć do wyboru uczelni i wydziału">
-        <span class="tenant-btn-icon" aria-hidden="true">🏛️</span>
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h13l-4-4M17 17H4l4 4"></path></svg>
         <span>Zmień uczelnię / wydział</span>
       </a>
-      <span class="subtext" id="last-updated">Ładowanie danych...</span>
+      <span class="subtext hidden" id="last-updated" style="display: none;"></span>
     </div>
   </aside>
 
@@ -336,58 +349,35 @@
     <!-- Week navigation -->
     <section class="week-nav-card">
       <div class="week-nav-controls">
-        <button id="prev-week" class="btn-nav" title="Poprzedni tydzień">‹</button>
+        <button id="prev-week" class="btn-nav" title="Poprzedni tydzień" aria-label="Poprzedni tydzień">
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>
+        </button>
         <div class="week-info">
-          <span class="week-label" id="current-week-label" title="Kliknij, aby wybrać dzień z kalendarza">Ładowanie
-            tygodnia...</span>
+          <span class="week-label" id="current-week-label" title="Kliknij, aby wybrać dzień z kalendarza">Ładowanie tygodnia...</span>
           <input type="date" id="week-date-picker" class="visually-hidden-picker" tabindex="-1" aria-hidden="true"
             aria-label="Wybierz datę z kalendarza">
           <button id="today-btn" class="btn-today">Dzisiaj</button>
         </div>
-        <button id="next-week" class="btn-nav" title="Następny tydzień">›</button>
+        <button id="next-week" class="btn-nav" title="Następny tydzień" aria-label="Następny tydzień">
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+        </button>
       </div>
 
-      <!-- Mobile day selector tabs -->
-      <div class="day-tabs" id="day-tabs">
-        <button class="day-tab" data-day="PON">Pon</button>
-        <button class="day-tab" data-day="WT">Wt</button>
-        <button class="day-tab" data-day="ŚR">Śr</button>
-        <button class="day-tab" data-day="CZW">Czw</button>
-        <button class="day-tab" data-day="PT">Pt</button>
-        <button class="day-tab hidden" data-day="SOB">Sob</button>
-        <button class="day-tab hidden" data-day="ND">Nd</button>
-        <button class="day-tab active" data-day="ALL">Cały tydzień</button>
-      </div>
+      <!-- Day selector tabs & always-visible legend bar -->
+      <div class="tabs-and-legend-bar">
+        <div class="day-tabs" id="day-tabs" role="tablist" aria-label="Wybór dnia">
+          <button class="day-tab" data-day="PON">Pon</button>
+          <button class="day-tab" data-day="WT">Wt</button>
+          <button class="day-tab" data-day="ŚR">Śr</button>
+          <button class="day-tab" data-day="CZW">Czw</button>
+          <button class="day-tab" data-day="PT">Pt</button>
+          <button class="day-tab hidden" data-day="SOB">Sob</button>
+          <button class="day-tab hidden" data-day="ND">Nd</button>
+          <button class="day-tab active" data-day="ALL" aria-label="Cały tydzień"><span class="tab-label-full">Cały tydzień</span><span class="tab-label-short" aria-hidden="true">Tydzień</span></button>
+        </div>
 
-      <!-- Lesson form color legend disclosure -->
-      <details class="legend-disclosure" id="legend-disclosure">
-        <summary class="legend-summary">
-          <span class="legend-summary-left">
-            <span class="legend-summary-title">Legenda form zajęć</span>
-            <span class="legend-preview" id="legend-preview-dots" aria-hidden="true">
-              <span class="legend-dot form-wyklad" title="Wykład"></span>
-              <span class="legend-dot form-cwiczenia" title="Ćwiczenia"></span>
-              <span class="legend-dot form-laboratorium" title="Laboratorium"></span>
-              <span class="legend-dot form-symulator" title="Symulator"></span>
-            </span>
-          </span>
-          <span class="legend-chevron" aria-hidden="true">›</span>
-        </summary>
-        <ul class="legend-list" id="legend-items-list" role="list">
-          <li class="legend-item form-wyklad">
-            <span class="legend-label"><strong class="legend-abbr">W</strong> Wykład</span>
-          </li>
-          <li class="legend-item form-cwiczenia">
-            <span class="legend-label"><strong class="legend-abbr">Ćw</strong> Ćwiczenia</span>
-          </li>
-          <li class="legend-item form-laboratorium">
-            <span class="legend-label"><strong class="legend-abbr">Lab</strong> Laboratorium</span>
-          </li>
-          <li class="legend-item form-symulator">
-            <span class="legend-label"><strong class="legend-abbr">Sym</strong> Symulator</span>
-          </li>
-        </ul>
-      </details>
+        <div class="legend-bar hidden" id="legend-bar" aria-label="Legenda form zajęć"></div>
+      </div>
     </section>
 
     <!-- Calendar Notice / Day Replacement Alert -->
@@ -519,19 +509,32 @@
   </dialog>
 
   <!-- Cross-reference detail modal (Teacher / Room / Subject / Free Rooms) -->
-  <dialog id="cross-modal" class="modal-dialog cross-modal-dialog" aria-labelledby="cross-modal-title" closedby="any">
-    <div class="modal-content modal-content-large">
-      <div class="modal-header">
-        <div class="modal-header-titles">
-          <span id="cross-modal-badge" class="cross-modal-badge">Informacja</span>
-          <h3 id="cross-modal-title">Szczegóły</h3>
-        </div>
+  <dialog id="cross-modal" class="modal-dialog cross-modal-dialog hidden" aria-labelledby="cross-modal-title" closedby="any" inert hidden>
+    <div class="modal-content cross-modal-content">
+      <div class="bottom-sheet-handle"><span class="drag-bar"></span></div>
+      <div class="cross-modal-top-bar">
+        <button id="cross-modal-back-btn" class="modal-back-btn hidden" aria-label="Wróć" type="button">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7"></path>
+          </svg>
+          <span id="cross-modal-back-text"></span>
+        </button>
         <button id="close-cross-modal" class="btn-close" aria-label="Zamknij">
-          <svg class="icon" aria-hidden="true">
-            <use href="#icon-close"></use>
+          <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 6l12 12M18 6L6 18"></path>
           </svg>
         </button>
       </div>
+      <div class="modal-header cross-modal-header">
+        <div class="modal-header-titles">
+          <span id="cross-modal-badge" class="cross-modal-badge">Plan sali</span>
+          <h3 id="cross-modal-title">N2</h3>
+        </div>
+      </div>
+      <div class="cross-modal-scope-notice" id="cross-modal-scope-notice">
+        Zajęcia z planu WN. Zajęcia innych wydziałów nie są uwzględnione.
+      </div>
+      <div id="cross-modal-week-nav" class="modal-week-nav"></div>
       <div id="cross-modal-body" class="modal-body cross-modal-body">
         <!-- Dynamic content populated by JS -->
       </div>
@@ -923,17 +926,17 @@
   </footer>
 
   <script async src="https://tally.so/widgets/embed.js"></script>
-  <script src="js/state.js?v=3.11.0"></script>
-  <script src="js/tenant-config.js?v=3.11.0"></script>
-  <script src="js/schedule-engine.js?v=3.11.0"></script>
-  <script src="js/modules/cross-reference.js?v=3.11.0"></script>
-  <script src="js/modules/events.js?v=3.11.0"></script>
-  <script src="js/modules/voting.js?v=3.11.0"></script>
-  <script src="js/modules/lesson-hiding.js?v=3.11.0"></script>
-  <script src="js/modules/changelog.js?v=3.11.0"></script>
-  <script src="js/timeline.js?v=3.11.0"></script>
-  <script src="js/render.js?v=3.11.0"></script>
-  <script src="app.js?v=3.11.0"></script>
+  <script src="js/state.js?v=3.12.0"></script>
+  <script src="js/tenant-config.js?v=3.12.0"></script>
+  <script src="js/schedule-engine.js?v=3.12.0"></script>
+  <script src="js/modules/cross-reference.js?v=3.12.0"></script>
+  <script src="js/modules/events.js?v=3.12.0"></script>
+  <script src="js/modules/voting.js?v=3.12.0"></script>
+  <script src="js/modules/lesson-hiding.js?v=3.12.0"></script>
+  <script src="js/modules/changelog.js?v=3.12.0"></script>
+  <script src="js/timeline.js?v=3.12.0"></script>
+  <script src="js/render.js?v=3.12.0"></script>
+  <script src="app.js?v=3.12.0"></script>
 </body>
 
 </html>

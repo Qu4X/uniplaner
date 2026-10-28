@@ -63,6 +63,11 @@ const state = _AppState && _AppState.state ? _AppState.state : {
   theme: "light"
 };
 
+if (typeof window !== "undefined") {
+  window.state = state;
+  window.AppState = _AppState;
+}
+
 function icon(name, extraClass = "", style = "") {
   return _ScheduleRender ? _ScheduleRender.icon(name, extraClass, style) : "";
 }
@@ -161,6 +166,8 @@ const elements = typeof document !== "undefined" ? {
   crossModal: document.getElementById("cross-modal"),
   crossModalTitle: document.getElementById("cross-modal-title"),
   crossModalBadge: document.getElementById("cross-modal-badge"),
+  crossModalScopeNotice: document.getElementById("cross-modal-scope-notice"),
+  crossModalWeekNav: document.getElementById("cross-modal-week-nav"),
   crossModalBody: document.getElementById("cross-modal-body"),
   closeCrossModalBtn: document.getElementById("close-cross-modal"),
   themeToggle: document.getElementById("theme-toggle"),
@@ -258,6 +265,8 @@ function initCrossRefUI() {
         modal: elements.crossModal,
         title: elements.crossModalTitle,
         badge: elements.crossModalBadge,
+        scopeNotice: elements.crossModalScopeNotice,
+        weekNav: elements.crossModalWeekNav,
         body: elements.crossModalBody,
         searchInput: elements.sidebarSearchInput,
         searchResults: elements.searchResults,
@@ -650,8 +659,16 @@ async function loadPlans() {
       elements.lastUpdated.textContent = `Aktualizacja: ${state.plansData.last_updated}`;
     }
 
-    const savedPlan = _getStorage("selected_plan", "umg_selected_plan");
-    const savedGroup = _getStorage("selected_group", "umg_selected_group");
+    const urlParams = typeof window !== "undefined" && window.location && window.location.search ? new URLSearchParams(window.location.search) : null;
+    const urlPlan = urlParams ? urlParams.get("plan") : null;
+    const urlGroup = urlParams ? urlParams.get("group") : null;
+    let savedPlan = urlPlan || _getStorage("selected_plan", "umg_selected_plan");
+    let savedGroup = urlGroup || _getStorage("selected_group", "umg_selected_group");
+
+    if (savedPlan && state.plansData && state.plansData.plans && !state.plansData.plans[savedPlan]) {
+      const match = Object.entries(state.plansData.plans).find(([, p]) => p.id === savedPlan);
+      if (match) savedPlan = match[0];
+    }
 
     if (savedPlan && state.plansData.plans[savedPlan]) {
       const planObj = state.plansData.plans[savedPlan];
@@ -1173,6 +1190,30 @@ function setupEventListeners() {
       if (elements.themeToggle) elements.themeToggle.focus();
     }
   });
+  
+  /* Sidebar Focus Trap and Esc */
+  if (elements.appSidebar) {
+    elements.appSidebar.addEventListener("keydown", (e) => {
+      if (e.key === "Tab") {
+        const focusables = Array.from(elements.appSidebar.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+          .filter(el => el.offsetParent !== null || el === elements.closeSidebarBtn);
+        if (focusables.length > 0) {
+          const first = focusables[0];
+          const last = focusables[focusables.length - 1];
+          if (e.shiftKey && document.activeElement === first) {
+            last.focus();
+            e.preventDefault();
+          } else if (!e.shiftKey && document.activeElement === last) {
+            first.focus();
+            e.preventDefault();
+          }
+        }
+      } else if (e.key === "Escape") {
+        closeSidebar();
+        e.preventDefault();
+      }
+    });
+  }
   elements.menuToggleBtn.addEventListener("click", openSidebar);
   if (elements.openMenuCta) elements.openMenuCta.addEventListener("click", openSidebar);
   elements.closeSidebarBtn.addEventListener("click", closeSidebar);
@@ -1460,13 +1501,6 @@ function setupEventListeners() {
   if (elements.calendarModal) setupDialogBackdropDismiss(elements.calendarModal, closeCalendarModal);
   if (elements.copyUrlBtn) elements.copyUrlBtn.addEventListener("click", copyCalendarUrl);
 
-  if (elements.closeCrossModalBtn) {
-    elements.closeCrossModalBtn.addEventListener("click", () => window.CrossRef?.UI?.closeModal());
-  }
-  if (elements.crossModal) {
-    setupDialogBackdropDismiss(elements.crossModal, () => window.CrossRef?.UI?.closeModal());
-  }
-
   if (elements.eventsBtn) {
     elements.eventsBtn.addEventListener("click", () => { closeSidebar(); openEventsModal(); });
   }
@@ -1520,7 +1554,7 @@ function setupEventListeners() {
     if (e.key === "Escape") {
       closeAboutModal();
       closeEventsModal();
-      window.CrossRef?.UI?.closeModal();
+      window.CrossRef?.UI?.handleEscape();
       closeCalendarModal();
       closeChangelogModal();
       closeIosModal();

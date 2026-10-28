@@ -306,7 +306,8 @@ assert.ok(!cardHtml.includes("<img src=x"), "Kod HTML w nazwie przedmiotu musi b
 assert.ok(cardHtml.includes("&lt;img src=x"), "Encje HTML powinny być obecne w wyniku");
 assert.ok(cardHtml.includes("1. poł. sem."), "Plakietka połowy semestru powinna być wyrenderowana");
 assert.ok(cardHtml.includes("co 2 tyg (od 2 tyg)"), "Plakietka cyklu powinna być wyrenderowana");
-assert.ok(cardHtml.includes("modal-group-chip"), "Grupy powinny być wyrenderowane jako chipy");
+assert.ok(cardHtml.includes("groups-nowrap") && cardHtml.includes("GR 1, GR 2"), "Grupy powinny być wyrenderowane w podtytule slotu");
+assert.ok(!cardHtml.includes("modal-groups-chips"), "Ukryty kontener modal-groups-chips nie powinien być w DOM");
 console.log("✅ [PASS] renderSlotCard generuje bezpieczny HTML z prawidłowymi klasami.");
 
 // --- Test 7: DataService (Cache, mockowanie storage, fetch i onUpdate) ---
@@ -544,6 +545,94 @@ console.log("\n-- Test 7: DataService (Cache, unieważnianie, fallback i onUpdat
   assert.strictEqual(mockModal.open, false, "Kliknięcie w tło powinno zamknąć modal");
 
   console.log("✅ [PASS] CrossRef.UI poprawnie orkiestruje natywny <dialog> (Issue #9), a11y, date picker i wyszukiwarkę.");
+
+  // --- FAZA 9: Testy dopasowania 'Twoja grupa' oraz historii nawigacji (Points 5 & 8) ---
+  console.log("\n🧪 Testowanie dopasowania 'Twoja grupa' (kierunek + semestr + grupa, zakresy, listy)...");
+
+  // 9a: Dopasowanie zakresów grup (np. GR.01-GR.08)
+  assert.strictEqual(CrossRef.Engine.isGroupInListOrRange("GR.01", ["GR.01–GR.08"]), true);
+  assert.strictEqual(CrossRef.Engine.isGroupInListOrRange("GR.05", ["GR.01–GR.08"]), true);
+  assert.strictEqual(CrossRef.Engine.isGroupInListOrRange("GR.08", ["GR.01–GR.08"]), true);
+  assert.strictEqual(CrossRef.Engine.isGroupInListOrRange("GR.09", ["GR.01–GR.08"]), false);
+  assert.strictEqual(CrossRef.Engine.isGroupInListOrRange("GR. 1", ["GR.01–GR.08"]), true);
+
+  // 9b: Dopasowanie list grup (np. ['GR.01', 'GR.02'])
+  assert.strictEqual(CrossRef.Engine.isGroupInListOrRange("GR.01", ["GR.01", "GR.02"]), true);
+  assert.strictEqual(CrossRef.Engine.isGroupInListOrRange("GR.02", ["GR.01", "GR.02"]), true);
+  assert.strictEqual(CrossRef.Engine.isGroupInListOrRange("GR.03", ["GR.01", "GR.02"]), false);
+
+  // 9c: Dopasowanie planu użytkownika (ID lub nazwa)
+  const itemTil = {
+    plan_id: "560",
+    plan_name: "Transport i Logistyka sem. 1",
+    groups: ["GR.01", "GR.02"]
+  };
+  const itemNaw = {
+    plan_id: "100",
+    plan_name: "Nawigacja sem. 1",
+    groups: ["GR.01"]
+  };
+  assert.strictEqual(CrossRef.Engine.isUserPlanMatch(itemTil, "560", "Transport i Logistyka sem. 1"), true);
+  assert.strictEqual(CrossRef.Engine.isUserPlanMatch(itemNaw, "560", "Transport i Logistyka sem. 1"), false);
+
+  // 9d: Pełne dopasowanie isUserGroupMatch dla Milczek Beata w TiL sem. 1
+  assert.strictEqual(
+    CrossRef.Engine.isUserGroupMatch(itemTil, "560", "GR.01", "Transport i Logistyka sem. 1"),
+    true,
+    "TiL sem 1 GR.01 powinien być oznaczony jako Twoja grupa dla wtorku 12:15"
+  );
+  const itemTilRange = {
+    plan_id: "560",
+    plan_name: "Transport i Logistyka sem. 1",
+    groups: ["GR.01", "GR.02", "GR.03", "GR.04", "GR.05", "GR.06", "GR.07", "GR.08"]
+  };
+  assert.strictEqual(
+    CrossRef.Engine.isUserGroupMatch(itemTilRange, "560", "GR.01", "Transport i Logistyka sem. 1"),
+    true,
+    "TiL sem 1 GR.01–GR.08 powinien być oznaczony jako Twoja grupa dla poniedziałku 13:15"
+  );
+  assert.strictEqual(
+    CrossRef.Engine.isUserGroupMatch(itemNaw, "560", "GR.01", "Transport i Logistyka sem. 1"),
+    false,
+    "Inny kierunek (Nawigacja) z GR.01 NIE powinien być oznaczony jako Twoja grupa"
+  );
+
+  // 9e: Renderowanie karty slotu z klasą .is-user-group i badge 'Twoja grupa'
+  const cardHtml = CrossRef.Engine.renderSlotCard(itemTil, "teacher");
+  // Gdy kontekst window/localstorage nie ma grupy, is-user-group jest false bez crasha:
+  assert.ok(typeof cardHtml === "string" && cardHtml.length > 0);
+  const rangeCardHtml = CrossRef.Engine.renderSlotCard(itemTilRange, "room");
+  assert.ok(rangeCardHtml.includes("GR.01–GR.08"), "Zakres grup powinien być sformatowany w podtytule");
+  console.log("✅ [PASS] Dopasowanie 'Twoja grupa' i niełamliwe tokeny wiersza działają bezbłędnie.");
+
+  // 9f: Dynamiczny tekst zakresu (scopeNotice) i cofanie historii przez handleEscape
+  const mockScopeNotice = createMockElement("cross-modal-scope-notice");
+  CrossRef.UI.elements.scopeNotice = mockScopeNotice;
+  global.window = { state: { tenantConfig: { faculty: "WMW" } } };
+  await CrossRef.UI.openRoom("114");
+  assert.strictEqual(
+    mockScopeNotice.textContent,
+    "Zajęcia z planu WMW. Zajęcia innych wydziałów nie są uwzględnione.",
+    "Widok sali powinien wyświetlać skrót wydziału i komunikat o nieuwzględnieniu innych wydziałów"
+  );
+  await CrossRef.UI.openTeacher("Boniewicz-Szmyt Katarzyna");
+  assert.strictEqual(CrossRef.UI.navHistory.length, 1, "Nawigacja z sali do wykładowcy powinna dodać wpis do historii");
+  CrossRef.UI.handleEscape();
+  assert.strictEqual(CrossRef.UI.navHistory.length, 0, "Pierwsze handleEscape() powinno cofnąć historię");
+  assert.strictEqual(mockModal.open, true, "Modal powinien pozostać otwarty po cofnięciu historii");
+  assert.strictEqual(CrossRef.UI.currentModalType, "room", "Powinien wrócić do widoku sali");
+  CrossRef.UI.handleEscape();
+  assert.strictEqual(mockModal.open, false, "Drugie handleEscape() przy pustej historii zamyka modal");
+
+  await CrossRef.UI.openFreeRooms({ dateISO: "2026-10-05", slot: "08:00 - 09:30" });
+  assert.strictEqual(
+    mockScopeNotice.textContent,
+    "Zajęcia z planu WMW. Sala może być zajęta przez inny wydział.",
+    "Widok wolnych sal powinien wyświetlać komunikat o możliwym zajęciu sali przez inny wydział"
+  );
+  CrossRef.UI.closeModal();
+  delete global.window;
+  console.log("✅ [PASS] Dynamiczny scopeNotice i cofanie historii przez handleEscape działają poprawnie.");
 
   console.log("\n🎉 Wszystkie testy CrossRef zakończone sukcesem (100% PASS)!\n");
 })();

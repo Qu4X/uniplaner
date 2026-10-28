@@ -97,7 +97,8 @@
     const hiddenSlots = options.hiddenLessonSlots || (typeof window !== "undefined" && window.state && window.state.hiddenLessonSlots);
 
     const safeTitle = escapeHtml(lesson.przedmiot || lesson.subject || "Zajęcia");
-    const safeTime = escapeHtml(lesson.godziny || `${lesson.start_time || ''} - ${lesson.end_time || ''}`);
+    const rawTime = (lesson.godziny || `${lesson.start_time || ''} - ${lesson.end_time || ''}`).trim();
+    const safeTime = escapeHtml(rawTime.replace(/-/g, "–"));
     const rawRoom = (lesson.sala || lesson.room || "").trim();
     const safeRoom = escapeHtml(rawRoom || "OL");
     const rawTeacher = (lesson.prowadzacy || lesson.teacher || "").trim();
@@ -125,19 +126,34 @@
       : "";
 
     const prog = getProgressFn ? getProgressFn(lesson, lesson.sourceDay || baseDay, targetMonday, lesson.lessonDate || null) : null;
+    let weeksHtml = "";
+    if (prog) {
+      const progDisplay = prog.text ? prog.text.replace("/", " z ") : "";
+      weeksHtml = `<span class="lesson-weeks ${prog.isFinal ? 'final-week' : ''}" title="${escapeHtml(prog.title || 'Spotkanie')}">${escapeHtml(progDisplay)}</span>`;
+    }
 
     const isPhysicalRoom = rawRoom && rawRoom.toUpperCase() !== "OL";
     const roomHtml = isPhysicalRoom
-      ? `<button class="lesson-room-btn" data-room="${escapeHtml(rawRoom)}" title="Sprawdź plan i dostępność sali ${safeRoom}">${safeRoom}</button>`
+      ? `<button type="button" class="lesson-room-btn" data-room="${escapeHtml(rawRoom)}" aria-label="Pokaż plan sali ${safeRoom}" title="Sprawdź plan i dostępność sali ${safeRoom}"><svg class="room-pin-icon" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg> ${safeRoom}</button>`
       : `<span class="lesson-room-badge">${safeRoom}</span>`;
 
-    const teacherHtml = rawTeacher && rawTeacher !== "Brak danych prowadzącego"
-      ? `<button class="lesson-teacher-btn" data-teacher="${escapeHtml(rawTeacher)}" title="Zobacz pełny plan wykładowcy ${safeTeacher}">${safeTeacher}</button>`
-      : `<span class="lesson-teacher">${safeTeacher || "Brak danych prowadzącego"}</span>`;
+        let teacherBtnInner = safeTeacher;
+    if (safeTeacher) {
+      const arrowSvg = `<svg class="teacher-arrow-icon" aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"></path></svg>`;
+      const trimmedTeacher = safeTeacher.trim();
+      const lastSpaceIdx = trimmedTeacher.lastIndexOf(" ");
+      if (lastSpaceIdx !== -1) {
+        const firstPart = trimmedTeacher.substring(0, lastSpaceIdx);
+        const lastPart = trimmedTeacher.substring(lastSpaceIdx + 1);
+        teacherBtnInner = `${firstPart} <span class="teacher-nowrap">${lastPart}&nbsp;${arrowSvg}</span>`;
+      } else {
+        teacherBtnInner = `<span class="teacher-nowrap">${trimmedTeacher}&nbsp;${arrowSvg}</span>`;
+      }
+    }
 
-    const weeksHtml = prog
-      ? `<span class="lesson-weeks ${prog.isFinal ? 'final-week' : ''}" title="${escapeHtml(prog.title || 'Spotkanie')}">${escapeHtml(prog.text)}</span>`
-      : "";
+    const teacherHtml = rawTeacher && rawTeacher !== "Brak danych prowadzącego"
+      ? `<button type="button" class="lesson-teacher-btn" data-teacher="${escapeHtml(rawTeacher)}" aria-label="Pokaż plan: ${safeTeacher}" title="Zobacz pełny plan wykładowcy ${safeTeacher}">${teacherBtnInner}</button>`
+      : `<span class="lesson-teacher lesson-teacher-empty">${safeTeacher || "Brak danych prowadzącego"}</span>`;
 
     let badgeHtml = "";
     if (lesson.co_ile === 2) {
@@ -155,21 +171,43 @@
     const formVal = lesson.forma || lesson.form || "";
     const formClass = formVal ? ` form-${escapeHtml(formVal)}` : "";
 
+    const formLabels = {
+      lecture: "Wykład",
+      wyklad: "Wykład",
+      exercise: "Ćwiczenia",
+      cwiczenia: "Ćwiczenia",
+      lab: "Laboratorium",
+      laboratorium: "Laboratorium",
+      simulator: "Symulator",
+      symulator: "Symulator",
+      project: "Projekt",
+      projekt: "Projekt",
+      seminar: "Seminarium",
+      seminarium: "Seminarium",
+      elective: "Fakultet",
+      fakultet: "Fakultet",
+      other: "Inne",
+      inne: "Inne"
+    };
+    const formLabel = formVal ? (formLabels[formVal.toLowerCase()] || escapeHtml(formVal)) : "";
+
     return `
     <div class="lesson-card${formClass}${isHiddenClass}" data-slot-key="${escapeHtml(slotKey)}" data-day="${escapeHtml(baseDay)}">
-      <div class="lesson-header-row">
-        <div class="lesson-title">${safeTitle}</div>
-        ${(canHide || hiddenBadge) ? `
-        <div class="lesson-card-actions">
+      <div class="lesson-top-row">
+        ${formLabel ? `<span class="lesson-type-tag"><span class="lesson-type-dot"></span>${formLabel}</span>` : `<span></span>`}
+        <div class="lesson-top-actions lesson-card-actions">
           ${hiddenBadge}
           ${hideBtnHtml}
-        </div>` : ""}
+          ${weeksHtml}
+        </div>
       </div>
-      <div class="lesson-time">${safeTime}</div>
-      <div class="lesson-room-wrapper">${roomHtml}${badgeHtml}</div>
+      <div class="lesson-title">${safeTitle}</div>
+      <div class="lesson-middle-row">
+        <span class="lesson-time">${safeTime}</span>
+        <div class="lesson-room-wrapper">${roomHtml}${badgeHtml}</div>
+      </div>
       <div class="lesson-footer">
         ${teacherHtml}
-        ${weeksHtml}
       </div>
     </div>
   `;
@@ -332,7 +370,7 @@
     const yearHtml = monYear === sunYear
       ? `<span class="week-year">.${sunYear}</span>`
       : `<span class="week-year">.${sunYear}</span>`;
-    const datesHtml = `${formatShort(targetMonday)} – ${formatShort(targetSunday)}${yearHtml}`;
+    const datesOnly = `${formatShort(targetMonday)} – ${formatShort(targetSunday)}${yearHtml}`;
     const academicInfo = getAcademicInfoFn ? getAcademicInfoFn(targetMonday) : {};
 
     let prefix = "";
@@ -342,18 +380,20 @@
       prefix = academicInfo.periodName;
     }
 
-    let htmlContent = "";
-    if (prefix && state.weekOffset === 0) {
-      htmlContent = `<span class="week-prefix-long">Bieżący tydzień • </span>${escapeHtml(prefix)} (${datesHtml})`;
-    } else if (prefix) {
-      htmlContent = `${escapeHtml(prefix)} (${datesHtml})`;
-    } else if (state.weekOffset === 0) {
-      htmlContent = `Bieżący tydzień (${datesHtml})`;
-    } else {
-      htmlContent = `Tydzień (${datesHtml})`;
-    }
+    const weekTitle = prefix || "Tydzień";
+    const statusBadge = state.weekOffset === 0
+      ? '<span class="week-status-badge">Bieżący tydzień</span>'
+      : "";
 
-    elements.currentWeekLabel.innerHTML = `<span style="font-size: 0.9em; opacity: 0.8; flex-shrink: 0;">📅</span> <span class="week-label-text">${htmlContent}</span>`;
+    elements.currentWeekLabel.innerHTML = `
+      <div class="week-label-top">
+        <svg class="week-calendar-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+        ${statusBadge}
+        <span class="week-title-text">${escapeHtml(weekTitle)}</span>
+        <span class="week-dates-inline">(${datesOnly})</span>
+      </div>
+      <div class="week-dates-mobile">${datesOnly}</div>
+    `;
 
     if (typeof updateNoticeFn === "function") {
       updateNoticeFn(academicInfo);
@@ -446,6 +486,27 @@
 
       tab.classList.toggle("hidden", !shouldShow);
       tab.classList.toggle("active", day === state.selectedDayTab);
+
+      const now = new Date();
+      const currentDayIdx = (now.getDay() + 6) % 7;
+      const isDayToday = state.weekOffset === 0 && dIdx === currentDayIdx;
+      tab.classList.toggle("is-today", isDayToday);
+
+      if (isDayToday) {
+        if (typeof tab.setAttribute === "function") tab.setAttribute("aria-label", `${DNI_PELNE[day] || day} (dziś)`);
+        let todayDot = tab.querySelector(".today-dot");
+        if (!todayDot) {
+          todayDot = document.createElement("span");
+          todayDot.className = "today-dot";
+          todayDot.setAttribute("aria-hidden", "true");
+          tab.appendChild(todayDot);
+        }
+      } else {
+        if (typeof tab.removeAttribute === "function") tab.removeAttribute("aria-label");
+        const todayDot = tab.querySelector(".today-dot");
+        if (todayDot) todayDot.remove();
+      }
+
 
       let indicator = tab.querySelector(".day-tab-indicator");
       if (matchingEvents.length > 0) {
@@ -684,7 +745,8 @@
         return;
       }
 
-      const headerTitle = dayDateFormatted ? `${DNI_PELNE[day]} <span style="font-size: 0.85em; font-weight: normal; opacity: 0.8;">(${dayDateFormatted})</span>` : DNI_PELNE[day];
+      const isSingleDayToday = day === todayCode && state.weekOffset === 0;
+      const headerTitle = `<span class="day-header-title">${DNI_PELNE[day]}</span> <span class="day-date">${dayDateFormatted}</span>${isSingleDayToday ? ' <span class="grid-today-badge">Dziś</span>' : ''}`;
 
       let swapBadge = "";
       if (dayData.swap) {
@@ -757,7 +819,7 @@
           `;
         }
 
-        html += `<div class="grid-day-col">
+        html += `<div class="grid-day-col ${isToday ? 'is-today' : ''}">
           <div class="grid-day-header ${isToday ? 'today' : ''}">
             <span class="grid-day-header-title">${DNI_PELNE[day]} <span style="font-size: 0.8em; font-weight: normal; opacity: 0.75;">${dayDateFormatted}</span> ${isToday ? '• Dziś' : ''}</span>
             ${swapBadge}
@@ -775,6 +837,76 @@
     }
 
     if (elements.scheduleContent) elements.scheduleContent.innerHTML = html;
+
+    // Point 6: Render legend only for forms present in current view
+    if (typeof document !== "undefined") {
+      const legendBar = document.getElementById("legend-bar");
+      if (legendBar) {
+        const activeLessons = [];
+        if (state.selectedDayTab !== "ALL") {
+          const dData = filteredSchedule[state.selectedDayTab];
+          if (dData && Array.isArray(dData.lessons)) activeLessons.push(...dData.lessons);
+        } else {
+          for (const d of Object.values(filteredSchedule)) {
+            if (d && Array.isArray(d.lessons)) activeLessons.push(...d.lessons);
+          }
+        }
+
+        if (activeLessons.length === 0) {
+          if (legendBar.classList) legendBar.classList.add("hidden");
+          legendBar.innerHTML = "";
+        } else {
+          const usedForms = new Set();
+          for (const l of activeLessons) {
+            const formVal = (l.forma || l.form || "").toLowerCase();
+            if (formVal) usedForms.add(formVal);
+            else {
+              const subj = (l.przedmiot || l.subject || "").toLowerCase();
+              if (/wyk/i.test(subj)) usedForms.add("lecture");
+              else if (/ćw/i.test(subj)) usedForms.add("exercise");
+              else if (/lab/i.test(subj)) usedForms.add("lab");
+              else if (/sym/i.test(subj)) usedForms.add("simulator");
+              else if (/proj/i.test(subj)) usedForms.add("project");
+              else if (/sem/i.test(subj)) usedForms.add("seminar");
+            }
+          }
+
+          const formDefMap = {
+            lecture: { label: "Wykład", color: "var(--lesson-lecture, #2563EB)" },
+            wyklad: { label: "Wykład", color: "var(--lesson-lecture, #2563EB)" },
+            exercise: { label: "Ćwiczenia", color: "var(--lesson-exercise, #15803D)" },
+            cwiczenia: { label: "Ćwiczenia", color: "var(--lesson-exercise, #15803D)" },
+            lab: { label: "Laboratorium", color: "var(--lesson-lab, #6D28D9)" },
+            laboratorium: { label: "Laboratorium", color: "var(--lesson-lab, #6D28D9)" },
+            simulator: { label: "Symulator", color: "#0EA5E9" },
+            symulator: { label: "Symulator", color: "#0EA5E9" },
+            project: { label: "Projekt", color: "#F59E0B" },
+            projekt: { label: "Projekt", color: "#F59E0B" },
+            seminar: { label: "Seminarium", color: "#EC4899" },
+            seminarium: { label: "Seminarium", color: "#EC4899" }
+          };
+
+          const itemsHtml = [];
+          const seenLabels = new Set();
+          for (const formKey of usedForms) {
+            const def = formDefMap[formKey];
+            if (def && !seenLabels.has(def.label)) {
+              seenLabels.add(def.label);
+              itemsHtml.push(`<span class="legend-item"><span class="legend-dot form-${escapeHtml(formKey)}" style="background-color: ${def.color};"></span>${escapeHtml(def.label)}</span>`);
+            }
+          }
+
+          if (itemsHtml.length > 0) {
+            legendBar.innerHTML = itemsHtml.join("");
+            if (legendBar.classList) legendBar.classList.remove("hidden");
+          } else {
+            if (legendBar.classList) legendBar.classList.add("hidden");
+            legendBar.innerHTML = "";
+          }
+        }
+      }
+    }
+  
   }
 
   function isAppStandalone() {

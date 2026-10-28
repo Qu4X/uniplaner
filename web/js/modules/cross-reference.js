@@ -223,8 +223,130 @@
       return results;
     },
 
+    normalizeGroupName(raw) {
+      if (!raw) return { prefix: "", num: null, raw: "" };
+      const str = String(raw).trim().toUpperCase();
+      const m = str.match(/^([A-ZĄĆĘŁŃÓŚŹŻ.\s_-]+?)(\d+)$/);
+      if (m) {
+        return {
+          prefix: m[1].replace(/[\s._-]/g, ""),
+          num: parseInt(m[2], 10),
+          raw: str
+        };
+      }
+      const onlyNum = str.match(/^(\d+)$/);
+      if (onlyNum) {
+        return {
+          prefix: "",
+          num: parseInt(onlyNum[1], 10),
+          raw: str
+        };
+      }
+      return {
+        prefix: str.replace(/[\s._-]/g, ""),
+        num: null,
+        raw: str
+      };
+    },
+
+    isGroupInListOrRange(userGroup, groupsData) {
+      if (!userGroup || !groupsData) return false;
+      const u = this.normalizeGroupName(userGroup);
+
+      let items = [];
+      if (Array.isArray(groupsData)) {
+        items = groupsData;
+      } else if (typeof groupsData === "string") {
+        items = groupsData.split(",").map(s => s.trim());
+      }
+
+      for (const itemStr of items) {
+        if (!itemStr) continue;
+        const trimmed = String(itemStr).trim();
+
+        // Check if itemStr is a range like "GR.01–GR.08" or "GR.01-GR.08" or "GR. 1 - GR. 8"
+        const rangeMatch = trimmed.match(/^(.+?)\s*[-–—]\s*(.+)$/);
+        if (rangeMatch) {
+          const startG = this.normalizeGroupName(rangeMatch[1]);
+          const endG = this.normalizeGroupName(rangeMatch[2]);
+          if (startG.num !== null && endG.num !== null && u.num !== null) {
+            const prefixMatches = !u.prefix || !startG.prefix || (u.prefix === startG.prefix);
+            if (prefixMatches && u.num >= startG.num && u.num <= endG.num) {
+              return true;
+            }
+          }
+        }
+
+        const g = this.normalizeGroupName(trimmed);
+        if (u.raw && g.raw && u.raw === g.raw) return true;
+        if (u.num !== null && g.num !== null && u.num === g.num) {
+          if (!u.prefix || !g.prefix || u.prefix === g.prefix) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+
+    isUserPlanMatch(item, userPlanId, userPlanName) {
+      if (!userPlanId && !userPlanName) return false;
+      if (userPlanId && item && item.plan_id && String(userPlanId) === String(item.plan_id)) {
+        return true;
+      }
+      if (item && item.plan_name && userPlanName) {
+        const normA = item.plan_name.toLowerCase().replace(/\s+/g, " ").trim();
+        const normB = userPlanName.toLowerCase().replace(/\s+/g, " ").trim();
+        if (normA === normB) return true;
+        const semA = normA.match(/sem(?:\.|\s+)(\d+)/);
+        const semB = normB.match(/sem(?:\.|\s+)(\d+)/);
+        if (semA && semB && semA[1] === semB[1]) {
+          const wordsA = normA.replace(/sem(?:\.|\s+)\d+/, "").split(/[^a-ząćęłńóśźż0-9]+/).filter(w => w.length > 2);
+          const wordsB = normB.replace(/sem(?:\.|\s+)\d+/, "").split(/[^a-ząćęłńóśźż0-9]+/).filter(w => w.length > 2);
+          const common = wordsA.filter(w => wordsB.includes(w));
+          if (common.length >= 2) return true;
+        }
+      }
+      return false;
+    },
+
+    isUserGroupMatch(item, userPlanId, userGroup, userPlanName) {
+      if (!userGroup) return false;
+      const planMatches = this.isUserPlanMatch(item, userPlanId, userPlanName);
+      if (!planMatches) return false;
+      return this.isGroupInListOrRange(userGroup, item && item.groups);
+    },
+
     renderSlotCard(item, type = "room") {
       if (!item) return "";
+
+      function formatGroupsSummary(groups) {
+        if (!Array.isArray(groups) || groups.length === 0) return { text: "", title: "" };
+        const fullText = groups.join(", ");
+        if (groups.length <= 2) return { text: fullText, title: fullText };
+
+        const matches = groups.map(g => {
+          const m = g.match(/^([^\d]+)(\d+)$/);
+          return m ? { prefix: m[1], num: parseInt(m[2], 10) } : null;
+        });
+
+        if (matches.every(m => m !== null && m.prefix === matches[0].prefix)) {
+          let contiguous = true;
+          for (let i = 1; i < matches.length; i++) {
+            if (matches[i].num !== matches[i-1].num + 1) {
+              contiguous = false;
+              break;
+            }
+          }
+          if (contiguous) {
+            return { text: `${groups[0]}–${groups[groups.length - 1]}`, title: fullText };
+          }
+        }
+
+        if (groups.length > 3) {
+          return { text: `${groups.length} grup`, title: fullText };
+        }
+        return { text: fullText, title: fullText };
+      }
 
       let cycleBadges = "";
       if (item.polowa_sem) {
@@ -235,35 +357,91 @@
         cycleBadges += `<span class="lesson-cycle-badge">co 2 tyg (${odStr})</span>`;
       }
 
-      const isPhys = item.room && item.room.toUpperCase() !== "OL";
-      const roomBtn = item.room
-        ? (isPhys
-          ? `<button class="lesson-room-btn" data-room="${escapeHtml(item.room)}">🚪 Sala ${escapeHtml(item.room)}</button>`
-          : `<span class="lesson-room-badge">${escapeHtml(item.room)}</span>`)
-        : "";
+      const hoursParts = (item.hours || "").split(/[-–]/).map(s => s.trim());
+      const startTime = hoursParts[0] || "";
+      const endTime = hoursParts[1] || "";
 
-      const teacherHtml = item.teacher && item.teacher !== "Brak danych prowadzącego"
-        ? `<button class="lesson-teacher-btn" data-teacher="${escapeHtml(item.teacher)}">👨‍🏫 ${escapeHtml(item.teacher)}</button>`
-        : (item.teacher ? `<span style="font-style: italic; font-size: 0.8rem; color: var(--text-muted);">${escapeHtml(item.teacher)}</span>` : "");
+      let isUserGroup = false;
+      let uPlanId = null;
+      let uGroup = null;
+      let uPlanName = null;
 
-      const groupsHtml = (item.groups || []).map(g => `<span class="modal-group-chip">${escapeHtml(g)}</span>`).join("");
-      const planNameHtml = item.plan_name ? `<div style="font-size: 0.75rem; color: var(--text-muted);">${escapeHtml(item.plan_name)}</div>` : "";
+      if (typeof window !== "undefined") {
+        if (window.state) {
+          uPlanId = window.state.selectedPlanId || null;
+          uGroup = window.state.selectedGroup || null;
+          if (uPlanId && window.state.plansData && window.state.plansData.plans && window.state.plansData.plans[uPlanId]) {
+            uPlanName = window.state.plansData.plans[uPlanId].name;
+          }
+        }
+        if ((!uGroup || !uPlanId) && window.AppState && window.AppState.state) {
+          uPlanId = uPlanId || window.AppState.state.selectedPlanId;
+          uGroup = uGroup || window.AppState.state.selectedGroup;
+        }
+        if ((!uGroup || !uPlanId) && typeof localStorage !== "undefined") {
+          const tid = (window.state && window.state.tenantId) || "umg_wn";
+          uPlanId = uPlanId || localStorage.getItem(`${tid}_selected_plan`) || localStorage.getItem("umg_selected_plan");
+          uGroup = uGroup || localStorage.getItem(`${tid}_selected_group`) || localStorage.getItem("umg_selected_group");
+        }
+      }
+
+      if (uGroup) {
+        isUserGroup = this.isUserGroupMatch(item, uPlanId, uGroup, uPlanName);
+      }
+
+      let formKey = "";
+      let formLabel = item.form || "";
+      const sLower = (item.subject || "").toLowerCase();
+      if (/wyk/i.test(sLower) || /\(w\)/i.test(sLower)) { formKey = "lecture"; if (!formLabel) formLabel = "Wykład"; }
+      else if (/ćw/i.test(sLower) || /\(ćw\)/i.test(sLower)) { formKey = "exercise"; if (!formLabel) formLabel = "Ćwiczenia"; }
+      else if (/lab/i.test(sLower) || /\(lab\)/i.test(sLower)) { formKey = "lab"; if (!formLabel) formLabel = "Laboratorium"; }
+      else if (/sym/i.test(sLower) || /\(sym\)/i.test(sLower)) { formKey = "simulator"; if (!formLabel) formLabel = "Symulator"; }
+      else if (/proj/i.test(sLower) || /\(pr\)/i.test(sLower)) { formKey = "project"; if (!formLabel) formLabel = "Projekt"; }
+      else if (/sem/i.test(sLower) || /\(sem\)/i.test(sLower)) { formKey = "seminar"; if (!formLabel) formLabel = "Seminarium"; }
+
+      const grpObj = formatGroupsSummary(item.groups);
+      const typeBadgeHtml = formLabel ? `<span class="lesson-type-pill" data-type="${formKey}">${escapeHtml(formLabel)}</span>` : "";
+
+      let actionBtnHtml = "";
+      if (type === "room") {
+        if (item.teacher && item.teacher !== "Brak danych prowadzącego") {
+          actionBtnHtml = `<button type="button" class="lesson-teacher-btn modal-action-btn" data-teacher="${escapeHtml(item.teacher)}" aria-label="Pokaż plan: ${escapeHtml(item.teacher)}">${escapeHtml(item.teacher)}</button>`;
+        } else {
+          actionBtnHtml = `<span>Brak danych prowadzącego</span>`;
+        }
+      } else if (type === "teacher") {
+        if (item.room) {
+          actionBtnHtml = `<button type="button" class="lesson-room-btn modal-action-btn" data-room="${escapeHtml(item.room)}" aria-label="Pokaż plan sali ${escapeHtml(item.room)}">Sala ${escapeHtml(item.room)}</button>`;
+        }
+      }
+
+      const primaryParts = [];
+      if (item.plan_name) primaryParts.push(escapeHtml(item.plan_name));
+      if (grpObj.text && (!item.plan_name || !item.plan_name.toLowerCase().includes(grpObj.text.toLowerCase()))) {
+        const titleAttr = grpObj.title && grpObj.title !== grpObj.text ? ` title="${escapeHtml(grpObj.title)}"` : "";
+        primaryParts.push(`<span class="groups-nowrap"${titleAttr}>${escapeHtml(grpObj.text)}</span>`);
+      }
+
+      const subtitleHtml = `
+        <span class="meta-primary-info">${primaryParts.join(' · ')}</span>
+        ${actionBtnHtml ? `<span class="meta-secondary-action"><span class="meta-action-sep" aria-hidden="true"> · </span>${actionBtnHtml}</span>` : ''}
+      `;
 
       return `
-        <div class="modal-slot-item">
-          <div class="modal-slot-header">
-            <span class="modal-slot-time">${escapeHtml(item.hours || "")}</span>
-            <div style="display:flex; gap:0.35rem; align-items:center;">
-              ${cycleBadges}
-              ${type === "room" ? `<span class="free-room-badge" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;">Zajęta</span>` : roomBtn}
+        <div class="modal-slot-item${isUserGroup ? ' is-user-group' : ''}">
+          <div class="modal-slot-time-col">
+            <span class="slot-start-time">${escapeHtml(startTime)}</span>
+            <span class="slot-end-time">${escapeHtml(endTime)}</span>
+          </div>
+          <div class="modal-slot-content-col">
+            <div class="modal-slot-top-row">
+              ${typeBadgeHtml}
+              ${isUserGroup ? '<span class="user-group-badge">Twoja grupa</span>' : ''}
+              ${cycleBadges ? `<div class="modal-slot-badges">${cycleBadges}</div>` : ''}
             </div>
+            <div class="modal-slot-subject">${escapeHtml(item.subject || "")}</div>
+            <div class="modal-slot-meta-subtitle">${subtitleHtml}</div>
           </div>
-          <div class="modal-slot-subject">${escapeHtml(item.subject || "")}</div>
-          <div class="modal-slot-meta">
-            ${type === "room" ? teacherHtml : (type === "teacher" ? `<span>Grupy:</span>` : "")}
-            <div class="modal-groups-chips">${groupsHtml}</div>
-          </div>
-          ${planNameHtml}
         </div>
       `;
     }
@@ -354,6 +532,8 @@
     cachedData: null,
     previousFocusedElement: null,
     onBeforeOpen: null,
+    navHistory: [],
+    _isNavigatingHistory: false,
     freeRoomsState: {
       dateISO: null,
       slot: "NOW",
@@ -383,6 +563,13 @@
         closeBtn.addEventListener("click", () => this.closeModal());
       }
 
+      // Przycisk powrotu w historii dialogu
+      const backBtn = (typeof modal.querySelector === "function" ? modal.querySelector("#cross-modal-back-btn") : null) ||
+        (typeof document !== "undefined" && typeof document.getElementById === "function" ? document.getElementById("cross-modal-back-btn") : null);
+      if (backBtn && typeof backBtn.addEventListener === "function") {
+        backBtn.addEventListener("click", () => this.popHistory());
+      }
+
       // Obsługa legacy backdrop jeśli istnieje w DOM
       if (typeof modal.querySelector === "function") {
         const backdrop = modal.querySelector(".modal-backdrop");
@@ -410,7 +597,7 @@
 
         modal.addEventListener("cancel", (e) => {
           e.preventDefault();
-          this.closeModal();
+          this.handleEscape();
         });
       }
 
@@ -423,7 +610,7 @@
 
           if (e.key === "Escape") {
             e.preventDefault();
-            this.closeModal();
+            this.handleEscape();
             return;
           }
 
@@ -477,7 +664,9 @@
       if (this.elements.title) this.elements.title.textContent = title;
       if (this.elements.badge) this.elements.badge.textContent = badge;
       if (this.elements.body) this.elements.body.innerHTML = bodyHtml;
+      this._updateScopeNotice();
 
+      if (typeof modal.removeAttribute === "function") { modal.removeAttribute("inert"); modal.removeAttribute("hidden"); }
       if (typeof modal.showModal === "function") {
         if (!modal.open) {
           modal.showModal();
@@ -500,6 +689,10 @@
     },
 
     closeModal() {
+      this.navHistory = [];
+      this._isNavigatingHistory = false;
+      this._updateBackButton();
+
       if (!this.elements || !this.elements.modal) return;
 
       const modal = this.elements.modal;
@@ -522,6 +715,78 @@
       }
     },
 
+    handleEscape() {
+      if (this.navHistory && this.navHistory.length > 0) {
+        this.popHistory();
+        return;
+      }
+      this.closeModal();
+    },
+
+    popHistory() {
+      if (!this.navHistory || this.navHistory.length === 0) {
+        this.closeModal();
+        return;
+      }
+      const prev = this.navHistory.pop();
+      this._isNavigatingHistory = true;
+      let p;
+      if (prev.type === "teacher") {
+        p = this.openTeacher(prev.target, prev.weekOffset);
+      } else if (prev.type === "room") {
+        p = this.openRoom(prev.target, prev.weekOffset);
+      } else if (prev.type === "free_rooms") {
+        p = this.openFreeRooms();
+      }
+      if (p && typeof p.finally === "function") {
+        p.finally(() => {
+          this._isNavigatingHistory = false;
+          this._updateBackButton();
+        });
+      } else {
+        this._isNavigatingHistory = false;
+        this._updateBackButton();
+      }
+      this._updateBackButton();
+    },
+
+    _getFacultyAbbr() {
+      if (typeof window !== "undefined") {
+        const cfg = (window.state && window.state.tenantConfig) ||
+          (window.TenantConfig && typeof window.TenantConfig.get === "function" ? window.TenantConfig.get() : null);
+        if (cfg && (cfg.faculty || cfg.short_name)) {
+          return cfg.faculty || cfg.short_name;
+        }
+      }
+      return "WN";
+    },
+
+    _updateScopeNotice(mode = this.currentModalType) {
+      const noticeEl = (this.elements && this.elements.scopeNotice) ||
+        (typeof document !== "undefined" && typeof document.getElementById === "function" ? document.getElementById("cross-modal-scope-notice") : null);
+      if (!noticeEl) return;
+      const fac = this._getFacultyAbbr();
+      if (mode === "free_rooms") {
+        noticeEl.textContent = `Zajęcia z planu ${fac}. Sala może być zajęta przez inny wydział.`;
+      } else {
+        noticeEl.textContent = `Zajęcia z planu ${fac}. Zajęcia innych wydziałów nie są uwzględnione.`;
+      }
+    },
+
+    _updateBackButton() {
+      const backBtn = typeof document !== "undefined" ? document.getElementById("cross-modal-back-btn") : null;
+      const backText = typeof document !== "undefined" ? document.getElementById("cross-modal-back-text") : null;
+      if (!backBtn) return;
+      if (this.navHistory && this.navHistory.length > 0) {
+        const prev = this.navHistory[this.navHistory.length - 1];
+        if (backText) backText.textContent = prev.target;
+        backBtn.classList.remove("hidden");
+        backBtn.setAttribute("aria-label", `Wróć: ${prev.target}`);
+      } else {
+        backBtn.classList.add("hidden");
+      }
+    },
+
     async _ensureData() {
       if (this.cachedData) return this.cachedData;
       const data = await DataService.load({
@@ -533,14 +798,33 @@
       return data;
     },
 
-    async openTeacher(teacherName) {
+    async openTeacher(teacherName, targetWeekOffset = null) {
       if (this.onBeforeOpen) this.onBeforeOpen();
 
-      this.openModal(teacherName, "👨‍🏫 Wykładowca", `<div class="spinner" style="margin: 2rem auto;"></div><p style="text-align:center;">Wczytywanie planu...</p>`);
+      const modal = this.elements && this.elements.modal;
+      const isCurrentlyOpen = Boolean(modal && (!modal.classList.contains("hidden") || modal.open));
+      if (!this._isNavigatingHistory && isCurrentlyOpen && this.currentModalTarget && (this.currentModalTarget !== teacherName || this.currentModalType !== "teacher")) {
+        if (!this.navHistory) this.navHistory = [];
+        this.navHistory.push({
+          type: this.currentModalType,
+          target: this.currentModalTarget,
+          weekOffset: this.currentModalWeekOffset
+        });
+      }
+
+      const weekOffset = (typeof targetWeekOffset === "number") ? targetWeekOffset : (
+        (typeof window !== "undefined" && window.state && typeof window.state.weekOffset === "number") ? window.state.weekOffset : 0
+      );
+      this.currentModalType = "teacher";
+      this.currentModalTarget = teacherName;
+      this.currentModalWeekOffset = weekOffset;
+      this._updateBackButton();
+
+      this.openModal(teacherName, "Plan prowadzącego", `<div class="spinner" style="margin: 2rem auto;"></div><p style="text-align:center;">Wczytywanie planu...</p>`);
 
       const data = await this._ensureData();
       if (!data) {
-        this.openModal(teacherName, "👨‍🏫 Wykładowca", `<p class="placeholder-text" style="text-align:center; padding: 2rem; color: #ef4444;">Nie udało się załadować danych.</p>`);
+        this.openModal(teacherName, "Plan prowadzącego", `<p class="placeholder-text" style="text-align:center; padding: 2rem; color: #ef4444;">Nie udało się załadować danych.</p>`);
         return;
       }
 
@@ -557,29 +841,64 @@
       entries = entries || [];
 
       if (entries.length === 0) {
-        this.openModal(teacherName, "👨‍🏫 Wykładowca", `<p class="placeholder-text" style="text-align:center; padding: 2rem;">Brak zaplanowanych zajęć w bazie dla ${escapeHtml(teacherName)}.</p>`);
+        this.openModal(teacherName, "Plan prowadzącego", `<p class="placeholder-text" style="text-align:center; padding: 2rem;">Brak zaplanowanych zajęć w bazie dla ${escapeHtml(teacherName)}.</p>`);
         return;
       }
 
-      const byDay = {};
-      for (const day of DNI_TYGODNIA) byDay[day] = [];
-      for (const entry of entries) {
-        if (!byDay[entry.day]) byDay[entry.day] = [];
-        byDay[entry.day].push(entry);
+      // Calculate dates for target week
+      const now = new Date();
+      const dayOfWeek = now.getDay();
+      const diffDays = now.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1) + weekOffset * 7;
+      const targetMonday = new Date(now.getFullYear(), now.getMonth(), diffDays);
+      targetMonday.setHours(0, 0, 0, 0);
+
+      const targetSunday = new Date(targetMonday);
+      targetSunday.setDate(targetMonday.getDate() + 6);
+
+      const formatShort = d => `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}`;
+      const formatIso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      const weekDatesText = `${formatShort(targetMonday)} – ${formatShort(targetSunday)}`;
+
+      let acadWeek = "";
+      if (typeof window !== "undefined" && window.Timeline && typeof window.Timeline.getAcademicInfoForWeek === "function") {
+        const acad = window.Timeline.getAcademicInfoForWeek(targetMonday);
+        if (acad && acad.weekNum) acadWeek = `Tydzień ${acad.weekNum} · `;
       }
 
-      let html = `<div class="modal-schedule-section">`;
-      html += `<p style="margin-bottom: 0.5rem; color: var(--text-secondary);">Łącznie zajęć w tygodniu: <strong>${entries.length}</strong></p>`;
+      const todayStr = (new Date()).toDateString();
 
-      for (const day of DNI_TYGODNIA) {
-        const dayEntries = byDay[day] || [];
+      let html = `<div class="modal-schedule-section">`;
+
+      for (let dIdx = 0; dIdx < DNI_TYGODNIA.length; dIdx++) {
+        const day = DNI_TYGODNIA[dIdx];
+        const dayDate = new Date(targetMonday);
+        dayDate.setDate(targetMonday.getDate() + dIdx);
+        const dayIso = formatIso(dayDate);
+        const isToday = dayDate.toDateString() === todayStr;
+
+        // Filter entries for this day and week date
+        const dayEntries = entries.filter(e => {
+          if (e.day !== day) return false;
+          if (Array.isArray(e.dates) && e.dates.length > 0) {
+            return e.dates.includes(dayIso);
+          }
+          return true;
+        });
+
         if (dayEntries.length === 0) continue;
+
+        dayEntries.sort((a, b) => {
+          const startA = parseMinutes((a.hours || "").split(/[-–]/)[0]);
+          const startB = parseMinutes((b.hours || "").split(/[-–]/)[0]);
+          return startA - startB;
+        });
 
         html += `
           <div class="modal-day-group">
-            <div class="modal-day-title">
-              <span>${DNI_PELNE[day] || day}</span>
-              <span>${dayEntries.length} ${dayEntries.length === 1 ? 'zajęcia' : 'zajęć'}</span>
+            <div class="modal-day-header ${isToday ? 'is-today' : ''}">
+              <span class="modal-day-name">${DNI_PELNE[day] || day}</span>
+              <span class="modal-day-date">${formatShort(dayDate)}</span>
+              ${isToday ? '<span class="modal-day-today-tag">Dziś</span>' : ''}
             </div>
             <div class="modal-slots-list">
         `;
@@ -592,18 +911,64 @@
       }
 
       html += `</div>`;
-      this.openModal(teacherName, "👨‍🏫 Wykładowca", html);
+      if (this.elements.weekNav) {
+        const weekNavHtml = `
+          <button type="button" class="modal-nav-btn modal-prev-week-btn" data-modal-nav="${weekOffset - 1}" aria-label="Poprzedni tydzień">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>
+          </button>
+          <span class="modal-week-label">${acadWeek}${weekDatesText}</span>
+          <button type="button" class="modal-nav-btn modal-next-week-btn" data-modal-nav="${weekOffset + 1}" aria-label="Następny tydzień">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+          </button>
+        `;
+        this.elements.weekNav.innerHTML = weekNavHtml;
+        this.openModal(teacherName, "Plan prowadzącego", html);
+      } else {
+        const fullHtml = `
+          <div class="modal-week-nav">
+            <button type="button" class="modal-nav-btn modal-prev-week-btn" data-modal-nav="${weekOffset - 1}" aria-label="Poprzedni tydzień">
+              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>
+            </button>
+            <span class="modal-week-label">${acadWeek}${weekDatesText}</span>
+            <button type="button" class="modal-nav-btn modal-next-week-btn" data-modal-nav="${weekOffset + 1}" aria-label="Następny tydzień">
+              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+            </button>
+          </div>
+          ${html}
+        `;
+        this.openModal(teacherName, "Plan prowadzącego", fullHtml);
+      }
       this._bindModalActionLinks();
+      this._bindModalNavEvents();
     },
 
-    async openRoom(roomName) {
+    async openRoom(roomName, targetWeekOffset = null) {
       if (this.onBeforeOpen) this.onBeforeOpen();
 
-      this.openModal(`Sala ${roomName}`, "🚪 Sala", `<div class="spinner" style="margin: 2rem auto;"></div><p style="text-align:center;">Wczytywanie obłożenia sali...</p>`);
+      const modal = this.elements && this.elements.modal;
+      const isCurrentlyOpen = Boolean(modal && (!modal.classList.contains("hidden") || modal.open));
+      if (!this._isNavigatingHistory && isCurrentlyOpen && this.currentModalTarget && (this.currentModalTarget !== roomName || this.currentModalType !== "room")) {
+        if (!this.navHistory) this.navHistory = [];
+        this.navHistory.push({
+          type: this.currentModalType,
+          target: this.currentModalTarget,
+          weekOffset: this.currentModalWeekOffset
+        });
+      }
+
+      const weekOffset = (typeof targetWeekOffset === "number") ? targetWeekOffset : (
+        (typeof window !== "undefined" && window.state && typeof window.state.weekOffset === "number") ? window.state.weekOffset : 0
+      );
+      this.currentModalType = "room";
+      this.currentModalTarget = roomName;
+      this.currentModalWeekOffset = weekOffset;
+      this._updateBackButton();
+
+      this.openModal(roomName, "Plan sali", `<div class="spinner" style="margin: 2rem auto;"></div><p style="text-align:center;">Wczytywanie obłożenia sali...</p>`);
 
       const data = await this._ensureData();
       if (!data) {
-        this.openModal(`Sala ${roomName}`, "🚪 Sala", `<p class="placeholder-text" style="text-align:center; padding: 2rem; color: #ef4444;">Nie udało się załadować danych.</p>`);
+        this.openModal(roomName, "Plan sali", `<p class="placeholder-text" style="text-align:center; padding: 2rem; color: #ef4444;">Nie udało się załadować danych.</p>`);
         return;
       }
 
@@ -619,41 +984,148 @@
       }
       roomDays = roomDays || {};
 
-      let totalBooked = 0;
-      for (const d of Object.values(roomDays)) totalBooked += d.length;
+      const now = new Date();
+      const dayOfWeek = now.getDay();
+      const diffDays = now.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1) + weekOffset * 7;
+      const targetMonday = new Date(now.getFullYear(), now.getMonth(), diffDays);
+      targetMonday.setHours(0, 0, 0, 0);
+
+      const targetSunday = new Date(targetMonday);
+      targetSunday.setDate(targetMonday.getDate() + 6);
+
+      const formatShort = d => `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}`;
+      const formatIso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      const weekDatesText = `${formatShort(targetMonday)} – ${formatShort(targetSunday)}`;
+
+      let acadWeek = "";
+      if (typeof window !== "undefined" && window.Timeline && typeof window.Timeline.getAcademicInfoForWeek === "function") {
+        const acad = window.Timeline.getAcademicInfoForWeek(targetMonday);
+        if (acad && acad.weekNum) acadWeek = `Tydzień ${acad.weekNum} · `;
+      }
+
+      const todayStr = (new Date()).toDateString();
+
+      function formatMin(mins) {
+        const h = String(Math.floor(mins / 60)).padStart(2, "0");
+        const m = String(mins % 60).padStart(2, "0");
+        return `${h}:${m}`;
+      }
 
       let html = `<div class="modal-schedule-section">`;
-      html += `<p style="margin-bottom: 0.5rem; color: var(--text-secondary);">Tygodniowe obłożenie sali: <strong>${totalBooked}</strong> bloków zajęciowych.</p>`;
 
-      for (const day of DNI_TYGODNIA) {
-        const dayEntries = roomDays[day] || [];
+      for (let dIdx = 0; dIdx < DNI_TYGODNIA.length; dIdx++) {
+        const day = DNI_TYGODNIA[dIdx];
+        const dayDate = new Date(targetMonday);
+        dayDate.setDate(targetMonday.getDate() + dIdx);
+        const dayIso = formatIso(dayDate);
+        const isToday = dayDate.toDateString() === todayStr;
+
+        const dayEntries = (roomDays[day] || []).filter(e => {
+          if (Array.isArray(e.dates) && e.dates.length > 0) {
+            return e.dates.includes(dayIso);
+          }
+          return true;
+        });
+
+        if (dayEntries.length === 0) continue;
+
+        dayEntries.sort((a, b) => {
+          const startA = parseMinutes((a.hours || "").split(/[-–]/)[0]);
+          const startB = parseMinutes((b.hours || "").split(/[-–]/)[0]);
+          return startA - startB;
+        });
+
         html += `
           <div class="modal-day-group">
-            <div class="modal-day-title">
-              <span>${DNI_PELNE[day] || day}</span>
-              <span>${dayEntries.length > 0 ? `${dayEntries.length} zajęć` : 'Wolna cały dzień'}</span>
+            <div class="modal-day-header ${isToday ? 'is-today' : ''}">
+              <span class="modal-day-name">${DNI_PELNE[day] || day}</span>
+              <span class="modal-day-date">${formatShort(dayDate)}</span>
+              ${isToday ? '<span class="modal-day-today-tag">Dziś</span>' : ''}
             </div>
             <div class="modal-slots-list">
         `;
 
-        if (dayEntries.length === 0) {
-          html += `<p style="padding: 0.75rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">Brak zajęć w tym dniu (sala wolna)</p>`;
-        } else {
-          for (const e of dayEntries) {
-            html += Engine.renderSlotCard(e, "room");
+        let lastEnd = null;
+        for (let i = 0; i < dayEntries.length; i++) {
+          const e = dayEntries[i];
+          const parts = (e.hours || "").split(/[-–]/).map(s => s.trim());
+          const startM = parseMinutes(parts[0]);
+          const endM = parseMinutes(parts[1]);
+
+          if (lastEnd !== null && startM - lastEnd >= 15) {
+            html += `
+              <div class="modal-free-slot">
+                <div class="modal-slot-time-col">
+                  <span class="slot-start-time">${formatMin(lastEnd)}</span>
+                  <span class="slot-end-time">${formatMin(startM)}</span>
+                </div>
+                <div class="modal-free-label">Sala wolna</div>
+              </div>
+            `;
           }
+
+          html += Engine.renderSlotCard(e, "room");
+          lastEnd = Math.max(lastEnd || 0, endM);
         }
 
         html += `</div></div>`;
       }
 
       html += `</div>`;
-      this.openModal(`Sala ${roomName}`, "🚪 Sala", html);
+      if (this.elements.weekNav) {
+        const weekNavHtml = `
+          <button type="button" class="modal-nav-btn modal-prev-week-btn" data-modal-nav="${weekOffset - 1}" aria-label="Poprzedni tydzień">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>
+          </button>
+          <span class="modal-week-label">${acadWeek}${weekDatesText}</span>
+          <button type="button" class="modal-nav-btn modal-next-week-btn" data-modal-nav="${weekOffset + 1}" aria-label="Następny tydzień">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+          </button>
+        `;
+        this.elements.weekNav.innerHTML = weekNavHtml;
+        this.openModal(roomName, "Plan sali", html);
+      } else {
+        const fullHtml = `
+          <div class="modal-week-nav">
+            <button type="button" class="modal-nav-btn modal-prev-week-btn" data-modal-nav="${weekOffset - 1}" aria-label="Poprzedni tydzień">
+              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>
+            </button>
+            <span class="modal-week-label">${acadWeek}${weekDatesText}</span>
+            <button type="button" class="modal-nav-btn modal-next-week-btn" data-modal-nav="${weekOffset + 1}" aria-label="Następny tydzień">
+              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+            </button>
+          </div>
+          ${html}
+        `;
+        this.openModal(roomName, "Plan sali", fullHtml);
+      }
       this._bindModalActionLinks();
+      this._bindModalNavEvents();
+    },
+
+    _bindModalNavEvents() {
+      if (!this.elements) return;
+      const root = this.elements.modal || this.elements.body;
+      if (!root) return;
+      const navButtons = root.querySelectorAll("button[data-modal-nav]");
+      navButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const targetOffset = parseInt(btn.getAttribute("data-modal-nav"), 10);
+          if (this.currentModalType === "room" && this.currentModalTarget) {
+            this.openRoom(this.currentModalTarget, targetOffset);
+          } else if (this.currentModalType === "teacher" && this.currentModalTarget) {
+            this.openTeacher(this.currentModalTarget, targetOffset);
+          }
+        });
+      });
     },
 
     async openSubject(subjectName) {
       if (this.onBeforeOpen) this.onBeforeOpen();
+      this.currentModalType = "subject";
+      this.currentModalTarget = subjectName;
+      this._updateBackButton();
+      if (this.elements && this.elements.weekNav) this.elements.weekNav.innerHTML = "";
 
       this.openModal(subjectName, "📚 Przedmiot", `<div class="spinner" style="margin: 2rem auto;"></div><p style="text-align:center;">Wczytywanie szczegółów przedmiotu...</p>`);
 
@@ -725,6 +1197,10 @@
 
     async openFreeRooms(customOptions = {}) {
       if (this.onBeforeOpen) this.onBeforeOpen();
+      this.currentModalType = "free_rooms";
+      this.currentModalTarget = "Dostępność sal";
+      this._updateBackButton();
+      if (this.elements && this.elements.weekNav) this.elements.weekNav.innerHTML = "";
 
       this.openModal("Dostępność sal", "🔎 Wolne sale", `<div class="spinner" style="margin: 2rem auto;"></div><p style="text-align:center;">Sprawdzanie dostępności sal...</p>`);
 

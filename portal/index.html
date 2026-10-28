@@ -1,97 +1,282 @@
 <!DOCTYPE html>
-<html lang="pl" data-theme="dark">
+<html lang="pl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Uniplaner — Wybierz swoją uczelnię i wydział</title>
   <meta name="description" content="Plan zajęć z Twojej uczelni. Bez logowania, bez instalacji i bez reklam.">
-  <meta name="theme-color" content="#17181b">
-  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#151517">
+  <meta name="color-scheme" content="light dark">
   <link rel="icon" type="image/svg+xml" href="assets/uniplaner.svg">
   <link rel="alternate icon" type="image/png" href="icon-192.png">
 
-  <!-- Google Fonts: Bricolage Grotesque (wersja zmienna z osiami opsz, wdth, wght) -->
+  <!-- Google Fonts: Bricolage Grotesque (opsz,wdth,wght) + DM Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap">
 
-  <link rel="stylesheet" href="portal.css?v=3.11.1">
+  <link rel="stylesheet" href="tokens.css?v=3.12.0">
+  <link rel="stylesheet" href="portal.css?v=3.12.0">
+
+  <!-- 3-stanowy motyw: wykonanie w <head> przed renderem eliminuje flash motywu -->
   <script>
-    (function() {
+    (function () {
       try {
-        var saved = localStorage.getItem('uniplaner_theme') || 'dark';
-        document.documentElement.setAttribute('data-theme', saved);
-        document.documentElement.style.colorScheme = saved;
-        var meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.setAttribute('content', saved === 'dark' ? '#17181b' : '#fbf9f4');
-      } catch(e) {}
-    })();
-  </script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function(regs) {
-        for (var reg of regs) {
-          if (!reg.scope.includes('/umg/') && !reg.scope.includes('/sggw/')) {
-            reg.unregister().then(function() {
-              if ('caches' in window) {
-                caches.keys().then(function(keys) {
-                  keys.forEach(function(k) {
-                    if (k.startsWith('plan-app-')) caches.delete(k);
-                  });
-                });
-              }
-            });
-          }
+        var saved = localStorage.getItem('uniplaner_theme');
+        var theme = (saved === 'light' || saved === 'dark') ? saved : null;
+        if (theme) {
+          document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.style.colorScheme = theme;
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+          var isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
         }
-      });
-    }
+        var effective = theme || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) {
+          meta.setAttribute('content', effective === 'dark' ? '#151517' : '#F7EFDC');
+        }
+      } catch (_) {}
+    })();
   </script>
 </head>
 <body>
+
+  <!-- Tło dekoracyjne z motywami ręcznie rysowanych ikon i miękkimi gradientami -->
+  <svg class="portal-bg-pattern" aria-hidden="true" viewBox="0 0 720 980" preserveAspectRatio="none">
+    <defs>
+      <!-- Definicje wektorów ikon -->
+      <g id="i-calendar"><g transform="translate(-32 -32)"><path d="M10 14 H54 V55 H10 Z M10 25 H54 M21 8 V19 M43 8 V19 M20 34 H44 M20 43 H44 M26 29 V51 M38 29 V51"></path></g></g>
+      <g id="i-ship"><g transform="translate(-32 -32)"><path d="M7 40 H57 L50 53 Q32 58 14 53 Z M17 40 V30 H47 V40 M25 30 V21 H39 V30 M29 21 V13 H35 V21 M24 35 H24.1 M32 35 H32.1 M40 35 H40.1"></path></g></g>
+      <g id="i-plane"><g transform="translate(-32 -32)"><path d="M32 5 Q36 9 36 19 V29 L58 42 V48 L36 41 V52 L43 57 V61 L32 58 L21 61 V57 L28 52 V41 L6 48 V42 L28 29 V19 Q28 9 32 5 Z"></path></g></g>
+      <g id="i-masks"><g transform="translate(-32 -32)"><path d="M8 14 Q8 36 23 43 Q38 36 38 14 Q23 9 8 14 Z M15 22 Q18 19 21 22 M26 22 Q29 19 32 22 M15 30 Q23 38 31 30"></path><path d="M30 28 Q30 50 44 57 Q58 50 58 28 Q44 23 30 28 Z M37 37 Q40 40 43 37 M47 37 Q50 40 53 37 M37 49 Q44 43 51 49"></path></g></g>
+      <g id="i-laptop"><g transform="translate(-32 -32)"><path d="M13 16 H51 V39 H13 Z M7 45 H57 L61 52 H3 Z M27 48.5 H37"></path></g></g>
+      <g id="i-crane"><g transform="translate(-32 -32)"><path d="M19 57 V12 M28 57 V12 M19 50 L28 42 L19 34 L28 26 L19 18 M8 12 H56 M12 12 V21 H19 M49 12 V35 M45 35 H53 V39 H45 Z M14 57 H33"></path></g></g>
+      <g id="i-building"><g transform="translate(-32 -32)"><path d="M5 23 L32 8 L59 23 Z M9 28 H55 M14 28 V50 M26 28 V50 M38 28 V50 M50 28 V50 M7 50 H57 M3 56 H61"></path></g></g>
+      <g id="i-syringe"><g transform="translate(-32 -32)"><path d="M16 25 H45 V39 H16 Z M16 32 H7 M7 25 V39 M45 32 H59 M24 25 V30 M31 25 V30 M38 25 V30 M45 21 V43"></path></g></g>
+      <g id="i-violin"><g transform="translate(-32 -32)"><path d="M32 22 C22 20 18 29 24 35 C15 40 18 55 32 55 C46 55 49 40 40 35 C46 29 42 20 32 22 Z M32 22 V9 M28 41 Q30 45 28 49 M36 41 Q34 45 36 49 M26 56 H38 M51 8 L46 58"></path><circle cx="32" cy="6" r="3.2"></circle></g></g>
+      <g id="i-camera"><g transform="translate(-32 -32)"><circle cx="24" cy="19" r="9"></circle><circle cx="44" cy="19" r="9"></circle><path d="M9 31 H48 V53 H9 Z M48 38 L58 33 V51 L48 46 M18 42 H30"></path></g></g>
+
+      <!-- Pattern jasny -->
+      <pattern id="pat-l" width="270" height="320" patternUnits="userSpaceOnUse" x="6" y="6">
+        <g fill="none" stroke="rgba(150,110,60,0.18)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <g transform="translate(45 40) rotate(-8) scale(0.62)"><use href="#i-calendar"></use></g>
+          <g transform="translate(135 40) rotate(4) scale(0.62)"><use href="#i-ship"></use></g>
+          <g transform="translate(225 40) rotate(25) scale(0.62)"><use href="#i-plane"></use></g>
+          <g transform="translate(0 120) rotate(8) scale(0.62)"><use href="#i-camera"></use></g>
+          <g transform="translate(270 120) rotate(8) scale(0.62)"><use href="#i-camera"></use></g>
+          <g transform="translate(90 120) rotate(-12) scale(0.62)"><use href="#i-masks"></use></g>
+          <g transform="translate(180 120) rotate(6) scale(0.62)"><use href="#i-laptop"></use></g>
+          <g transform="translate(45 200) rotate(3) scale(0.62)"><use href="#i-crane"></use></g>
+          <g transform="translate(135 200) rotate(-5) scale(0.62)"><use href="#i-building"></use></g>
+          <g transform="translate(225 200) rotate(35) scale(0.62)"><use href="#i-syringe"></use></g>
+          <g transform="translate(0 280) rotate(-6) scale(0.62)"><use href="#i-ship"></use></g>
+          <g transform="translate(270 280) rotate(-6) scale(0.62)"><use href="#i-ship"></use></g>
+          <g transform="translate(90 280) rotate(20) scale(0.62)"><use href="#i-violin"></use></g>
+          <g transform="translate(180 280) rotate(-20) scale(0.62)"><use href="#i-plane"></use></g>
+        </g>
+      </pattern>
+
+      <!-- Pattern ciemny -->
+      <pattern id="pat-d" width="270" height="320" patternUnits="userSpaceOnUse" x="6" y="6">
+        <g fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <g transform="translate(45 40) rotate(-8) scale(0.62)"><use href="#i-calendar"></use></g>
+          <g transform="translate(135 40) rotate(4) scale(0.62)"><use href="#i-ship"></use></g>
+          <g transform="translate(225 40) rotate(25) scale(0.62)"><use href="#i-plane"></use></g>
+          <g transform="translate(0 120) rotate(8) scale(0.62)"><use href="#i-camera"></use></g>
+          <g transform="translate(270 120) rotate(8) scale(0.62)"><use href="#i-camera"></use></g>
+          <g transform="translate(90 120) rotate(-12) scale(0.62)"><use href="#i-masks"></use></g>
+          <g transform="translate(180 120) rotate(6) scale(0.62)"><use href="#i-laptop"></use></g>
+          <g transform="translate(45 200) rotate(3) scale(0.62)"><use href="#i-crane"></use></g>
+          <g transform="translate(135 200) rotate(-5) scale(0.62)"><use href="#i-building"></use></g>
+          <g transform="translate(225 200) rotate(35) scale(0.62)"><use href="#i-syringe"></use></g>
+          <g transform="translate(0 280) rotate(-6) scale(0.62)"><use href="#i-ship"></use></g>
+          <g transform="translate(270 280) rotate(-6) scale(0.62)"><use href="#i-ship"></use></g>
+          <g transform="translate(90 280) rotate(20) scale(0.62)"><use href="#i-violin"></use></g>
+          <g transform="translate(180 280) rotate(-20) scale(0.62)"><use href="#i-plane"></use></g>
+        </g>
+      </pattern>
+
+      <linearGradient id="fade-top-l" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#F7EFDC" stop-opacity="0.94"></stop>
+        <stop offset="1" stop-color="#F7EFDC" stop-opacity="0"></stop>
+      </linearGradient>
+      <linearGradient id="fade-bot-l" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#F7EFDC" stop-opacity="0"></stop>
+        <stop offset="0.3" stop-color="#F7EFDC" stop-opacity="0.92"></stop>
+        <stop offset="1" stop-color="#F7EFDC" stop-opacity="0.96"></stop>
+      </linearGradient>
+
+      <linearGradient id="fade-top-d" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#151517" stop-opacity="0.94"></stop>
+        <stop offset="1" stop-color="#151517" stop-opacity="0"></stop>
+      </linearGradient>
+      <linearGradient id="fade-bot-d" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#151517" stop-opacity="0"></stop>
+        <stop offset="0.3" stop-color="#151517" stop-opacity="0.92"></stop>
+        <stop offset="1" stop-color="#151517" stop-opacity="0.96"></stop>
+      </linearGradient>
+    </defs>
+
+    <!-- Warstwa Jasna -->
+    <g class="bg-layer-light">
+      <rect width="100%" height="100%" fill="url(#pat-l)"></rect>
+      <rect x="0" y="0" width="100%" height="130" fill="url(#fade-top-l)"></rect>
+      <rect x="0" y="650" width="100%" height="330" fill="url(#fade-bot-l)"></rect>
+    </g>
+
+    <!-- Warstwa Ciemna -->
+    <g class="bg-layer-dark">
+      <rect width="100%" height="100%" fill="url(#pat-d)"></rect>
+      <rect x="0" y="0" width="100%" height="130" fill="url(#fade-top-d)"></rect>
+      <rect x="0" y="650" width="100%" height="330" fill="url(#fade-bot-d)"></rect>
+    </g>
+  </svg>
+
+  <style>
+    /* Sterowanie widocznością warstw tła w SVG */
+    :root[data-theme='light'] .bg-layer-dark { display: none; }
+    :root[data-theme='light'] .bg-layer-light { display: block; }
+
+    :root[data-theme='dark'] .bg-layer-light { display: none; }
+    :root[data-theme='dark'] .bg-layer-dark { display: block; }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme]) .bg-layer-light { display: none; }
+      :root:not([data-theme]) .bg-layer-dark { display: block; }
+    }
+    @media (prefers-color-scheme: light) {
+      :root:not([data-theme]) .bg-layer-dark { display: none; }
+      :root:not([data-theme]) .bg-layer-light { display: block; }
+    }
+  </style>
+
   <div class="portal-container">
+    <!-- Nagłówek -->
     <header class="portal-header">
-      <div class="logo-card">
+      <div class="logo-tile">
         <img
-          src="assets/uniplaner-header.svg"
-          alt="Uniplaner Logo"
+          src="assets/logo.png"
+          alt="Logo Uniplaner"
           class="portal-logo"
-          width="44"
-          height="44"
+          width="66"
+          height="66"
           fetchpriority="high"
         >
       </div>
+
       <div class="header-title-wrap">
         <h1 class="portal-title">Uniplaner</h1>
+        <p class="portal-tagline">Plan zajęć z Twojej uczelni. Bez logowania, bez instalacji i bez reklam.</p>
       </div>
+
       <div class="header-actions">
-        <button
-          type="button"
-          id="theme-toggle-btn"
-          class="theme-toggle-btn"
-          aria-label="Przełącz motyw"
-          aria-pressed="false"
-          title="Przełącz motyw"
-        >
-          <svg class="theme-icon icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-          <svg class="theme-icon icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-          </svg>
-        </button>
+        <!-- Desktop: Segmented Control (Jasny / System / Ciemny) -->
+        <div class="theme-segmented-control" role="radiogroup" aria-label="Wybór motywu">
+          <button
+            type="button"
+            role="radio"
+            aria-checked="false"
+            data-theme-val="light"
+            class="theme-segment-btn"
+          >
+            Jasny
+          </button>
+          <button
+            type="button"
+            role="radio"
+            aria-checked="true"
+            data-theme-val="system"
+            class="theme-segment-btn"
+          >
+            System
+          </button>
+          <button
+            type="button"
+            role="radio"
+            aria-checked="false"
+            data-theme-val="dark"
+            class="theme-segment-btn"
+          >
+            Ciemny
+          </button>
+        </div>
+
+        <!-- Mobile: Dropdown Button -->
+        <div class="theme-dropdown-control">
+          <button
+            type="button"
+            id="theme-dropdown-btn"
+            class="theme-dropdown-btn"
+            aria-label="Motyw: system"
+            aria-haspopup="menu"
+            aria-expanded="false"
+          >
+            <span class="theme-btn-icon" aria-hidden="true" id="theme-btn-icon">
+              <!-- Domyślna ikona systemu / monitor -->
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="12" rx="2"></rect>
+                <path d="M8 20h8M12 16v4"></path>
+              </svg>
+            </span>
+            <svg class="chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+
+          <div id="theme-menu-dropdown" class="theme-menu-dropdown" role="menu" hidden>
+            <button
+              type="button"
+              role="menuitemradio"
+              aria-checked="false"
+              data-theme-val="light"
+              class="theme-dropdown-item"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+              </svg>
+              <span>Jasny</span>
+            </button>
+            <button
+              type="button"
+              role="menuitemradio"
+              aria-checked="true"
+              data-theme-val="system"
+              class="theme-dropdown-item"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="12" rx="2"></rect>
+                <path d="M8 20h8M12 16v4"></path>
+              </svg>
+              <span>System</span>
+            </button>
+            <button
+              type="button"
+              role="menuitemradio"
+              aria-checked="false"
+              data-theme-val="dark"
+              class="theme-dropdown-item"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+              </svg>
+              <span>Ciemny</span>
+            </button>
+          </div>
+        </div>
       </div>
-      <p class="portal-tagline">Plan zajęć z Twojej uczelni. Bez logowania, bez instalacji i bez reklam.</p>
     </header>
 
-    <main id="portal-app" class="portal-main">
+    <main id="portal-app">
       <!-- Ostatnio przeglądany plan (najważniejszy element) -->
       <section id="last-visited-card" class="last-visited-card" aria-label="Ostatnio przeglądany plan" hidden>
         <div class="last-visited-content">
@@ -99,11 +284,10 @@
           <div class="last-visited-title" id="last-visited-text">Ładowanie...</div>
         </div>
         <div class="last-visited-actions">
-          <a id="last-visited-link" href="#" class="btn-fast-forward" title="Przejdź bezpośrednio do ostatnio wybranego planu">
+          <a id="last-visited-link" href="#" class="btn-fast-forward" title="Przejdź do ostatnio wybranego planu">
             <span>Otwórz plan</span>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M13 6l6 6-6 6"></path>
             </svg>
           </a>
         </div>
@@ -113,129 +297,122 @@
       <section class="portal-card" aria-labelledby="form-heading">
         <h2 id="form-heading" class="sr-only">Wybór uczelni i wydziału</h2>
 
-        <div class="form-flow">
-          <!-- Wyszukiwarka Uczelni -->
-          <div class="form-step" id="step-university">
-            <div class="step-label-row">
-              <label for="uni-search-input" id="uni-label" class="step-label">
-                Uczelnia
-              </label>
-              <span id="uni-loading-badge" class="loading-badge" hidden>
-                <span class="loading-spinner" aria-hidden="true"></span>
-                Ładowanie listy...
-              </span>
-            </div>
-
-            <div class="combobox-container">
-              <div class="combobox-field" id="combobox-field">
-                <span class="combobox-icon" aria-hidden="true">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                  </svg>
-                </span>
-                <input
-                  type="search"
-                  id="uni-search-input"
-                  class="combobox-input"
-                  role="combobox"
-                  aria-autocomplete="list"
-                  aria-expanded="false"
-                  aria-controls="uni-listbox"
-                  aria-labelledby="uni-label"
-                  placeholder="Wpisz nazwę lub skrót uczelni (np. UMG, SGGW)..."
-                  autocomplete="off"
-                  spellcheck="false"
-                >
-                <button
-                  type="button"
-                  id="uni-toggle-btn"
-                  class="combobox-arrow-btn"
-                  aria-label="Pokaż listę wszystkich uczelni"
-                  aria-expanded="false"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                  </svg>
-                </button>
-              </div>
-
-              <!-- Lista rozwijana z wynikami -->
-              <ul
-                id="uni-listbox"
-                class="combobox-listbox"
-                role="listbox"
-                aria-label="Dostępne uczelnie"
-                hidden
-              ></ul>
-
-              <!-- Dedykowany kontener błędu z przyciskiem ponowienia -->
-              <div id="uni-error-container" class="portal-error-card" role="alert" aria-live="assertive" hidden>
-                <div class="error-content">
-                  <svg class="error-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                  </svg>
-                  <span id="uni-error-text" class="error-message">Nie udało się pobrać listy uczelni.</span>
-                </div>
-                <button type="button" id="uni-retry-btn" class="btn-retry">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
-                  </svg>
-                  <span>Spróbuj ponownie</span>
-                </button>
-              </div>
-
-              <!-- Live region dla czytników ekranowych -->
-              <div id="uni-status" class="sr-only" role="status" aria-live="polite"></div>
-            </div>
-          </div>
-
-          <!-- Wybór Wydziału (Adaptera) -->
-          <div class="form-step" id="step-faculty">
-            <label id="faculty-label" class="step-label">
-              Wydział i adapter planu
+        <!-- Krok 1: Wybór Uczelni -->
+        <div class="form-step" id="step-university">
+          <div class="step-label-row">
+            <label for="uni-search-input" id="uni-label" class="step-label">
+              Uczelnia
             </label>
-
-            <div
-              id="faculty-list"
-              class="faculty-grid"
-              role="radiogroup"
-              aria-labelledby="faculty-label"
-            ></div>
+            <span id="uni-loading-badge" class="loading-badge" hidden>
+              <span class="loading-spinner" aria-hidden="true"></span>
+              Ładowanie listy...
+            </span>
           </div>
 
-          <!-- Przycisk przejścia do wybranego adaptera -->
-          <div class="form-step form-step-action" id="step-action">
-            <p id="action-helper" class="action-helper" aria-live="polite">
-              Wybierz wydział powyżej, aby otworzyć plan zajęć.
-            </p>
-            <a
-              id="launch-plan-btn"
-              class="btn-launch is-disabled"
-              role="button"
-              aria-disabled="true"
-            >
-              <span>Przejdź do planu zajęć</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </a>
+          <div class="combobox-container">
+            <div class="combobox-field" id="combobox-field">
+              <span class="combobox-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="7"></circle>
+                  <path d="M20 20l-4-4"></path>
+                </svg>
+              </span>
+              <input
+                type="search"
+                id="uni-search-input"
+                class="combobox-input"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded="false"
+                aria-controls="uni-listbox"
+                aria-labelledby="uni-label"
+                placeholder="Wpisz nazwę lub skrót uczelni (np. UMG, SGGW)…"
+                autocomplete="off"
+                spellcheck="false"
+              >
+              <button
+                type="button"
+                id="uni-toggle-btn"
+                class="combobox-arrow-btn"
+                aria-label="Pokaż listę wszystkich uczelni"
+                aria-expanded="false"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M6 9l6 6 6-6"></path>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Lista rozwijana z wynikami (05) -->
+            <ul
+              id="uni-listbox"
+              class="combobox-listbox"
+              role="listbox"
+              aria-label="Dostępne uczelnie"
+              hidden
+            ></ul>
+
+            <!-- Stan błędu z przyciskiem Spróbuj ponownie -->
+            <div id="uni-error-container" class="portal-error-card" role="alert" aria-live="assertive" hidden>
+              <div class="error-content">
+                <svg class="error-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span id="uni-error-text" class="error-message">Nie udało się pobrać listy uczelni.</span>
+              </div>
+              <button type="button" id="uni-retry-btn" class="btn-retry">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+                </svg>
+                <span>Spróbuj ponownie</span>
+              </button>
+            </div>
+
+            <!-- Live region dla czytników ekranowych -->
+            <div id="uni-status" class="sr-only" role="status" aria-live="polite"></div>
           </div>
+        </div>
+
+        <!-- Krok 2: Wybór Wydziału (Adaptera) -->
+        <div class="form-step" id="step-faculty">
+          <label id="faculty-label" class="step-label">
+            Wydział i adapter planu
+          </label>
+
+          <div
+            id="faculty-list"
+            class="faculty-grid"
+            role="radiogroup"
+            aria-labelledby="faculty-label"
+          ></div>
+        </div>
+
+        <!-- Krok 3: Przycisk przejścia CTA -->
+        <div class="form-step form-step-action" id="step-action">
+          <a
+            id="launch-plan-btn"
+            class="btn-launch is-disabled"
+            role="button"
+            aria-disabled="true"
+            aria-describedby="faculty-prompt"
+          >
+            <span>Przejdź do planu zajęć</span>
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M13 6l6 6-6 6"></path>
+            </svg>
+          </a>
         </div>
       </section>
 
-      <!-- Sekcja społecznościowa / Open source -->
+      <!-- Sekcja społecznościowa / wtyczki -->
       <section class="portal-community-card">
-        <div class="community-header">
-          <span class="community-badge">Licencja MIT • Społeczność akademicka</span>
-          <h2 class="community-title">Nie widzisz swojej uczelni?</h2>
-          <p class="community-desc">
-            Uniplaner to niezależna, otwarta platforma stworzona przez studentów. Każdy wydział działa w oparciu o autonomiczny adapter w Pythonie — możesz dopisać obsługę swojej uczelni lub pomóc w rozwoju projektu.
-          </p>
-        </div>
+        <span class="community-badge">Licencja MIT • Społeczność akademicka</span>
+        <h2 class="community-title">Nie widzisz swojej uczelni?</h2>
+        <p class="community-desc">
+          Uniplaner to niezależna, otwarta platforma stworzona przez studentów. Każdy wydział działa w oparciu o autonomiczny adapter w Pythonie. Możesz dopisać obsługę swojej uczelni lub pomóc w rozwoju projektu.
+        </p>
         <div class="community-actions">
           <a
             href="https://github.com/Qu4X/uniplaner"
@@ -243,8 +420,8 @@
             rel="noopener noreferrer"
             class="btn-community"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path>
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 7l-5 5 5 5M16 7l5 5-5 5"></path>
             </svg>
             <span>Napisz wtyczkę na GitHubie</span>
           </a>
@@ -253,10 +430,10 @@
     </main>
 
     <footer class="portal-footer">
-      <p><strong>Uniplaner</strong> — Otwarty projekt studencki. Kod źródłowy na licencji MIT.</p>
+      <p>Uniplaner — otwarty projekt studencki. Kod źródłowy na licencji MIT.</p>
     </footer>
   </div>
 
-  <script src="portal.js?v=3.11.1"></script>
+  <script src="portal.js?v=3.12.0"></script>
 </body>
 </html>
