@@ -183,10 +183,20 @@ a:focus:not(:focus-visible) {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    /* Allowed !important exception: accessibility prefers-reduced-motion reset */
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
   ::view-transition-group(*),
   ::view-transition-old(*),
   ::view-transition-new(*) {
-    /* Allowed !important exception: accessibility prefers-reduced-motion */
+    /* Allowed !important exception: accessibility prefers-reduced-motion view-transitions */
     animation: none !important;
   }
 }
