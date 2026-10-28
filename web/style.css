@@ -1273,20 +1273,46 @@ input, select, textarea, button {
 .day-header {
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--text-primary);
-  padding-bottom: 0.35rem;
+  color: var(--school-text);
+  padding-bottom: 8px;
   margin-bottom: 0.6rem;
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--school-border);
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 0.75rem;
+  align-items: baseline;
+  gap: 8px;
 }
 
 .day-header-title {
   display: inline-flex;
   align-items: baseline;
   gap: 0.35rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 20px;
+  color: var(--school-text);
+}
+
+.day-date {
+  font-size: 14px;
+  color: var(--school-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.grid-today-badge {
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lesson-lecture-text, #1D4ED8);
+}
+
+@media (max-width: 899px) {
+  .day-group {
+    padding: 16px 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
 }
 
 .lessons-list {
@@ -1837,10 +1863,12 @@ input, select, textarea, button {
 .schedule-week-grid {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 16px;
+  padding: 0 16px;
 }
 
 .grid-day-col {
+  position: relative;
   display: flex;
   flex-direction: column;
 }
@@ -1879,18 +1907,26 @@ input, select, textarea, button {
   .schedule-week-grid {
     --grid-cols: repeat(5, 1fr);
     display: grid;
-    grid-template-columns: var(--grid-cols);
-    gap: 0.75rem;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    padding: 0 36px;
     align-items: start;
   }
 
   .grid-day-col {
-    background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius);
-    padding: 0.75rem;
-    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 12px 16px;
+    border-radius: 16px 16px 0 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
     min-height: 400px;
+  }
+
+  .grid-day-col.is-today {
+    background: var(--school-today-tint);
   }
 
   .grid-day-header {
@@ -1899,22 +1935,27 @@ input, select, textarea, button {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    align-items: center;
-    gap: 0.35rem 0.5rem;
-    padding-bottom: 0.5rem;
-    margin-bottom: 1rem;
-    border-bottom: 2px solid var(--brand-primary);
+    align-items: baseline;
+    gap: 8px;
+    padding-bottom: 10px;
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--school-border);
   }
 
   .grid-day-header-title {
     display: inline-flex;
     align-items: baseline;
     gap: 0.3rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--school-text);
   }
 
-  .grid-day-header.today {
+  .grid-day-header.today,
+  .grid-day-col.is-today .grid-day-header {
     color: var(--brand-primary);
-    border-bottom-color: var(--brand-accent);
+    border-bottom: 2px solid var(--school-primary, var(--lesson-lecture, #1D4ED8));
   }
 
   .grid-lessons-list {
@@ -3886,105 +3927,6 @@ body {
   color: var(--school-text, #0F1B33);
 }
 
-/* Schedule Week Grid (Desktop 5 cols) */
-@media (min-width: 900px) {
-  .schedule-week-grid {
-    display: grid !important;
-    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-    gap: 8px !important;
-    padding: 0 36px !important;
-    align-items: start !important;
-  }
-
-  .grid-day-col {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-    padding: 12px 12px 16px !important;
-    border-radius: 16px 16px 0 0 !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    min-height: 400px !important;
-  }
-
-  .grid-day-col.is-today {
-    background: var(--school-today-tint) !important;
-  }
-
-  .grid-day-header {
-    display: flex !important;
-    align-items: baseline !important;
-    gap: 8px !important;
-    padding-bottom: 10px !important;
-    border-bottom: 1px solid var(--school-border) !important;
-    margin-bottom: 0 !important;
-  }
-
-  .grid-day-header.today {
-    border-bottom: 2px solid var(--school-primary, var(--lesson-lecture, #1D4ED8)) !important;
-  }
-
-  .grid-day-header-title {
-    font-family: var(--font-display) !important;
-    font-weight: 600 !important;
-    font-size: 18px !important;
-    color: var(--school-text) !important;
-  }
-
-  .grid-today-badge {
-    margin-left: auto !important;
-    font-size: 13px !important;
-    font-weight: 600 !important;
-    color: var(--lesson-lecture-text, #1D4ED8) !important;
-  }
-}
-
-/* Mobile Day View */
-@media (max-width: 899px) {
-  .schedule-week-grid {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 16px !important;
-    padding: 0 16px !important;
-  }
-
-  .day-group {
-    padding: 16px 16px 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-  }
-
-  .day-header {
-    display: flex !important;
-    align-items: baseline !important;
-    gap: 8px !important;
-    padding-bottom: 8px !important;
-    border-bottom: 1px solid var(--school-border) !important;
-  }
-
-  .day-header-title {
-    font-family: var(--font-display) !important;
-    font-weight: 600 !important;
-    font-size: 20px !important;
-    color: var(--school-text) !important;
-  }
-
-  .day-date {
-    font-size: 14px !important;
-    color: var(--school-text-muted) !important;
-    font-variant-numeric: tabular-nums !important;
-  }
-
-  .grid-today-badge {
-    margin-left: auto !important;
-    font-size: 13px !important;
-    font-weight: 600 !important;
-    color: var(--lesson-lecture-text, #1D4ED8) !important;
-  }
-}
-
 /* Lesson Cards (Redesign) */
 .lesson-card {
   display: flex !important;
@@ -4521,11 +4463,6 @@ a:focus:not(:focus-visible) {
   align-items: center !important;
 }
 
-/* Point 10: Desktop Today column */
-.grid-day-col.is-today .grid-day-header {
-  border-bottom: 2px solid var(--school-primary, #2F6FEB) !important;
-}
-
 /* Point 12: Search input and menu tools title */
 #sidebar-search-input {
   text-overflow: ellipsis !important;
@@ -4540,11 +4477,6 @@ a:focus:not(:focus-visible) {
 
 
 /* === REVISED POST-REVIEW POINTS 1-6 === */
-
-/* Point 2: Desktop Today column styling */
-.grid-day-col {
-  position: relative !important;
-}
 
 /* Point 3: Teacher button inline wrapping */
 .lesson-card .lesson-teacher-btn {
