@@ -878,12 +878,14 @@
             cwiczenia: { label: "Ćwiczenia", color: "var(--lesson-exercise, #15803D)" },
             lab: { label: "Laboratorium", color: "var(--lesson-lab, #6D28D9)" },
             laboratorium: { label: "Laboratorium", color: "var(--lesson-lab, #6D28D9)" },
-            simulator: { label: "Symulator", color: "#0EA5E9" },
-            symulator: { label: "Symulator", color: "#0EA5E9" },
-            project: { label: "Projekt", color: "#F59E0B" },
-            projekt: { label: "Projekt", color: "#F59E0B" },
-            seminar: { label: "Seminarium", color: "#EC4899" },
-            seminarium: { label: "Seminarium", color: "#EC4899" }
+            simulator: { label: "Symulator", color: "var(--lesson-simulator, #D97706)" },
+            symulator: { label: "Symulator", color: "var(--lesson-simulator, #D97706)" },
+            project: { label: "Projekt", color: "var(--lesson-project, #8B5CF6)" },
+            projekt: { label: "Projekt", color: "var(--lesson-project, #8B5CF6)" },
+            seminar: { label: "Seminarium", color: "var(--lesson-seminar, #6366F1)" },
+            seminarium: { label: "Seminarium", color: "var(--lesson-seminar, #6366F1)" },
+            elective: { label: "Fakultet", color: "var(--lesson-elective, #0D9488)" },
+            other: { label: "Inne", color: "var(--lesson-other, #6B7280)" }
           };
 
           const itemsHtml = [];

@@ -32,18 +32,21 @@
         } catch (_) {}
         var saved = null;
         try {
-          saved = localStorage.getItem(tid + "_theme") || (tid === "umg_wn" ? localStorage.getItem("umg_theme") : null);
+          saved = localStorage.getItem(tid + "_theme") || (tid === "umg_wn" ? localStorage.getItem("umg_theme") : null) || localStorage.getItem("uniplaner_theme");
         } catch (_) {}
-        var theme = (saved === "light" || saved === "dark") ? saved : null;
-        if (!theme) {
-          var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-          theme = prefersDark ? "dark" : "light";
-        }
+        var mode = (saved === "light" || saved === "dark" || saved === "system") ? saved : "system";
+        var theme = (mode === "light" || mode === "dark")
+          ? mode
+          : (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
         document.documentElement.setAttribute("data-theme", theme);
         document.documentElement.style.colorScheme = theme;
         var meta = document.querySelector('meta[name="theme-color"]');
         if (meta) {
-          meta.setAttribute("content", theme === "dark" ? "#0b1828" : "#0d233a");
+          var cssHeaderBg = "";
+          try {
+            cssHeaderBg = getComputedStyle(document.documentElement).getPropertyValue("--school-header-bg").trim();
+          } catch (_) {}
+          meta.setAttribute("content", cssHeaderBg || (theme === "dark" ? "#0b1828" : "#0d233a"));
         }
       } catch (_) {}
     })();

@@ -91,7 +91,8 @@ function describeThemeTests() {
   assert.strictEqual(mockDocElement.getAttribute("data-theme"), "light");
   assert.strictEqual(mockDocElement.style.colorScheme, "light");
   assert.strictEqual(mockMeta.getAttribute("content"), "#0d233a");
-  assert.strictEqual(global.localStorage.getItem("umg_theme"), null);
+  assert.strictEqual(global.localStorage.getItem("umg_theme"), "system");
+  assert.strictEqual(global.localStorage.getItem("umg_wn_theme"), "system");
   console.log("✅ [PASS] Default theme mode is 'system' and reflects media query.");
 
   // --- Test 2: System theme reacts to prefers-color-scheme dark ---
@@ -124,13 +125,14 @@ function describeThemeTests() {
   assert.strictEqual(mockMeta.getAttribute("content"), "#0d233a");
   console.log("✅ [PASS] Manual light mode saved to localStorage.");
 
-  // --- Test 5: Setting "system" removes the key from localStorage ---
-  console.log("-- Test 5: Returning to 'system' clears localStorage");
+  // --- Test 5: Setting "system" persists "system" in localStorage and resolves data-theme ---
+  console.log("-- Test 5: Returning to 'system' saves 'system' in localStorage");
   setThemeMode("system");
   assert.strictEqual(state.themeMode, "system");
-  assert.strictEqual(global.localStorage.getItem("umg_theme"), null, "Klucz umg_theme powinien zostać usunięty");
-  assert.strictEqual(global.localStorage.getItem("umg_wn_theme"), null, "Klucz umg_wn_theme powinien zostać usunięty");
-  console.log("✅ [PASS] Returning to system clears localStorage entry.");
+  assert.strictEqual(global.localStorage.getItem("umg_theme"), "system", "Klucz umg_theme powinien zachować wartość 'system'");
+  assert.strictEqual(global.localStorage.getItem("umg_wn_theme"), "system", "Klucz umg_wn_theme powinien zachować wartość 'system'");
+  assert.strictEqual(mockDocElement.getAttribute("data-theme"), "dark", "data-theme powinien zostać rozwiązany z matchMedia");
+  console.log("✅ [PASS] Returning to system saves 'system' in localStorage and resolves data-theme.");
 
   // --- Test 6: setupThemeListener live listener in system mode ---
   console.log("-- Test 6: setupThemeListener live updates in system mode");

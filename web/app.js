@@ -371,11 +371,27 @@ function updateThemeUI() {
   }
 }
 
+function updateThemeColorMeta() {
+  if (typeof document === "undefined" || typeof document.querySelector !== "function") return;
+  const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+  if (!themeColorMeta) return;
+  let cssHeaderBg = "";
+  if (typeof window !== "undefined" && typeof window.getComputedStyle === "function" && document.documentElement) {
+    try {
+      const val = window.getComputedStyle(document.documentElement).getPropertyValue("--school-header-bg");
+      if (val && val.trim()) cssHeaderBg = val.trim();
+    } catch (_) {}
+  }
+  const lightThemeColor = (state.tenantConfig && state.tenantConfig.theme_color) || "#0d233a";
+  const fallbackColor = state.theme === "dark" ? "#0b1828" : lightThemeColor;
+  themeColorMeta.setAttribute("content", cssHeaderBg || fallbackColor);
+}
+
 function initTheme() {
   if (typeof document === "undefined") return;
   if (!state.themeMode) {
     const saved = _getStorage("theme", "umg_theme");
-    state.themeMode = (saved === "light" || saved === "dark") ? saved : "system";
+    state.themeMode = (saved === "light" || saved === "dark" || saved === "system") ? saved : "system";
   }
   state.theme = getEffectiveTheme(state.themeMode);
   if (document.documentElement) {
@@ -384,11 +400,7 @@ function initTheme() {
       document.documentElement.style.colorScheme = state.theme;
     }
   }
-  const themeColorMeta = document.querySelector('meta[name="theme-color"]');
-  if (themeColorMeta) {
-    const lightThemeColor = (state.tenantConfig && state.tenantConfig.theme_color) || "#0d233a";
-    themeColorMeta.setAttribute("content", state.theme === "dark" ? "#0b1828" : lightThemeColor);
-  }
+  updateThemeColorMeta();
   updateThemeUI();
 }
 
@@ -405,11 +417,7 @@ function setupThemeListener() {
           document.documentElement.style.colorScheme = state.theme;
         }
       }
-      const themeColorMeta = document.querySelector('meta[name="theme-color"]');
-      if (themeColorMeta) {
-        const lightThemeColor = (state.tenantConfig && state.tenantConfig.theme_color) || "#0d233a";
-        themeColorMeta.setAttribute("content", state.theme === "dark" ? "#0b1828" : lightThemeColor);
-      }
+      updateThemeColorMeta();
       updateThemeUI();
     }
   };
@@ -423,11 +431,7 @@ function setThemeMode(mode) {
     mode = "system";
   }
   state.themeMode = mode;
-  if (mode === "system") {
-    _removeStorage("theme", "umg_theme");
-  } else {
-    _setStorage("theme", mode, "umg_theme");
-  }
+  _setStorage("theme", mode, "umg_theme");
   initTheme();
 }
 

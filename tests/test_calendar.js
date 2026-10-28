@@ -1099,10 +1099,10 @@ assert.strictEqual(state.theme, "light");
 assert.strictEqual(global.localStorage.getItem("umg_theme"), "light");
 assert.strictEqual(mockDocElement.getAttribute("data-theme"), "light");
 
-// Setting "system" must remove the theme key from localStorage
+// Setting "system" persists "system" in localStorage and resolves data-theme
 setThemeMode("system");
 assert.strictEqual(state.themeMode, "system");
-assert.strictEqual(global.localStorage.getItem("umg_theme"), null, "Wybór 'system' musi usunąć wpis z localStorage");
+assert.strictEqual(global.localStorage.getItem("umg_theme"), "system", "Wybór 'system' musi zapisać 'system' w localStorage");
 
 // Cleanup
 global.document.querySelector = origQuerySelector;
