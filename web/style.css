@@ -112,16 +112,24 @@ input, select, textarea, button {
 
 /* Header */
 .app-header {
-  background-color: var(--brand-navy);
-  color: #ffffff;
+  background-color: var(--school-header-bg, #12274A);
+  color: var(--school-header-text, #FFFFFF);
+  border-bottom: 1px solid var(--school-border, #0C1B38);
+  box-shadow: none;
   padding: env(safe-area-inset-top, 0px) max(1rem, env(safe-area-inset-right, 1rem)) 0 max(1rem, env(safe-area-inset-left, 1rem));
-  box-shadow: var(--shadow-md);
   position: sticky;
   top: 0;
-  z-index: 50;
-  height: calc(60px + env(safe-area-inset-top, 0px));
+  z-index: 100;
+  height: calc(72px + env(safe-area-inset-top, 0px));
   display: flex;
   align-items: center;
+}
+
+@media (max-width: 639px) {
+  .app-header {
+    height: calc(64px + env(safe-area-inset-top, 0px));
+    padding: env(safe-area-inset-top, 0px) 8px 0 4px;
+  }
 }
 
 /* Window Controls Overlay (Desktop PWA Title Bar) */
@@ -143,7 +151,6 @@ input, select, textarea, button {
     app-region: no-drag;
   }
 }
-
 
 .header-content {
   max-width: 1200px;
@@ -167,9 +174,36 @@ input, select, textarea, button {
 .brand {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 12px;
   min-width: 0;
   height: 100%;
+}
+
+@media (max-width: 639px) {
+  .brand {
+    gap: 8px;
+  }
+}
+
+.brand-logo-tile {
+  width: 40px;
+  height: 40px;
+  border-radius: 20%;
+  overflow: hidden;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+@media (max-width: 639px) {
+  .brand-logo-tile {
+    width: 34px;
+    height: 34px;
+    border-radius: 20%;
+  }
 }
 
 .brand-logo {
@@ -182,6 +216,15 @@ input, select, textarea, button {
   border-radius: 20%;
   border: 1px solid var(--school-border);
   box-sizing: border-box;
+}
+
+.brand-logo-tile .brand-logo {
+  border: none;
+  border-radius: 20%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .logo {
@@ -204,27 +247,41 @@ input, select, textarea, button {
 }
 
 .brand h1 {
-  font-size: 1.05rem;
+  font-family: var(--font-display, 'Bricolage Grotesque', sans-serif);
   font-weight: 700;
+  font-size: 21px;
+  line-height: 1.1;
   letter-spacing: -0.01em;
-  line-height: 1.2;
+  color: var(--school-header-text, #FFFFFF);
   margin: 0;
   padding: 0;
   white-space: nowrap;
 }
 
+@media (max-width: 639px) {
+  .brand h1 {
+    font-size: 17px;
+  }
+}
+
 .header-group-badge {
   display: block;
-  font-size: 0.78rem;
+  font-size: 14px;
   line-height: 1.2;
-  color: var(--brand-accent);
-  font-weight: 700;
+  color: var(--school-header-sub, #CFE0FF);
+  font-weight: 600;
   white-space: nowrap;
   max-width: clamp(140px, 35vw, 340px);
   overflow: hidden;
   text-overflow: ellipsis;
   margin: 0;
   padding: 0;
+}
+
+@media (max-width: 639px) {
+  .header-group-badge {
+    font-size: 13px;
+  }
 }
 
 .header-actions {
@@ -246,46 +303,6 @@ input, select, textarea, button {
   user-select: none;
   vertical-align: middle;
   flex-shrink: 0;
-}
-
-/* Header icon buttons - borderless, transparent, just the pure icon */
-.app-header .btn-icon {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  color: #ffffff;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-  flex-shrink: 0;
-  outline: none;
-  transition: background-color 0.2s, opacity 0.2s, transform 0.1s;
-}
-
-.app-header .btn-icon:hover {
-  background: rgba(255, 255, 255, 0.12) !important;
-}
-
-.app-header .btn-icon:active {
-  background: rgba(255, 255, 255, 0.22) !important;
-  transform: scale(0.92);
-}
-
-.app-header .btn-icon .icon {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  color: #ffffff;
 }
 
 /* Generic .btn-icon for sidebar and modals */
@@ -316,6 +333,46 @@ input, select, textarea, button {
   background: rgba(255, 255, 255, 0.12);
 }
 
+/* Header icon buttons - borderless, transparent, just the pure icon */
+.app-header .btn-icon {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: #E8EEF9;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  outline: none;
+  transition: background-color 0.2s, opacity 0.2s, transform 0.1s;
+}
+
+.app-header .btn-icon:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.app-header .btn-icon:active {
+  background: rgba(255, 255, 255, 0.22);
+  transform: scale(0.92);
+}
+
+.app-header .btn-icon .icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: #ffffff;
+}
+
 /* Theme Switcher (Segmented Control & Mobile Dropdown) */
 .theme-switcher-wrapper {
   display: inline-flex;
@@ -323,12 +380,12 @@ input, select, textarea, button {
   position: relative;
 }
 
-/* Wide screen segmented control (>= 600px) */
+/* Wide screen segmented control (>= 640px) */
 .theme-segmented-group {
   display: none;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 640px) {
   .theme-segmented-group {
     display: inline-flex;
     align-items: center;
@@ -388,16 +445,16 @@ input, select, textarea, button {
   outline-offset: 2px;
 }
 
-/* Narrow screen dropdown (< 600px) */
+/* Narrow screen dropdown (< 640px) */
 .theme-dropdown-container {
   position: relative;
   display: inline-flex;
   align-items: center;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 640px) {
   .theme-dropdown-container {
-    display: none !important;
+    display: none;
   }
 }
 
@@ -406,6 +463,21 @@ input, select, textarea, button {
   min-height: 44px;
   width: 44px;
   height: 44px;
+  padding: 0 8px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--school-text, #E8EEF9);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+[data-theme="light"] .app-header .theme-dropdown-btn {
+  border-color: var(--school-border, #A9BBD8);
+  color: var(--school-text, #0F1B33);
 }
 
 .theme-dropdown-menu {
@@ -423,10 +495,6 @@ input, select, textarea, button {
   flex-direction: column;
   gap: 3px;
   z-index: 1000;
-}
-
-.theme-dropdown-menu.hidden {
-  display: none !important;
 }
 
 .theme-dropdown-item {
@@ -3644,95 +3712,6 @@ body {
   color: var(--school-text, #0F1B33);
 }
 
-/* Header Redesign */
-.app-header {
-  background-color: var(--school-header-bg, #12274A) !important;
-  color: var(--school-header-text, #FFFFFF) !important;
-  border-bottom: 1px solid var(--school-border, #0C1B38) !important;
-  box-shadow: none !important;
-  height: calc(72px + env(safe-area-inset-top, 0px)) !important;
-}
-@media (max-width: 640px) {
-  .app-header {
-    height: calc(64px + env(safe-area-inset-top, 0px)) !important;
-    padding: env(safe-area-inset-top, 0px) 8px 0 4px !important;
-  }
-}
-
-.brand {
-  gap: 12px;
-}
-@media (max-width: 640px) {
-  .brand {
-    gap: 8px;
-  }
-}
-
-.brand-logo-tile {
-  width: 40px;
-  height: 40px;
-  border-radius: 20%;
-  overflow: hidden;
-  background: transparent;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-@media (max-width: 640px) {
-  .brand-logo-tile {
-    width: 34px;
-    height: 34px;
-    border-radius: 20%;
-  }
-}
-.brand-logo-tile .brand-logo {
-  border: none;
-  border-radius: 20%;
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  display: block !important;
-}
-@media (max-width: 640px) {
-  .brand-logo-tile .brand-logo {
-    width: 100% !important;
-    height: 100% !important;
-  }
-}
-
-.brand h1 {
-  font-family: var(--font-display, 'Bricolage Grotesque', sans-serif) !important;
-  font-weight: 700 !important;
-  font-size: 21px !important;
-  line-height: 1.1 !important;
-  letter-spacing: -0.01em !important;
-  color: var(--school-header-text, #FFFFFF) !important;
-}
-@media (max-width: 640px) {
-  .brand h1 {
-    font-size: 17px !important;
-  }
-}
-
-.header-group-badge {
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  color: var(--school-header-sub, #CFE0FF) !important;
-}
-@media (max-width: 640px) {
-  .header-group-badge {
-    font-size: 13px !important;
-  }
-}
-
-.app-header .btn-icon {
-  width: 44px;
-  height: 44px;
-  color: #E8EEF9;
-}
-
 /* Week Navigation & Day Tabs Bar */
 .week-nav-card {
   background: transparent !important;
@@ -4580,15 +4559,10 @@ body {
   }
 }
 
-.app-header {
-  position: sticky !important;
-  z-index: 100 !important;
-}
-
 #schedule-container,
 .schedule-container {
-  position: relative !important;
-  z-index: 1 !important;
+  position: relative;
+  z-index: 1;
 }
 
 
@@ -4692,25 +4666,6 @@ a:focus:not(:focus-visible) {
     font-size: 12.5px !important;
     overflow-x: auto !important;
   }
-}
-
-/* Point 8: Mobile theme dropdown button */
-.theme-dropdown-btn {
-  height: 44px !important;
-  padding: 0 8px !important;
-  border: 1px solid rgba(255, 255, 255, 0.25) !important;
-  border-radius: 10px !important;
-  background: transparent !important;
-  color: var(--school-text, #E8EEF9) !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 4px !important;
-  cursor: pointer !important;
-  box-sizing: border-box !important;
-}
-[data-theme="light"] .theme-dropdown-btn {
-  border-color: var(--school-border, #A9BBD8) !important;
-  color: var(--school-text, #0F1B33) !important;
 }
 
 /* Point 9: Teacher card styling */
