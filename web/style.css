@@ -2063,12 +2063,6 @@ input, select, textarea, button {
   margin: auto;
 }
 
-.modal-dialog.cross-modal-dialog[open] {
-  max-width: 840px;
-  width: min(94vw, 840px);
-  margin: auto;
-}
-
 .modal-dialog::backdrop {
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(2px);
@@ -2752,69 +2746,10 @@ iframe[src*="tally.so"] {
   flex-direction: column;
 }
 
-.modal-header-titles {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  flex-wrap: wrap;
-}
-
-.cross-modal-badge {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-  background: var(--brand-primary);
-  color: white;
-}
-
-.cross-modal-body {
-  overflow-y: auto;
-  max-height: calc(88vh - 70px);
-  padding: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-/* Timetable timeline for teacher & room schedules inside modal */
 .modal-schedule-section {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-}
-
-.modal-day-group {
-  border: 1px solid var(--border-subtle);
-  border-radius: 8px;
-  background: var(--bg-card-subtle);
-  overflow: hidden;
-}
-
-.modal-slots-list {
-  padding: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.modal-slot-item {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-left: 4px solid var(--brand-primary);
-  border-radius: 6px;
-  padding: 0.65rem 0.85rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.modal-slot-subject {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--text-primary);
 }
 
 .modal-groups-chips {
@@ -4270,7 +4205,7 @@ body {
   color: inherit !important;
 }
 
-.lesson-room-btn {
+.lesson-card .lesson-room-btn {
   display: inline-flex !important;
   align-items: center !important;
   gap: 5px !important;
@@ -4289,7 +4224,7 @@ body {
   text-underline-offset: 5px !important;
   cursor: pointer !important;
 }
-.lesson-room-btn:hover {
+.lesson-card .lesson-room-btn:hover {
   text-decoration-style: solid !important;
 }
 
@@ -4309,7 +4244,7 @@ body {
   border-top: none !important;
 }
 
-.lesson-teacher-btn {
+.lesson-card .lesson-teacher-btn {
   align-self: flex-start !important;
   display: inline-block !important;
   min-height: 44px !important;
@@ -4329,7 +4264,7 @@ body {
   word-break: normal !important;
   overflow-wrap: break-word !important;
 }
-.lesson-teacher-btn:hover {
+.lesson-card .lesson-teacher-btn:hover {
   color: var(--school-text) !important;
   text-decoration-style: solid !important;
 }
@@ -4615,390 +4550,6 @@ body {
 }
 
 
-/* --- 2. Dialog: Bottom Sheet on Mobile / Modal on Desktop (12-dialog-sali-mobile-dark.html) --- */
-.modal-dialog.cross-modal-dialog[open] {
-  border: none !important;
-  padding: 0 !important;
-  background: var(--school-surface) !important;
-  box-sizing: border-box !important;
-  color: var(--school-text) !important;
-}
-
-/* Mobile Bottom Sheet */
-@media (max-width: 768px) {
-  .modal-dialog.cross-modal-dialog[open] {
-    position: fixed !important;
-    inset: auto 0 0 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    max-height: 85vh !important;
-    margin: 0 !important;
-    border-radius: 20px 20px 0 0 !important;
-    border-top: 1px solid var(--border-subtle, #2B4470) !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.45) !important;
-  }
-
-  .cross-modal-content {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100% !important;
-    max-height: 85vh !important;
-    overflow: hidden !important;
-    box-sizing: border-box !important;
-  }
-
-  .bottom-sheet-handle {
-    display: flex !important;
-    justify-content: center !important;
-    padding: 8px 0 4px !important;
-    flex: none !important;
-  }
-
-  .bottom-sheet-handle .drag-bar {
-    width: 40px !important;
-    height: 4px !important;
-    border-radius: 2px !important;
-    background: var(--border-strong, #3B5C94) !important;
-    display: block !important;
-  }
-
-  .cross-modal-header {
-    display: flex !important;
-    align-items: flex-start !important;
-    justify-content: space-between !important;
-    padding: 0 20px !important;
-    flex: none !important;
-  }
-
-  .cross-modal-header .cross-modal-badge {
-    font-size: 13px !important;
-    color: var(--school-text-muted) !important;
-    font-weight: 400 !important;
-    text-transform: none !important;
-    padding: 0 !important;
-    background: none !important;
-    letter-spacing: normal !important;
-  }
-
-  .cross-modal-header h3 {
-    font-family: var(--font-display) !important;
-    font-weight: 700 !important;
-    font-size: 30px !important;
-    line-height: 1.1 !important;
-    letter-spacing: -0.02em !important;
-    color: var(--school-text) !important;
-    margin: 2px 0 0 0 !important;
-  }
-
-  .cross-modal-header .btn-close {
-    width: 44px !important;
-    height: 44px !important;
-    margin-right: -10px !important;
-    border: none !important;
-    background: transparent !important;
-    color: var(--school-text) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    cursor: pointer !important;
-    padding: 0 !important;
-  }
-
-  .cross-modal-scope-notice {
-    font-size: 13px !important;
-    line-height: 1.4 !important;
-    color: var(--school-text-muted) !important;
-    padding: 4px 20px 8px !important;
-    flex: none !important;
-  }
-
-  .cross-modal-body {
-    flex: 1 !important;
-    overflow-y: auto !important;
-    padding: 8px 20px 24px !important;
-  }
-}
-
-/* Desktop Centered Modal */
-@media (min-width: 769px) {
-  .modal-dialog.cross-modal-dialog[open] {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: 560px !important;
-    max-width: 90vw !important;
-    max-height: 85vh !important;
-    margin: 0 !important;
-    border-radius: 16px !important;
-    border: 1px solid var(--border-subtle, #2B4470) !important;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5) !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-  }
-
-  .cross-modal-content {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100% !important;
-    max-height: 85vh !important;
-    overflow: hidden !important;
-    box-sizing: border-box !important;
-  }
-
-  .bottom-sheet-handle {
-    display: none !important;
-  }
-
-  .cross-modal-header {
-    display: flex !important;
-    align-items: flex-start !important;
-    justify-content: space-between !important;
-    padding: 20px 24px 0 !important;
-    flex: none !important;
-  }
-
-  .cross-modal-header .cross-modal-badge {
-    font-size: 13px !important;
-    color: var(--school-text-muted) !important;
-    font-weight: 400 !important;
-    text-transform: none !important;
-    padding: 0 !important;
-    background: none !important;
-    letter-spacing: normal !important;
-  }
-
-  .cross-modal-header h3 {
-    font-family: var(--font-display) !important;
-    font-weight: 700 !important;
-    font-size: 28px !important;
-    line-height: 1.1 !important;
-    letter-spacing: -0.02em !important;
-    color: var(--school-text) !important;
-    margin: 2px 0 0 0 !important;
-  }
-
-  .cross-modal-header .btn-close {
-    width: 40px !important;
-    height: 40px !important;
-    margin-right: -8px !important;
-    border: none !important;
-    background: transparent !important;
-    color: var(--school-text) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    cursor: pointer !important;
-    padding: 0 !important;
-  }
-
-  .cross-modal-scope-notice {
-    font-size: 13px !important;
-    line-height: 1.4 !important;
-    color: var(--school-text-muted) !important;
-    padding: 4px 24px 8px !important;
-    flex: none !important;
-  }
-
-  .cross-modal-body {
-    flex: 1 !important;
-    overflow-y: auto !important;
-    padding: 12px 24px 24px !important;
-  }
-}
-
-/* Modal Slot Item Components */
-.modal-day-group {
-  margin-top: 16px !important;
-}
-
-.modal-day-header {
-  display: flex !important;
-  align-items: baseline !important;
-  gap: 8px !important;
-  margin-bottom: 8px !important;
-}
-
-.modal-day-name {
-  font-family: var(--font-display) !important;
-  font-weight: 600 !important;
-  font-size: 18px !important;
-  color: var(--school-text) !important;
-}
-
-.modal-slots-list {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 0 !important;
-}
-
-.modal-slot-item {
-  display: flex !important;
-  gap: 14px !important;
-  margin: 6px -8px 0 !important;
-  padding: 12px 8px !important;
-  border-radius: 10px !important;
-  border: 1px solid transparent !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  box-sizing: border-box !important;
-  transition: background 0.15s ease !important;
-}
-
-.modal-slot-item.is-user-group {
-  background: rgba(47, 111, 235, 0.16) !important;
-  border-color: rgba(77, 140, 255, 0.3) !important;
-}
-
-.modal-slot-time-col {
-  width: 76px !important;
-  flex: none !important;
-  font-size: 15px !important;
-  font-weight: 600 !important;
-  font-variant-numeric: tabular-nums !important;
-  line-height: 1.35 !important;
-  color: var(--school-text) !important;
-  display: flex !important;
-  flex-direction: column !important;
-}
-
-.modal-slot-time-col .slot-end-time {
-  font-weight: 400 !important;
-  color: var(--school-text-muted) !important;
-}
-
-.modal-slot-content-col {
-  flex: 1 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 3px !important;
-  min-width: 0 !important;
-}
-
-.modal-slot-top-row {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  font-size: 13px !important;
-  color: var(--school-text-muted) !important;
-}
-
-.user-group-badge {
-  font-weight: 600 !important;
-  color: var(--school-header-sub) !important;
-  font-size: 13px !important;
-}
-
-.modal-slot-subject {
-  font-family: var(--font-display) !important;
-  font-weight: 600 !important;
-  font-size: 16px !important;
-  line-height: 1.25 !important;
-  color: var(--school-text) !important;
-  margin-top: 1px !important;
-}
-
-.modal-slot-meta-subtitle {
-  font-size: 14px !important;
-  color: var(--school-text-muted) !important;
-  line-height: 1.3 !important;
-}
-
-.modal-free-slot {
-  display: flex !important;
-  gap: 14px !important;
-  padding: 12px 8px !important;
-  margin: 4px -8px 0 !important;
-  font-size: 15px !important;
-  color: var(--school-text-muted) !important;
-}
-
-.modal-free-label {
-  flex: 1 !important;
-  display: flex !important;
-  align-items: center !important;
-  font-style: italic !important;
-}
-
-
-/* Refinements for Stage 3 Modal & Day Group */
-.cross-modal-header .modal-header-titles {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  gap: 2px !important;
-}
-
-.cross-modal-header .cross-modal-badge {
-  font-size: 13px !important;
-  color: var(--school-text-muted) !important;
-  font-weight: 400 !important;
-  text-transform: none !important;
-  padding: 0 !important;
-  background: none !important;
-  letter-spacing: normal !important;
-}
-
-.cross-modal-header h3 {
-  font-family: var(--font-display) !important;
-  font-weight: 700 !important;
-  font-size: 30px !important;
-  line-height: 1.1 !important;
-  letter-spacing: -0.02em !important;
-  color: var(--school-text) !important;
-  margin: 0 !important;
-}
-
-.cross-modal-header .btn-close {
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-.cross-modal-body .modal-day-group {
-  border: none !important;
-  background: transparent !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  overflow: visible !important;
-  margin-top: 16px !important;
-  padding: 0 !important;
-}
-
-.cross-modal-body .modal-day-header {
-  display: flex !important;
-  align-items: baseline !important;
-  gap: 8px !important;
-  margin-bottom: 8px !important;
-  padding: 0 !important;
-  background: transparent !important;
-  border: none !important;
-}
-
-.cross-modal-body .modal-day-name {
-  font-family: var(--font-display) !important;
-  font-weight: 600 !important;
-  font-size: 18px !important;
-  color: var(--school-text) !important;
-}
-
-.cross-modal-body .modal-slots-list {
-  padding: 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 0 !important;
-  background: transparent !important;
-}
-
-.cross-modal-body .modal-slot-item:not(:first-child):not(.is-user-group) {
-  border-top: 1px solid var(--border-subtle, #223657) !important;
-}
-
-
 /* ==========================================================================
    STAGE 4: SVG PATTERN BACKGROUND & MOTIFS
    ========================================================================== */
@@ -5143,322 +4694,6 @@ a:focus:not(:focus-visible) {
   }
 }
 
-/* Point 7: Room & Teacher Modal layout (mock 12) */
-.cross-modal-dialog {
-  border: none !important;
-  background: transparent !important;
-  padding: 0 !important;
-}
-
-/* Mobile Bottom Sheet */
-@media (max-width: 768px) {
-  .modal-dialog.cross-modal-dialog[open] {
-    position: fixed !important;
-    inset: auto 0 0 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    max-height: 80vh !important;
-    height: 700px !important;
-    margin: 0 !important;
-    border-radius: 20px 20px 0 0 !important;
-    background: var(--school-header-bg, #0F1D36) !important;
-    border-top: 1px solid var(--border-subtle, #2B4470) !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.6) !important;
-    color: var(--school-text, #E8EEF9) !important;
-  }
-
-  .cross-modal-content {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100% !important;
-    max-height: 80vh !important;
-    padding: 8px 20px 0 !important;
-    box-sizing: border-box !important;
-    overflow: hidden !important;
-  }
-
-  .bottom-sheet-handle {
-    display: flex !important;
-    justify-content: center !important;
-    padding-bottom: 6px !important;
-    flex: none !important;
-  }
-
-  .bottom-sheet-handle .drag-bar {
-    width: 40px !important;
-    height: 4px !important;
-    border-radius: 2px !important;
-    background: var(--school-field-line, #3B5C94) !important;
-  }
-}
-
-/* Desktop Modal */
-@media (min-width: 769px) {
-  .modal-dialog.cross-modal-dialog[open] {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: 560px !important;
-    max-width: 90vw !important;
-    max-height: 85vh !important;
-    margin: 0 !important;
-    border-radius: 16px !important;
-    background: var(--school-header-bg, #0F1D36) !important;
-    border: 1px solid var(--border-subtle, #2B4470) !important;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5) !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-    color: var(--school-text, #E8EEF9) !important;
-  }
-
-  .cross-modal-content {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100% !important;
-    max-height: 85vh !important;
-    padding: 20px 24px 0 !important;
-    box-sizing: border-box !important;
-    overflow: hidden !important;
-  }
-
-  .bottom-sheet-handle {
-    display: none !important;
-  }
-}
-
-.cross-modal-header {
-  display: flex !important;
-  align-items: flex-start !important;
-  justify-content: space-between !important;
-  flex: none !important;
-}
-
-.cross-modal-header .modal-header-titles {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 2px !important;
-}
-
-.cross-modal-header .cross-modal-badge {
-  font-size: 13px !important;
-  color: var(--school-text-muted, #9FB0CC) !important;
-  font-weight: 400 !important;
-  background: transparent !important;
-  padding: 0 !important;
-  border: none !important;
-}
-
-.cross-modal-header h3 {
-  font-family: var(--font-display) !important;
-  font-weight: 700 !important;
-  font-size: 30px !important;
-  line-height: 1.1 !important;
-  letter-spacing: -0.02em !important;
-  color: var(--school-text, #E8EEF9) !important;
-  margin: 0 !important;
-}
-
-.cross-modal-header .btn-close {
-  width: 44px !important;
-  height: 44px !important;
-  margin-right: -10px !important;
-  border: none !important;
-  background: transparent !important;
-  color: var(--school-text, #E8EEF9) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
-  padding: 0 !important;
-}
-
-.cross-modal-scope-notice {
-  font-size: 13px !important;
-  line-height: 1.4 !important;
-  color: var(--school-text-muted, #9FB0CC) !important;
-  margin-top: 2px !important;
-  flex: none !important;
-}
-
-.modal-week-nav {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  margin-top: 12px !important;
-  padding-bottom: 8px !important;
-  border-bottom: 1px solid var(--school-border, #223657) !important;
-  flex: none !important;
-}
-
-.modal-nav-btn {
-  width: 44px !important;
-  height: 44px !important;
-  border-radius: 8px !important;
-  border: 1px solid var(--school-border, #223657) !important;
-  background: var(--school-header-bg, #0F1D36) !important;
-  color: var(--school-text, #E8EEF9) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 0 !important;
-  cursor: pointer !important;
-  transition: all 0.15s ease !important;
-}
-.modal-nav-btn:hover {
-  background: var(--school-surface, #111F38) !important;
-}
-
-.modal-week-label {
-  font-family: var(--font-display) !important;
-  font-weight: 600 !important;
-  font-size: 16px !important;
-  font-variant-numeric: tabular-nums !important;
-  color: var(--school-text, #E8EEF9) !important;
-}
-
-.cross-modal-body {
-  flex: 1 !important;
-  overflow-y: auto !important;
-  padding: 0 0 24px 0 !important;
-  margin-top: 4px !important;
-}
-
-.modal-day-group {
-  margin-top: 14px !important;
-}
-
-.modal-day-header {
-  display: flex !important;
-  align-items: baseline !important;
-  gap: 8px !important;
-  padding-top: 6px !important;
-}
-.modal-day-group:not(:first-child) .modal-day-header {
-  border-top: none !important;
-  padding-top: 12px !important;
-}
-
-.modal-day-name {
-  font-family: var(--font-display) !important;
-  font-weight: 600 !important;
-  font-size: 18px !important;
-  color: var(--school-text, #E8EEF9) !important;
-}
-
-.modal-day-date {
-  font-size: 14px !important;
-  color: var(--school-text-muted, #9FB0CC) !important;
-  font-variant-numeric: tabular-nums !important;
-}
-
-.modal-day-today-tag {
-  margin-left: auto !important;
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  color: var(--school-primary, var(--school-header-sub, #8DB8FF)) !important;
-}
-
-.modal-slots-list {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 0 !important;
-  margin-top: 8px !important;
-}
-
-.modal-slot-item {
-  display: flex !important;
-  gap: 14px !important;
-  padding: 12px 0 !important;
-  border-top: 1px solid var(--school-border, #223657) !important;
-}
-.modal-slot-item:first-child {
-  border-top: none !important;
-}
-
-.modal-slot-item.is-user-group {
-  margin: 8px -8px 0 !important;
-  padding: 12px 8px !important;
-  border-radius: 10px !important;
-  background: var(--own-group-tint, rgba(47, 111, 235, 0.16)) !important;
-  border-top: none !important;
-}
-
-.modal-slot-time-col {
-  width: 76px !important;
-  flex: none !important;
-  font-size: 15px !important;
-  font-weight: 600 !important;
-  font-variant-numeric: tabular-nums !important;
-  line-height: 1.35 !important;
-  color: var(--school-text, #E8EEF9) !important;
-  display: flex !important;
-  flex-direction: column !important;
-}
-.modal-slot-time-col .slot-end-time {
-  font-weight: 400 !important;
-  color: var(--school-text-muted, #9FB0CC) !important;
-}
-
-.modal-slot-content-col {
-  flex: 1 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 3px !important;
-  min-width: 0 !important;
-}
-
-.modal-slot-top-row {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  font-size: 13px !important;
-  color: var(--school-text-muted, #9FB0CC) !important;
-}
-
-.user-group-badge {
-  font-weight: 600 !important;
-  color: var(--school-header-sub, #8DB8FF) !important;
-  font-size: 13px !important;
-}
-
-.modal-slot-subject {
-  font-family: var(--font-display) !important;
-  font-weight: 600 !important;
-  font-size: 16px !important;
-  line-height: 1.25 !important;
-  color: var(--school-text, #E8EEF9) !important;
-}
-
-.modal-slot-meta-subtitle {
-  font-size: 14px !important;
-  line-height: 1.35 !important;
-  color: var(--school-header-sub, #C9D6EE) !important;
-}
-
-.modal-free-slot {
-  display: flex !important;
-  gap: 14px !important;
-  padding: 12px 0 !important;
-  font-size: 15px !important;
-  color: var(--school-text-muted, #9FB0CC) !important;
-}
-.modal-free-slot .modal-slot-time-col {
-  color: var(--school-text-muted, #9FB0CC) !important;
-  font-weight: 400 !important;
-}
-.modal-free-label {
-  flex: 1 !important;
-  display: flex !important;
-  align-items: center !important;
-  font-style: italic !important;
-  color: var(--school-text-muted, #9FB0CC) !important;
-}
-
 /* Point 8: Mobile theme dropdown button */
 .theme-dropdown-btn {
   height: 44px !important;
@@ -5479,7 +4714,7 @@ a:focus:not(:focus-visible) {
 }
 
 /* Point 9: Teacher card styling */
-.lesson-teacher-btn {
+.lesson-card .lesson-teacher-btn {
   font-style: normal !important;
   text-decoration: underline dotted !important;
   text-decoration-thickness: 1.5px !important;
@@ -5540,7 +4775,7 @@ a:focus:not(:focus-visible) {
 }
 
 /* Point 3: Teacher button inline wrapping */
-.lesson-teacher-btn {
+.lesson-card .lesson-teacher-btn {
   font-style: normal !important;
   text-decoration: underline dotted !important;
   text-decoration-thickness: 1.5px !important;
@@ -5632,86 +4867,120 @@ body.sidebar-open {
 
 
 /* ==========================================================================
-   REVISED ROOM & TEACHER DIALOG (FIXES 1-5, MOCK 12)
+   ROOM & TEACHER DIALOG (#cross-modal — consolidated, zero !important)
    ========================================================================== */
 
-/* Unified Horizontal Padding for Dialog: 20px Mobile, 24px Desktop */
+.modal-dialog.cross-modal-dialog {
+  border: none;
+  background: transparent;
+  padding: 0;
+  box-sizing: border-box;
+  color: var(--school-text, #E8EEF9);
+}
+
 @media (max-width: 768px) {
   .modal-dialog.cross-modal-dialog[open] {
-    position: fixed !important;
-    inset: auto 0 0 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    max-height: 85vh !important;
-    height: auto !important;
-    margin: 0 !important;
-    border-radius: 20px 20px 0 0 !important;
-    background: var(--school-header-bg, #0F1D36) !important;
-    border: none !important;
-    border-top: 1px solid var(--school-border, #2B4470) !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.6) !important;
-    color: var(--school-text, #E8EEF9) !important;
-    z-index: 1000 !important;
+    position: fixed;
+    inset: auto 0 0 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: 85vh;
+    height: auto;
+    margin: 0;
+    border-radius: 20px 20px 0 0;
+    background: var(--school-header-bg, #0F1D36);
+    border: none;
+    border-top: 1px solid var(--school-border, #2B4470);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.6);
+    color: var(--school-text, #E8EEF9);
+    z-index: 1000;
   }
 
   .cross-modal-content {
-    display: flex !important;
-    flex-direction: column !important;
-    max-height: 85vh !important;
-    height: 100% !important;
-    box-sizing: border-box !important;
-    padding: 8px 20px 0 20px !important;
-    overflow: hidden !important;
-    width: 100% !important;
+    display: flex;
+    flex-direction: column;
+    max-height: 85vh;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 8px 20px 0 20px;
+    overflow: hidden;
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .bottom-sheet-handle {
+    display: flex;
+    justify-content: center;
+    padding: 8px 0 4px;
+    flex: none;
+  }
+
+  .bottom-sheet-handle .drag-bar {
+    width: 40px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--school-field-line, #3B5C94);
+    display: block;
   }
 }
 
 @media (min-width: 769px) {
   .modal-dialog.cross-modal-dialog[open] {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: min(640px, 90vw) !important;
-    max-width: 90vw !important;
-    max-height: 85vh !important;
-    height: min(680px, 85vh) !important;
-    margin: 0 !important;
-    border-radius: 16px !important;
-    background: var(--school-header-bg, #0F1D36) !important;
-    border: 1px solid var(--school-border, #2B4470) !important;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5) !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-    color: var(--school-text, #E8EEF9) !important;
-    z-index: 1000 !important;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(640px, 90vw);
+    max-width: 90vw;
+    max-height: 85vh;
+    height: min(680px, 85vh);
+    margin: 0;
+    border-radius: 16px;
+    background: var(--school-header-bg, #0F1D36);
+    border: 1px solid var(--school-border, #2B4470);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    color: var(--school-text, #E8EEF9);
+    z-index: 1000;
   }
 
   .cross-modal-content {
-    display: flex !important;
-    flex-direction: column !important;
-    max-height: 85vh !important;
-    height: 100% !important;
-    box-sizing: border-box !important;
-    padding: 20px 24px 0 24px !important;
-    overflow: hidden !important;
-    width: 100% !important;
+    display: flex;
+    flex-direction: column;
+    max-height: 85vh;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 20px 24px 0 24px;
+    overflow: hidden;
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .bottom-sheet-handle {
+    display: none;
   }
 }
 
 /* Header Top Bar & Scope Notice */
 .cross-modal-top-bar {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  min-height: 44px !important;
-  margin-bottom: 6px !important;
-  width: 100% !important;
-  flex: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  margin-bottom: 6px;
+  width: 100%;
+  flex: none;
 }
 .cross-modal-top-bar:has(.modal-back-btn.hidden) {
   position: relative;
@@ -5721,67 +4990,68 @@ body.sidebar-open {
 
 .cross-modal-top-bar .btn-close {
   pointer-events: auto;
-  margin-left: auto !important;
-  width: 44px !important;
-  height: 44px !important;
-  margin-right: -10px !important;
-  padding: 0 !important;
-  border: none !important;
-  background: transparent !important;
-  color: var(--school-text, #E8EEF9) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
+  margin-left: auto;
+  width: 44px;
+  height: 44px;
+  margin-right: -10px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--school-text, #E8EEF9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .modal-back-btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  min-height: 44px !important;
-  height: 44px !important;
-  padding: 0 12px !important;
-  margin: 0 !important;
-  background: transparent !important;
-  border: 1px solid var(--school-border, #223657) !important;
-  border-radius: 8px !important;
-  color: var(--school-header-sub, #6EA8FF) !important;
-  font-family: var(--font-body) !important;
-  font-size: 14px !important;
-  font-weight: 500 !important;
-  cursor: pointer !important;
-  max-width: calc(100% - 54px) !important;
-  box-sizing: border-box !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  height: 44px;
+  padding: 0 12px;
+  margin: 0;
+  background: transparent;
+  border: 1px solid var(--school-border, #223657);
+  border-radius: 8px;
+  color: var(--school-header-sub, #6EA8FF);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  max-width: calc(100% - 54px);
+  box-sizing: border-box;
 }
 .modal-back-btn #cross-modal-back-text {
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .modal-back-btn:hover {
-  background: rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.08);
 }
 .modal-back-btn.hidden {
-  display: none !important;
+  display: none;
 }
 [data-theme="light"] .modal-back-btn {
-  color: var(--school-text, #0F1B33) !important;
-  border-color: var(--school-border, #A9BBD8) !important;
+  color: var(--school-text, #0F1B33);
+  border-color: var(--school-border, #A9BBD8);
 }
 [data-theme="light"] .modal-back-btn:hover {
-  background: rgba(0, 0, 0, 0.05) !important;
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .cross-modal-header {
-  display: block !important;
-  width: 100% !important;
-  padding: 0 !important;
+  display: block;
+  width: 100%;
+  padding: 0;
   margin-top: 0;
-  margin-right: 0 !important;
-  margin-bottom: 6px !important;
-  margin-left: 0 !important;
-  flex: none !important;
+  margin-right: 0;
+  margin-bottom: 6px;
+  margin-left: 0;
+  border-bottom: none;
+  flex: none;
 }
 .cross-modal-top-bar:has(.modal-back-btn.hidden) + .cross-modal-header {
   margin-top: -50px;
@@ -5791,267 +5061,281 @@ body.sidebar-open {
   box-sizing: border-box;
 }
 .cross-modal-header .modal-header-titles {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 2px !important;
-  width: 100% !important;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
 }
 .cross-modal-header .cross-modal-badge {
-  font-size: 13px !important;
-  font-weight: 400 !important;
-  color: var(--school-text-muted, #9FB0CC) !important;
-  text-transform: none !important;
-  letter-spacing: normal !important;
-  padding: 0 !important;
-  background: transparent !important;
-  border: none !important;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--school-text-muted, #9FB0CC);
+  text-transform: none;
+  letter-spacing: normal;
+  padding: 0;
+  background: transparent;
+  border: none;
 }
 .cross-modal-header h3 {
-  font-family: var(--font-display) !important;
-  font-weight: 700 !important;
-  font-size: 28px !important;
-  line-height: 1.15 !important;
-  letter-spacing: -0.02em !important;
-  margin: 2px 0 0 0 !important;
-  color: var(--school-text, #E8EEF9) !important;
-  width: 100% !important;
-  word-break: break-word !important;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 2px 0 0 0;
+  color: var(--school-text, #E8EEF9);
+  width: 100%;
+  word-break: break-word;
 }
 @media (min-width: 640px) {
   .cross-modal-header h3 {
-    font-size: 30px !important;
+    font-size: 30px;
   }
 }
 
 .cross-modal-scope-notice {
-  font-size: 13px !important;
-  line-height: 1.4 !important;
-  color: var(--school-text-muted, #9FB0CC) !important;
-  padding: 0 !important;
-  margin: 2px 0 12px 0 !important;
-  flex: none !important;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--school-text-muted, #9FB0CC);
+  padding: 0;
+  margin: 2px 0 12px 0;
+  flex: none;
 }
 
 /* Fixed Non-Scrolling Week Navigation */
 .modal-week-nav {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  flex: none !important;
-  padding: 0 0 8px 0 !important;
-  margin: 0 !important;
-  border-bottom: 1px solid var(--school-border, #223657) !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: none;
+  padding: 0 0 8px 0;
+  margin: 0;
+  border-bottom: 1px solid var(--school-border, #223657);
+  width: 100%;
+  box-sizing: border-box;
 }
 .modal-week-nav .modal-nav-btn {
-  width: 44px !important;
-  height: 44px !important;
-  border-radius: 8px !important;
-  border: 1px solid var(--school-border, #223657) !important;
-  background: var(--school-header-bg, #0F1D36) !important;
-  color: var(--school-text, #E8EEF9) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 0 !important;
-  cursor: pointer !important;
-  flex-shrink: 0 !important;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  border: 1px solid var(--school-border, #223657);
+  background: var(--school-header-bg, #0F1D36);
+  color: var(--school-text, #E8EEF9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+.modal-week-nav .modal-nav-btn:hover {
+  background: var(--school-surface, #111F38);
 }
 .modal-week-nav .modal-week-label {
-  font-family: var(--font-display) !important;
-  font-weight: 600 !important;
-  font-size: 16px !important;
-  font-variant-numeric: tabular-nums !important;
-  color: var(--school-text, #E8EEF9) !important;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  color: var(--school-text, #E8EEF9);
 }
 
-/* Scrollable Days Body with Thin Scrollbar & Stable Gutter (Point 1 & 7) */
+/* Scrollable Days Body with Thin Scrollbar & Stable Gutter */
 .cross-modal-body {
-  flex: 1 !important;
-  min-height: 0 !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  scrollbar-width: thin !important;
-  scrollbar-gutter: stable !important;
-  padding: 0 12px max(24px, env(safe-area-inset-bottom, 24px)) 0 !important;
-  margin: 0 !important;
-  box-sizing: border-box !important;
-  width: 100% !important;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
+  padding: 0 12px max(24px, env(safe-area-inset-bottom, 24px)) 0;
+  margin: 0;
+  box-sizing: border-box;
+  width: 100%;
 }
 .cross-modal-body::-webkit-scrollbar {
-  width: 6px !important;
+  width: 6px;
 }
 .cross-modal-body::-webkit-scrollbar-thumb {
-  background: var(--school-border, #223657) !important;
-  border-radius: 3px !important;
+  background: var(--school-border, #223657);
+  border-radius: 3px;
 }
 
-/* Day Groups & Headers (Point 4 & 7: single hairline, clean spacing) */
+/* Day Groups & Headers (single hairline, clean spacing) */
 .modal-day-group {
-  margin-top: 0 !important;
-  padding: 0 !important;
-  border: none !important;
-  border-radius: 0 !important;
-  background: transparent !important;
+  margin-top: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
 }
 .modal-day-group:not(:first-child) {
-  margin-top: 18px !important;
-  padding-top: 0 !important;
-  border-top: 1px solid var(--school-border, #223657) !important;
+  margin-top: 18px;
+  padding-top: 0;
+  border-top: 1px solid var(--school-border, #223657);
 }
 .modal-day-header {
-  display: flex !important;
-  align-items: baseline !important;
-  gap: 8px !important;
-  margin: 16px 0 8px 0 !important;
-  padding: 0 12px !important;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 16px 0 8px 0;
+  padding: 0 12px;
 }
 .modal-day-group:first-child .modal-day-header {
-  margin-top: 6px !important;
+  margin-top: 6px;
 }
 .modal-day-name {
-  font-family: var(--font-display) !important;
-  font-weight: 600 !important;
-  font-size: 18px !important;
-  color: var(--school-text, #E8EEF9) !important;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--school-text, #E8EEF9);
 }
 .modal-day-date {
-  font-size: 14px !important;
-  color: var(--school-text-muted, #9FB0CC) !important;
-  font-variant-numeric: tabular-nums !important;
+  font-size: 14px;
+  color: var(--school-text-muted, #9FB0CC);
+  font-variant-numeric: tabular-nums;
 }
 .modal-day-today-tag {
-  margin-left: auto !important;
-  margin-right: 4px !important;
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  color: var(--school-header-sub, #6EA8FF) !important;
+  margin-left: auto;
+  margin-right: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--school-header-sub, #6EA8FF);
 }
 
-/* Uniform 2-Column Grid for Slots (Point 6, 7 & 10) */
+/* Uniform 2-Column Grid for Slots */
 .modal-slots-list {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 0 !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .modal-slot-item,
 .modal-free-slot {
-  display: grid !important;
-  grid-template-columns: 52px minmax(0, 1fr) !important;
-  column-gap: 12px !important;
-  align-items: flex-start !important;
-  padding: 13px 12px !important;
-  margin: 0 !important;
-  box-sizing: border-box !important;
-  width: 100% !important;
-  border: none !important;
-  border-top: 1px solid var(--school-border, #223657) !important;
-  border-radius: 0 !important;
-  background: transparent !important;
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  column-gap: 12px;
+  align-items: flex-start;
+  padding: 13px 12px;
+  margin: 0;
+  box-sizing: border-box;
+  width: 100%;
+  border: none;
+  border-top: 1px solid var(--school-border, #223657);
+  border-radius: 0;
+  background: transparent;
+}
+.modal-free-slot {
+  font-size: 15px;
+  color: var(--school-text-muted, #9FB0CC);
 }
 .modal-slot-item:first-child,
 .modal-free-slot:first-child {
-  border-top: none !important;
+  border-top: none;
 }
 
 @media (min-width: 640px) {
   .modal-slot-item,
   .modal-free-slot {
-    grid-template-columns: 56px minmax(0, 1fr) !important;
+    grid-template-columns: 56px minmax(0, 1fr);
   }
 }
 
-/* Twoja Grupa Highlight (Full 10px rounded card, perfect column alignment) */
+/* Twoja Grupa Highlight */
 .modal-slot-item.is-user-group {
-  margin: 6px 0 !important;
-  padding: 13px 12px !important;
-  width: 100% !important;
-  border-radius: 10px !important;
-  background: var(--own-group-tint, rgba(47, 111, 235, 0.16)) !important;
-  border-top: none !important;
+  margin: 6px 0;
+  padding: 13px 12px;
+  width: 100%;
+  border-radius: 10px;
+  background: var(--own-group-tint, rgba(47, 111, 235, 0.16));
+  border-top: none;
 }
 
-/* Column 1: Time (52px/56px tabular-nums) */
+/* Column 1: Time */
 .modal-slot-time-col {
-  width: 100% !important;
-  min-width: 0 !important;
-  max-width: 100% !important;
-  flex: none !important;
-  font-size: 15px !important;
-  font-variant-numeric: tabular-nums !important;
-  line-height: 1.35 !important;
-  display: flex !important;
-  flex-direction: column !important;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  flex: none;
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.35;
+  color: var(--school-text, #E8EEF9);
+  display: flex;
+  flex-direction: column;
 }
 .modal-slot-time-col .slot-start-time {
-  font-weight: 600 !important;
-  color: var(--school-text, #E8EEF9) !important;
+  font-weight: 600;
+  color: var(--school-text, #E8EEF9);
 }
 .modal-slot-time-col .slot-end-time {
-  font-weight: 400 !important;
-  color: var(--school-text-muted, #9FB0CC) !important;
+  font-weight: 400;
+  color: var(--school-text-muted, #9FB0CC);
 }
 
 /* Column 2: Content */
 .modal-slot-content-col {
-  min-width: 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 3px !important;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
 .modal-free-label {
-  min-width: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  font-style: italic !important;
-  color: var(--school-text-muted, #9FB0CC) !important;
-  font-size: 15px !important;
-  padding: 2px 0 !important;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  font-style: italic;
+  color: var(--school-text-muted, #9FB0CC);
+  font-size: 15px;
+  padding: 2px 0;
 }
 
 .modal-slot-top-row {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--school-text-muted, #9FB0CC);
 }
 .user-group-badge {
-  font-weight: 600 !important;
-  font-size: 13px !important;
-  color: var(--school-header-sub, #8DB8FF) !important;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--school-header-sub, #8DB8FF);
 }
 
 .modal-slot-subject {
-  font-family: var(--font-display) !important;
-  font-weight: 600 !important;
-  font-size: 16px !important;
-  line-height: 1.25 !important;
-  color: var(--school-text, #E8EEF9) !important;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.25;
+  color: var(--school-text, #E8EEF9);
+  margin-top: 1px;
 }
 
-/* Helper line wrapping and tokens (Point 2) */
+/* Helper line wrapping and tokens */
 .modal-slot-meta-subtitle {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   row-gap: 3px;
-  font-size: 14px !important;
-  line-height: 1.35 !important;
-  color: var(--school-text-muted, #C9D6EE) !important;
-  word-break: normal !important;
-  overflow-wrap: break-word !important;
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--school-text-muted, #C9D6EE);
+  word-break: normal;
+  overflow-wrap: break-word;
 }
 [data-theme="light"] .modal-slot-meta-subtitle {
-  color: var(--school-text-muted, #44566F) !important;
+  color: var(--school-text-muted, #44566F);
 }
 .modal-slot-meta-subtitle .groups-nowrap {
-  white-space: nowrap !important;
+  white-space: nowrap;
 }
 .modal-slot-meta-subtitle .meta-primary-info {
   display: flex;
@@ -6067,7 +5351,7 @@ body.sidebar-open {
   margin-top: 0;
 }
 .modal-slot-meta-subtitle .meta-action-sep {
-  display: none !important;
+  display: none;
 }
 
 @media (min-width: 640px) {
@@ -6090,26 +5374,27 @@ body.sidebar-open {
 
 .modal-slot-meta-subtitle .lesson-teacher-btn,
 .modal-slot-meta-subtitle .lesson-room-btn {
-  font-family: inherit !important;
-  font-size: inherit !important;
-  line-height: 1.35 !important;
-  color: var(--school-text, #E8EEF9) !important;
-  font-style: normal !important;
-  text-decoration: underline dotted !important;
-  text-decoration-thickness: 1.5px !important;
-  text-underline-offset: 3.5px !important;
-  cursor: pointer !important;
-  background: transparent !important;
-  border: none !important;
-  padding: 0 !important;
-  display: inline !important;
-  min-height: auto !important;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 1.35;
+  color: var(--school-text, #E8EEF9);
+  font-style: normal;
+  text-decoration: underline dotted;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3.5px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: inline;
+  min-height: auto;
 }
 [data-theme="light"] .modal-slot-meta-subtitle .lesson-teacher-btn,
 [data-theme="light"] .modal-slot-meta-subtitle .lesson-room-btn {
-  color: var(--school-text, #0F1B33) !important;
+  color: var(--school-text, #0F1B33);
 }
 .modal-slot-meta-subtitle .lesson-teacher-btn:hover,
 .modal-slot-meta-subtitle .lesson-room-btn:hover {
-  color: var(--school-header-sub, #6EA8FF) !important;
+  color: var(--school-header-sub, #6EA8FF);
 }
