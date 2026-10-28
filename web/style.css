@@ -88,10 +88,11 @@
   --bg-pattern-fade: var(--school-bg, var(--bg-canvas, #0A1424));
 }
 
+/* FOUC fallback before JS sets data-theme attribute on <html> */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg-pattern-stroke: rgba(147, 180, 255, 0.12);
-    --bg-pattern-fade: var(--bg-canvas, #0A1424);
+    --bg-pattern-fade: var(--school-bg, var(--bg-canvas, #0A1424));
   }
 }
 
@@ -262,9 +263,9 @@ a:focus:not(:focus-visible) {
 
 /* Header */
 .app-header {
-  background-color: var(--school-header-bg, #12274A);
+  background-color: var(--school-header-bg, var(--brand-navy));
   color: var(--school-header-text, #FFFFFF);
-  border-bottom: 1px solid var(--school-border, #0C1B38);
+  border-bottom: 1px solid var(--school-border, var(--border-subtle));
   box-shadow: none;
   padding: env(safe-area-inset-top, 0px) max(1rem, env(safe-area-inset-right, 1rem)) 0 max(1rem, env(safe-area-inset-left, 1rem));
   position: sticky;
@@ -1158,40 +1159,6 @@ body.sidebar-open {
   background: transparent;
   font-size: 0.75rem;
   color: var(--text-muted);
-}
-
-.btn-sidebar-change-tenant,
-.back-to-portal-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 8px 12px;
-  margin-bottom: 8px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--r-btn, 8px);
-  color: var(--text-primary);
-  font-size: 0.84rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.btn-sidebar-change-tenant:hover,
-.back-to-portal-link:hover {
-  background: rgba(0, 210, 255, 0.08);
-  border-color: rgba(0, 210, 255, 0.35);
-  color: #00d2ff;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 210, 255, 0.12);
-}
-
-.btn-sidebar-change-tenant:active,
-.back-to-portal-link:active {
-  transform: translateY(0);
 }
 
 .btn-sidebar-change-tenant {
@@ -3190,9 +3157,9 @@ iframe[src*="tally.so"] {
     height: auto;
     margin: 0;
     border-radius: 20px 20px 0 0;
-    background: var(--school-header-bg, #0F1D36);
+    background: var(--school-header-bg, var(--brand-navy));
     border: none;
-    border-top: 1px solid var(--school-border, #2B4470);
+    border-top: 1px solid var(--school-border, var(--border-subtle));
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -3244,8 +3211,8 @@ iframe[src*="tally.so"] {
     height: min(680px, 85vh);
     margin: 0;
     border-radius: 16px;
-    background: var(--school-header-bg, #0F1D36);
-    border: 1px solid var(--school-border, #2B4470);
+    background: var(--school-header-bg, var(--brand-navy));
+    border: 1px solid var(--school-border, var(--border-subtle));
     box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
     overflow: hidden;
     display: flex;
@@ -3421,8 +3388,8 @@ iframe[src*="tally.so"] {
   width: 44px;
   height: 44px;
   border-radius: 8px;
-  border: 1px solid var(--school-border, #223657);
-  background: var(--school-header-bg, #0F1D36);
+  border: 1px solid var(--school-border, var(--border-subtle));
+  background: var(--school-header-bg, var(--brand-navy));
   color: var(--school-text, #E8EEF9);
   display: flex;
   align-items: center;
