@@ -113,7 +113,7 @@
     const isSlotInSet = Boolean(hiddenSlots && hiddenSlots.has(slotKey));
     const hideBtnIcon = (isHidden || isSlotInSet) ? "#icon-visibility" : "#icon-visibility_off";
     const hideBtnTitle = (isHidden || isSlotInSet) ? "Przywróć ten termin zajęć" : "Ukryj ten termin zajęć";
-    const hideBtnAria = (isHidden || isSlotInSet) ? "Przywróć zajęcia" : "Ukryj zajęcia";
+    const hideBtnAria = (isHidden || isSlotInSet) ? "Przywróć ten termin zajęć" : "Ukryj ten termin zajęć";
 
     const hideBtnHtml = canHide ? `
     <button type="button" class="btn-hide-lesson" data-slot-key="${escapeHtml(slotKey)}" data-day="${escapeHtml(baseDay)}" title="${hideBtnTitle}" aria-label="${hideBtnAria}">
@@ -129,7 +129,10 @@
     let weeksHtml = "";
     if (prog) {
       const progDisplay = prog.text ? prog.text.replace("/", " z ") : "";
-      weeksHtml = `<span class="lesson-weeks ${prog.isFinal ? 'final-week' : ''}" title="${escapeHtml(prog.title || 'Spotkanie')}">${escapeHtml(progDisplay)}</span>`;
+      const isFinal = Boolean(prog.isFinal);
+      const titleAttr = isFinal ? `Ostatnie zajęcia (${escapeHtml(prog.title || 'Spotkanie')})` : `zajęcia ${escapeHtml(progDisplay)}`;
+      const ariaAttr = isFinal ? `ostatnie zajęcia, ${escapeHtml(progDisplay)}` : `zajęcia ${escapeHtml(progDisplay)}`;
+      weeksHtml = `<span class="lesson-weeks ${isFinal ? 'final-week' : ''}" title="${escapeHtml(titleAttr)}" aria-label="${escapeHtml(ariaAttr)}">${escapeHtml(progDisplay)}</span>`;
     }
 
     const isPhysicalRoom = rawRoom && rawRoom.toUpperCase() !== "OL";

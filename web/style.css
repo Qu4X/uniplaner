@@ -2167,9 +2167,9 @@ select {
   flex: 1;
   min-width: 0;
   font-family: var(--font-display, 'Bricolage Grotesque', sans-serif);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 17px;
-  line-height: 1.2;
+  line-height: 1.25;
   color: var(--school-text);
   overflow-wrap: break-word;
   word-break: normal;
@@ -2198,7 +2198,7 @@ select {
   column-gap: 12px;
   row-gap: 4px;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 400;
   font-variant-numeric: tabular-nums;
   color: var(--school-text);
 }
@@ -2211,10 +2211,14 @@ select {
 
 .lesson-time {
   font-size: 0.84rem;
-  font-weight: 700;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
-  color: inherit;
+  color: var(--text-secondary);
   line-height: 1.25;
+}
+
+[data-theme="dark"] .lesson-time {
+  color: #94a3b8;
 }
 
 .lesson-room-wrapper {
@@ -2236,7 +2240,7 @@ select {
   height: 24px;
   padding: 0 0.5rem;
   font-size: 0.74rem;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1;
   border-radius: 4px;
   white-space: nowrap;
@@ -2283,24 +2287,30 @@ select {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  min-height: 44px;
-  margin: -12px 0;
-  padding: 0 2px;
+  min-height: auto;
+  margin: 0;
+  padding: 2px 6px;
   border: none;
   background: transparent;
   color: inherit;
   font-family: var(--font-body);
   font-size: inherit;
-  font-weight: 600;
+  font-weight: 400;
   font-variant-numeric: tabular-nums;
   text-decoration: underline dotted;
-  text-decoration-thickness: 1.5px;
-  text-underline-offset: 5px;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3.5px;
+  text-decoration-color: rgba(148, 163, 184, 0.45);
   cursor: pointer;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
 }
 
-.lesson-card .lesson-room-btn:hover {
-  text-decoration-style: solid;
+.lesson-card .lesson-room-btn:hover,
+.lesson-card .lesson-room-btn:focus-visible {
+  color: var(--school-text);
+  text-decoration: underline solid;
+  text-decoration-color: currentColor;
+  outline: none;
   filter: none;
   transform: none;
   background: transparent;
@@ -2332,29 +2342,47 @@ select {
 
 .lesson-footer {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  gap: 4px 8px;
   font-size: 0.8rem;
-  color: var(--text-secondary);
-  margin-top: 0;
+  color: #475569;
+  margin-top: 2px;
   padding-top: 0;
   border-top: none;
 }
 
+[data-theme="dark"] .lesson-footer {
+  color: #cbd5e1;
+}
+
 .lesson-footer .lesson-teacher-btn,
 .lesson-footer .lesson-teacher {
-  flex: 1;
+  flex: 1 1 120px;
   min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .lesson-footer .lesson-weeks {
-  margin-left: auto;
   flex-shrink: 0;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.lesson-footer .lesson-weeks.final-week {
+  flex-basis: 100%;
+  width: 100%;
+  display: inline-flex;
+  justify-content: flex-end;
+  margin-top: 2px;
 }
 
 .lesson-teacher {
-  font-style: italic;
+  font-style: normal;
 }
 
 .lesson-teacher-btn {
@@ -2364,8 +2392,8 @@ select {
   margin: 0;
   font-family: inherit;
   font-size: 0.8rem;
-  font-style: italic;
-  color: var(--text-secondary);
+  font-style: normal;
+  color: inherit;
   cursor: pointer;
   text-align: left;
   transition: color 0.15s ease;
@@ -2385,9 +2413,12 @@ select {
 
 .lesson-card .lesson-teacher-btn {
   align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
+  display: inline-block;
   min-height: auto;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   margin: 0;
   padding: 0;
   border: none;
@@ -2396,19 +2427,23 @@ select {
   font-family: var(--font-body);
   font-size: inherit;
   font-style: normal;
+  font-weight: 400;
   line-height: 1.35;
   text-decoration: underline dotted;
-  text-decoration-thickness: 1.5px;
+  text-decoration-thickness: 1px;
   text-underline-offset: 3.5px;
+  text-decoration-color: rgba(148, 163, 184, 0.45);
   cursor: pointer;
   text-align: left;
-  word-break: normal;
-  overflow-wrap: break-word;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
 }
 
-.lesson-card .lesson-teacher-btn:hover {
+.lesson-card .lesson-teacher-btn:hover,
+.lesson-card .lesson-teacher-btn:focus-visible {
   color: var(--school-text);
   text-decoration: underline solid;
+  text-decoration-color: currentColor;
+  outline: none;
 }
 
 .teacher-nowrap {
@@ -2431,11 +2466,11 @@ select {
 }
 
 .lesson-weeks {
-  font-size: 13px;
+  font-size: 12.5px;
   line-height: 1;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
-  color: var(--school-text-muted);
+  color: #475569;
   background: transparent;
   border: none;
   padding: 0;
@@ -2445,10 +2480,16 @@ select {
   align-items: center;
 }
 
+[data-theme="dark"] .lesson-weeks {
+  color: #cbd5e1;
+}
+
 .lesson-weeks.final-week {
   background: #fef2f2;
   color: #b91c1c;
-  border-color: #fecaca;
+  border: 1px solid #fecaca;
+  padding: 2px 6px;
+  border-radius: 4px;
   font-weight: 600;
 }
 
