@@ -1885,7 +1885,7 @@ select {
   .schedule-week-grid {
     --grid-cols: repeat(5, 1fr);
     display: grid;
-    grid-template-columns: repeat(5, minmax(195px, 1fr));
+    grid-template-columns: repeat(5, minmax(178px, 1fr));
     gap: 8px;
     padding: 0 36px;
     align-items: start;
@@ -2130,22 +2130,26 @@ select {
   justify-content: space-between;
   gap: 6px;
   font-size: 13px;
+  line-height: 1;
   color: var(--school-text-muted);
+  min-height: 18px;
 }
 
 .lesson-type-tag {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   flex-shrink: 0;
+  line-height: 1;
 }
 
 .lesson-type-dot {
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: var(--school-text-muted);
   flex-shrink: 0;
+  display: block;
 }
 
 .form-lecture .lesson-type-dot, .form-wyklad .lesson-type-dot { background: var(--lesson-lecture); }
@@ -2156,10 +2160,11 @@ select {
 .lesson-top-actions {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   margin-left: auto;
+  line-height: 1;
 }
 
 .lesson-title {
@@ -2184,8 +2189,9 @@ select {
 .lesson-card-actions {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 5px;
   flex-shrink: 0;
+  line-height: 1;
 }
 
 .lesson-middle-row {
@@ -2371,8 +2377,9 @@ select {
 
 .lesson-card .lesson-teacher-btn {
   align-self: flex-start;
-  display: inline-block;
-  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  min-height: auto;
   margin: 0;
   padding: 0;
   border: none;
@@ -2417,6 +2424,7 @@ select {
 
 .lesson-weeks {
   font-size: 13px;
+  line-height: 1;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   color: var(--school-text-muted);
@@ -2425,6 +2433,8 @@ select {
   padding: 0;
   border-radius: 4px;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
 }
 
 .lesson-weeks.final-week {
@@ -4254,15 +4264,23 @@ iframe[src*="tally.so"] {
 
 /* --- Module: lesson-hiding (#hidden-lessons-banner & card controls) --- */
 .lesson-card .btn-hide-lesson {
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
-  min-height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  min-height: 16px;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+  vertical-align: middle;
 }
 
 .lesson-card .btn-hide-lesson .icon {
   width: 14px;
   height: 14px;
+  display: block;
 }
 
 .btn-hide-lesson {
