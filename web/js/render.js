@@ -194,20 +194,20 @@
     return `
     <div class="lesson-card${formClass}${isHiddenClass}" data-slot-key="${escapeHtml(slotKey)}" data-day="${escapeHtml(baseDay)}">
       <div class="lesson-top-row">
-        ${formLabel ? `<span class="lesson-type-tag"><span class="lesson-type-dot"></span>${formLabel}</span>` : `<span></span>`}
+        <div class="lesson-title">${safeTitle}</div>
+        ${(hideBtnHtml || hiddenBadge) ? `
         <div class="lesson-top-actions lesson-card-actions">
           ${hiddenBadge}
           ${hideBtnHtml}
-          ${weeksHtml}
-        </div>
+        </div>` : ""}
       </div>
-      <div class="lesson-title">${safeTitle}</div>
       <div class="lesson-middle-row">
         <span class="lesson-time">${safeTime}</span>
         <div class="lesson-room-wrapper">${roomHtml}${badgeHtml}</div>
       </div>
       <div class="lesson-footer">
         ${teacherHtml}
+        ${weeksHtml}
       </div>
     </div>
   `;
