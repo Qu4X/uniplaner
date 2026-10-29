@@ -2362,9 +2362,9 @@ select {
   flex: 1 1 120px;
   min-width: 0;
   max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: break-word;
 }
 
 .lesson-footer .lesson-weeks {
@@ -2416,9 +2416,9 @@ select {
   display: inline-block;
   min-height: auto;
   max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: break-word;
   margin: 0;
   padding: 0;
   border: none;
@@ -2485,18 +2485,18 @@ select {
 }
 
 .lesson-weeks.final-week {
-  background: #fef2f2;
+  background: transparent;
   color: #b91c1c;
-  border: 1px solid #fecaca;
-  padding: 2px 6px;
-  border-radius: 4px;
+  border: none;
+  padding: 0;
+  border-radius: 0;
   font-weight: 600;
 }
 
 [data-theme="dark"] .lesson-weeks.final-week {
-  background: #450a0a;
-  color: #fca5a5;
-  border-color: #7f1d1d;
+  background: transparent;
+  color: #f87171;
+  border: none;
 }
 
 /* Modal */
