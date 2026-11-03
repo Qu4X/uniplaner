@@ -7,6 +7,7 @@ from core.validate import (
     validate_lesson,
     validate_group_schedule,
     validate_plans_index,
+    validate_tenant_config,
     ValidationError
 )
 
@@ -191,6 +192,41 @@ class TestContractV1(unittest.TestCase):
         self.assertTrue(features["lesson_hiding"].get("bulk_electives_dialog"))
         self.assertTrue(features["voting"].get("enabled"))
 
+
+
+    def test_validate_tenant_config_motifs(self):
+        # Valid config with 2 motifs
+        cfg = {"id": "test_t", "name": "Test", "motifs": ["nautical", "logistics"]}
+        ok, errs = validate_tenant_config(cfg)
+        self.assertTrue(ok)
+        self.assertEqual(len(errs), 0)
+
+        # Over 3 motifs -> error
+        cfg_too_many = {"id": "test_t", "name": "Test", "motifs": ["a", "b", "c", "d"]}
+        ok, errs = validate_tenant_config(cfg_too_many)
+        self.assertFalse(ok)
+        self.assertTrue(any("maksymalnie 3" in e for e in errs))
+
+        # Non-list motifs -> error
+        cfg_invalid = {"id": "test_t", "name": "Test", "motifs": "nautical"}
+        ok, errs = validate_tenant_config(cfg_invalid)
+        self.assertFalse(ok)
+        self.assertTrue(any("listą" in e for e in errs))
+
+        # Check existing tenants umg_wn, sggw_wmw, agh_wtk
+        import json, os
+        for tenant_path in [
+            'tenants/umg/wn/config.json',
+            'tenants/sggw/wmw/config.json',
+            'tenants/agh/wtk/config.json'
+        ]:
+            if os.path.exists(tenant_path):
+                with open(tenant_path, 'r', encoding='utf-8') as tf:
+                    tcfg = json.load(tf)
+                tok, terrs = validate_tenant_config(tcfg)
+                self.assertTrue(tok, f"Validation failed for {tenant_path}: {terrs}")
+                if 'motifs' in tcfg:
+                    self.assertLessEqual(len(tcfg['motifs']), 3)
 
 if __name__ == "__main__":
     unittest.main()

@@ -23,13 +23,41 @@
     "sources.agh.wtk.adapter.AghWtkSource"
   ],
   "forms": {
-    "lecture":   { "label": "Wykład",       "abbr": "W",    "badge_color": "#2563eb" },
-    "exercise":  { "label": "Ćwiczenia",    "abbr": "Ćw",   "badge_color": "#059669" },
-    "lab":       { "label": "Laboratorium", "abbr": "Lab",  "badge_color": "#7c3aed" },
-    "project":   { "label": "Projekt",      "abbr": "Pr",   "badge_color": "#8b5cf6" },
-    "seminar":   { "label": "Seminarium",   "abbr": "Sem",  "badge_color": "#0891b2" },
-    "elective":  { "label": "Lektorat",     "abbr": "Lekt", "badge_color": "#0284c7" },
-    "other":     { "label": "Teren / Inne", "abbr": "Ter",  "badge_color": "#d97706" }
+    "lecture": {
+      "label": "Wykład",
+      "abbr": "W",
+      "badge_color": "#2563eb"
+    },
+    "exercise": {
+      "label": "Ćwiczenia",
+      "abbr": "Ćw",
+      "badge_color": "#059669"
+    },
+    "lab": {
+      "label": "Laboratorium",
+      "abbr": "Lab",
+      "badge_color": "#7c3aed"
+    },
+    "project": {
+      "label": "Projekt",
+      "abbr": "Pr",
+      "badge_color": "#8b5cf6"
+    },
+    "seminar": {
+      "label": "Seminarium",
+      "abbr": "Sem",
+      "badge_color": "#0891b2"
+    },
+    "elective": {
+      "label": "Lektorat",
+      "abbr": "Lekt",
+      "badge_color": "#0284c7"
+    },
+    "other": {
+      "label": "Teren / Inne",
+      "abbr": "Ter",
+      "badge_color": "#d97706"
+    }
   },
   "features": {
     "cross_reference": true,
@@ -43,5 +71,8 @@
       "enabled": false
     },
     "changelog": true
-  }
+  },
+  "motifs": [
+    "engineering"
+  ]
 }

@@ -3,7 +3,8 @@
  * Barwy morskie (granat nawigacyjny i błękitne akcenty).
  */
 
-:root {
+:root,
+:root[data-theme="light"] {
   --brand-navy: #0e2a47;
   --brand-primary: #1a4f8a;
   --brand-primary-hover: #133c69;
@@ -15,9 +16,24 @@
   --accent-color: #1e40af;
   --accent-badge: #1d4ed8;
   --border-radius: 10px;
+
+  /* School Design Tokens (Light) */
+  --school-header-bg: #12274a;
+  --school-header-text: #ffffff;
+  --school-header-sub: #cfe0ff;
+  --school-bg: #eaf0fa;
+  --school-surface: #ffffff;
+  --school-text: #0f1b33;
+  --school-text-muted: #44566f;
+  --school-border: #a9bbd8;
+  --school-field-bg: #e8eef9;
+  --school-field-line: #3b5c94;
+  --school-today-tint: rgba(37, 99, 235, 0.06);
+  --own-group-tint: rgba(37, 99, 235, 0.12);
+  --bg-pattern-stroke: rgba(30, 50, 90, 0.08);
 }
 
-[data-theme="dark"] {
+:root[data-theme="dark"] {
   --brand-navy: #0b1828;
   --brand-primary: #2563eb;
   --brand-primary-hover: #1d4ed8;
@@ -27,4 +43,19 @@
   --primary-hover: #254b7a;
   --primary-light: #112236;
   --accent-color: #60a5fa;
+
+  /* School Design Tokens (Dark) */
+  --school-header-bg: #0f1d36;
+  --school-header-text: #ffffff;
+  --school-header-sub: #8db8ff;
+  --school-bg: #0a1424;
+  --school-surface: #111f38;
+  --school-text: #e8eef9;
+  --school-text-muted: #9fb0cc;
+  --school-border: #223657;
+  --school-field-bg: #16284a;
+  --school-field-line: #3b5c94;
+  --school-today-tint: rgba(47, 111, 235, 0.10);
+  --own-group-tint: rgba(47, 111, 235, 0.16);
+  --bg-pattern-stroke: rgba(147, 180, 255, 0.12);
 }

@@ -565,6 +565,10 @@ def _extract_lesson_details(
         text = text[:form_match.start()] + " " + text[form_match.end():]
         text = clean_cell_text(text)
 
+    # Sale symulatorów UMG WN (N102, N306): wszystkie zajęcia w N102 i N306 są symulatorami
+    if room and (room.upper() in ("N102", "N306", "102", "306") or bool(re.search(r"\b(N-?102|N-?306)\b", room.upper()))):
+        form = "symulator"
+
     # 3. Detect instructor name and degree/title (supporting hyphenated surnames)
     teacher_match = re.search(
         r"([A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?(?:\s+[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?,\s*(?:dr|prof|mgr|inż|hab)[\w\s\.,]*)",

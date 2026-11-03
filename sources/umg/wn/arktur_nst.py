@@ -104,13 +104,17 @@ class UmgArkturNstSource:
                         duration = 90
 
                     forma_str = (item.get("forma") or "").lower()
-                    form = "lecture" if "wyk" in forma_str else (
-                        "lab" if "lab" in forma_str else (
-                            "simulator" if "sym" in forma_str else "exercise"
-                        )
-                    )
-
                     room = item.get("sala")
+                    room_str = str(room).strip().upper() if room else ""
+                    if room_str in ("N102", "N306", "102", "306") or bool(re.search(r"\b(N-?102|N-?306)\b", room_str)):
+                        form = "simulator"
+                    else:
+                        form = "lecture" if "wyk" in forma_str else (
+                            "lab" if "lab" in forma_str else (
+                                "simulator" if "sym" in forma_str else "exercise"
+                            )
+                        )
+
                     is_remote = False
                     if room:
                         room_str = str(room).strip()

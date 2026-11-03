@@ -433,9 +433,19 @@ check("WF is cwiczenia (manual override)", classify_lesson_form(wf_lesson, "Tran
 bhp_lesson = {"przedmiot": "Bezpieczeństwo i Higiena Pracy", "raw_przedmiot": "BHP", "sala": "C136", "colspan": 1}
 check("BHP is wyklad (manual override)", classify_lesson_form(bhp_lesson, "Transport Morski sem. 1", curr_cat, forms_cfg) == "wyklad")
 
-# 3. Simulator by room
+# 3. Simulator by room (all lessons in N102 and N306 are simulators)
 sym_lesson = {"przedmiot": "Nawigacja", "raw_przedmiot": "Naw", "sala": "306", "colspan": 1}
 check("Room 306 is symulator", classify_lesson_form(sym_lesson, "Transport Morski sem. 3", curr_cat, forms_cfg) == "symulator")
+sym_lesson_n306 = {"przedmiot": "Nawigacja", "raw_przedmiot": "Naw", "sala": "N306", "colspan": 1}
+check("Room N306 is symulator", classify_lesson_form(sym_lesson_n306, "Transport Morski sem. 3", curr_cat, forms_cfg) == "symulator")
+sym_lesson_102 = {"przedmiot": "Nawigacja", "raw_przedmiot": "Naw", "sala": "102", "colspan": 1}
+check("Room 102 is symulator", classify_lesson_form(sym_lesson_102, "Transport Morski sem. 3", curr_cat, forms_cfg) == "symulator")
+sym_lesson_n102 = {"przedmiot": "Nawigacja", "raw_przedmiot": "Naw", "sala": "N102", "colspan": 1}
+check("Room N102 is symulator", classify_lesson_form(sym_lesson_n102, "Transport Morski sem. 3", curr_cat, forms_cfg) == "symulator")
+sym_lesson_n_102 = {"przedmiot": "Nawigacja", "raw_przedmiot": "Naw", "sala": "N-102", "colspan": 1}
+check("Room N-102 is symulator", classify_lesson_form(sym_lesson_n_102, "Transport Morski sem. 3", curr_cat, forms_cfg) == "symulator")
+sym_lesson_magenta = {"przedmiot": "Nawigacja", "raw_przedmiot": "Naw", "sala": "N102", "colspan": 1, "arktur_kolor": "magenta"}
+check("Room N102 even with magenta is symulator", classify_lesson_form(sym_lesson_magenta, "Transport Morski sem. 3", curr_cat, forms_cfg) == "symulator")
 
 ecdis_lesson = {"przedmiot": "Systemy", "raw_przedmiot": "Sys", "sala": "Symulator ECDIS", "colspan": 1}
 check("Room with simulator keyword is symulator", classify_lesson_form(ecdis_lesson, "Transport Morski sem. 3", curr_cat, forms_cfg) == "symulator")

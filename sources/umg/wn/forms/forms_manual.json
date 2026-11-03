@@ -13,7 +13,12 @@
   },
   "override_by_room": {
     "306,400": "laboratorium",
+    "n306,400": "laboratorium",
+    "n306, 400": "laboratorium",
     "306": "symulator",
+    "n306": "symulator",
+    "102": "symulator",
+    "n102": "symulator",
     "aula": "wyklad",
     "audytorium": "wyklad",
     "c136": "wyklad",
@@ -22,6 +27,7 @@
   },
   "room_regex": [
     ["\\b(symulator|sym\\.|arpa|ecdis|gmdss)\\b", "symulator"],
+    ["\\b(n[- ]?102|102|n[- ]?306|306)\\b", "symulator"],
     ["\\b(aula|audytorium)\\b", "wyklad"],
     ["\\b(basen|hala)\\b", "cwiczenia"]
   ]

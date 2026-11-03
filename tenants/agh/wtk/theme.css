@@ -1,40 +1,83 @@
 /**
  * AGH Wydział Technologii Kosmicznych — Theme CSS
- * Barwy AGH: Głęboka Zieleń (#00693C / #064131), Czerwień (#A71930), Biel (#FFFFFF) i Czerń (#1E1E1E).
+ * Barwy AGH: Głęboka Zieleń (#00693C / #052419), Czerwień (#A71930 / #EF4444),
+ * Biel (#FFFFFF) oraz Szarości / Grafit (#121214 / #1C1C20 w trybie ciemnym, #F4F4F5 w trybie jasnym).
  */
 
-:root {
+:root,
+:root[data-theme="light"] {
   --brand-navy: #00693c;         /* Górna belka w zieleni AGH */
   --brand-primary: #a71930;      /* Czerwień AGH na przyciskach i nagłówkach */
   --brand-primary-hover: #8c1427;
   --brand-accent: #00693c;       /* Akcenty w zieleni AGH */
-  --brand-light: #e8f5e9;        /* Lekkie tło zaznaczeń */
+  --brand-light: #f4f4f5;        /* Neutralne szare tło */
   --primary-color: #a71930;
   --primary-hover: #8c1427;
-  --primary-light: #f1f5f9;      /* Czyste neutralne tło bez różu */
+  --primary-light: #f4f4f5;      /* Czyste neutralne szare tło */
   --accent-color: #00693c;
   --accent-badge: #00693c;
   --border-radius: 10px;
+
+  /* School Design Tokens (Light) */
+  --school-header-bg: #00693c;   /* Zieleń AGH */
+  --school-header-text: #ffffff;
+  --school-header-sub: #fca5a5;  /* Czerwień/koral AGH na podtytule nagłówka */
+  --school-primary: #a71930;     /* Czerwień AGH */
+  --school-primary-hover: #8c1427;
+  --school-bg: #f4f4f5;          /* Neutralna szarość tła */
+  --school-surface: #ffffff;     /* Czysta biel kart */
+  --school-text: #18181b;        /* Ciemny grafit tekstu */
+  --school-text-muted: #71717a;  /* Szary tekst pomocniczy */
+  --school-border: #e4e4e7;      /* Neutralna szara ramka */
+  --school-field-bg: #ebebee;    /* Szare wypełnienie pól */
+  --school-field-line: #a71930;  /* Linia akcentowa w czerwieni AGH */
+  --school-today-tint: rgba(167, 25, 48, 0.08); /* Tint dziś z czerwienią AGH */
+  --own-group-tint: rgba(167, 25, 48, 0.14);    /* Twoja grupa w czerwieni AGH */
+  --bg-pattern-stroke: rgba(0, 0, 0, 0.05);     /* Subtelny szary wzór w tle */
 }
 
-[data-theme="dark"] {
-  --bg-app: #121212;
-  --bg-card: #1e1e1e;
-  --bg-card-subtle: #282828;
+:root[data-theme="dark"] {
+  --bg-app: #121214;             /* Ciemny neutralny grafit */
+  --bg-canvas: #121214;
+  --bg-card: #1c1c20;            /* Neutralna szara karta */
+  --bg-card-subtle: #242428;
+  --text-primary: #f4f4f5;       /* Jasny neutralny tekst */
+  --text-secondary: #a1a1aa;     /* Szary tekst wtórny */
+  --text-muted: #71717a;
 
-  --brand-navy: #052e22;         /* Ciemna zieleń AGH w trybie nocnym */
-  --brand-primary: #ef4444;
+  --brand-navy: #052419;         /* Ciemna zieleń AGH w nagłówku */
+  --brand-primary: #ef4444;      /* Czerwień AGH w trybie nocnym */
   --brand-primary-hover: #dc2626;
   --brand-accent: #10b981;
-  --brand-light: #132b1d;
+  --brand-light: #242428;
   --primary-color: #ef4444;
   --primary-hover: #f87171;
-  --primary-light: #1e293b;
+  --primary-light: #1c1c20;
   --accent-color: #34d399;
   --accent-badge: #10b981;
+
+  --border-subtle: #27272a;
+  --border-strong: #3f3f46;
+
+  /* School Design Tokens (Dark) */
+  --school-header-bg: #052419;   /* Ciemna zieleń AGH w nagłówku */
+  --school-header-text: #ffffff;
+  --school-header-sub: #f87171;  /* Czerwień AGH na podtytule nagłówka */
+  --school-primary: #ef4444;     /* Czerwień AGH */
+  --school-primary-hover: #dc2626;
+  --school-bg: #121214;          /* Szare neutralne tło w WTK */
+  --school-surface: #1c1c20;     /* Szare powierzchnie kart */
+  --school-text: #f4f4f5;        /* Jasnoszary tekst */
+  --school-text-muted: #a1a1aa;  /* Muted szary */
+  --school-border: #27272a;      /* Szara ramka */
+  --school-field-bg: #1f1f23;    /* Szare pole wyszukiwania/filtrów */
+  --school-field-line: #ef4444;  /* Linia akcentowa w czerwieni AGH */
+  --school-today-tint: rgba(239, 68, 68, 0.12); /* Kolumna dziś w czerwieni AGH */
+  --own-group-tint: rgba(239, 68, 68, 0.22);    /* Twoja grupa w czerwieni AGH */
+  --bg-pattern-stroke: rgba(255, 255, 255, 0.05); /* Subtelna szarość wzoru w tle */
 }
 
 /* Zaokrąglenie i dopasowanie logo w nagłówku */
 .brand-logo {
-  border-radius: 8px;
+  border-radius: 20%;
 }

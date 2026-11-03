@@ -603,8 +603,12 @@ def build_tenant(
 
     import shutil
     base = _REPO_ROOT
-    target_dist = dist_dir or os.path.join(base, "dist")
     config = load_tenant_config(tenant_id, repo_root=base)
+    tenant_slug = config.get("path") or tenant_id.replace("_", "/")
+    if dist_dir and dist_dir != "dist" and not dist_dir.rstrip("/\\").endswith("dist"):
+        target_dist = dist_dir
+    else:
+        target_dist = os.path.join(base, "dist", *tenant_slug.split("/"))
     sources = get_tenant_sources(tenant_id, tenant_config=config)
 
     try:
@@ -628,6 +632,7 @@ def build_tenant(
     tenant_dir = resolve_tenant_dir(tenant_id, repo_root=base)
     theme_file = os.path.join(tenant_dir, "theme.css")
     if os.path.exists(theme_file):
+        shutil.copy2(theme_file, os.path.join(target_dist, "theme.css"))
         with open(theme_file, "r", encoding="utf-8") as tf:
             theme_css = tf.read()
         target_style = os.path.join(target_dist, "style.css")

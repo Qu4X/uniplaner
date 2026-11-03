@@ -55,6 +55,33 @@ class TestUmgAdapters(unittest.TestCase):
         self.assertTrue(hasattr(first_l, "form"))
         self.assertIn(first_l.form, ["lecture", "exercise", "lab", "simulator", "project", "seminar", "elective", "other"])
 
+    def test_n102_and_n306_simulator_override(self):
+        """Wszystkie zajęcia w salach N102 i N306 na UMG WN są klasyfikowane jako symulator."""
+        from sources.umg.wn.arktur_html import classify_lesson_form, load_forms_manual, load_curriculum_forms
+        from sources.umg.wn.nst_parser import _extract_lesson_details
+
+        forms_cfg = load_forms_manual()
+        curr_cat = load_curriculum_forms()
+
+        for room in ("N102", "n102", "102", "N306", "n306", "306", "N-102", "N-306", "sala N102", "sala N306"):
+            lesson = {
+                "przedmiot": "Nawigacja",
+                "raw_przedmiot": "Naw",
+                "sala": room,
+                "colspan": 1
+            }
+            form_classified = classify_lesson_form(lesson, "Transport Morski sem. 3", curr_cat, forms_cfg)
+            self.assertEqual(form_classified, "symulator", f"Sala {room} powinna być symulatorem w classify_lesson_form")
+
+        # Test parsera NST
+        parsed_n102 = _extract_lesson_details("Nawigacja dr Kowalski N102", fallback_room="", time_range="08:00 - 09:30", day_name="Sobota", date_iso="2026-11-21", group_name="GR.01")
+        self.assertIsNotNone(parsed_n102)
+        self.assertEqual(parsed_n102["forma"], "symulator", "Zajęcia w N102 w NST powinny mieć formę symulator")
+
+        parsed_n306 = _extract_lesson_details("Manewrowanie ĆW prof Nowak N306", fallback_room="", time_range="08:00 - 09:30", day_name="Sobota", date_iso="2026-11-21", group_name="GR.01")
+        self.assertIsNotNone(parsed_n306)
+        self.assertEqual(parsed_n306["forma"], "symulator", "Zajęcia w N306 w NST powinny mieć formę symulator mimo oznaczenia ĆW")
+
     def test_arktur_nst_adapter_mapping(self):
         source = UmgArkturNstSource()
         # Mock fetch_schedule via monkeypatching parse_pdf_schedule

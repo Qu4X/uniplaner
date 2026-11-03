@@ -129,7 +129,9 @@ def classify_lesson_form(
         if re.search(pattern, room_lower, re.IGNORECASE):
             return form
 
-    # 3. Aula lub magenta
+    # 3. Sale symulatorów UMG WN (N102, N306) lub aula lub magenta
+    if room_lower in ("n102", "n306", "102", "306") or bool(re.search(r'\b(n[- ]?102|n[- ]?306)\b', room_lower)):
+        return "symulator"
     if room_lower in ("aula", "audytorium"):
         return "wyklad"
     if arktur_kolor == "magenta":

@@ -3,7 +3,8 @@
  * Barwy zieleni leśnej, nawiązujące do tradycji SGGW i weterynarii.
  */
 
-:root {
+:root,
+:root[data-theme="light"] {
   --brand-navy: #144518;
   --brand-primary: #1b5e20;
   --brand-primary-hover: #2e7d32;
@@ -15,32 +16,62 @@
   --accent-color: #43a047;
   --accent-badge: #2e7d32;
   --border-radius: 10px;
+
+  /* School Design Tokens (Light) */
+  --school-header-bg: #144518;
+  --school-header-text: #ffffff;
+  --school-header-sub: #bbf7d0;
+  --school-bg: #f0f5f1;
+  --school-surface: #ffffff;
+  --school-text: #0f2414;
+  --school-text-muted: #3d5a42;
+  --school-border: #bcd6c0;
+  --school-field-bg: #e2efe4;
+  --school-field-line: #2e7d32;
+  --school-today-tint: rgba(27, 94, 32, 0.08);
+  --own-group-tint: rgba(27, 94, 32, 0.14);
+  --bg-pattern-stroke: rgba(27, 94, 32, 0.08);
 }
 
-[data-theme="dark"] {
-  --bg-app: #0d1710;
-  --bg-card: #132417;
-  --bg-card-subtle: #193120;
-  --text-primary: #f1f5f9;
+:root[data-theme="dark"] {
+  --bg-app: #09140c;
+  --bg-card: #112316;
+  --bg-card-subtle: #172d1d;
+  --text-primary: #f0fdf4;
   --text-secondary: #c2d6c6;
-  --text-muted: #85a38a;
+  --text-muted: #8baa92;
 
-  --brand-navy: #0a170d;
+  --brand-navy: #0a1c10;
   --brand-primary: #2e7d32;
   --brand-primary-hover: #388e3c;
   --brand-accent: #66bb6a;
-  --brand-light: #1b3820;
+  --brand-light: #16301d;
 
   --border-subtle: #1e3a24;
   --border-strong: #2c5434;
 
-  --badge-bg: #193120;
+  --badge-bg: #172d1d;
   --badge-text: #c2d6c6;
   --badge-room-bg: #1c3d25;
   --badge-room-text: #a5d6a7;
 
   --primary-color: #2e7d32;
   --primary-hover: #388e3c;
-  --primary-light: #1b3820;
+  --primary-light: #16301d;
   --accent-color: #66bb6a;
+
+  /* School Design Tokens (Dark) */
+  --school-header-bg: #0a1c10;
+  --school-header-text: #ffffff;
+  --school-header-sub: #86efac;
+  --school-bg: #09140c;
+  --school-surface: #112316;
+  --school-text: #f0fdf4;
+  --school-text-muted: #8baa92;
+  --school-border: #1e3a24;
+  --school-field-bg: #152e1c;
+  --school-field-line: #2e7d32;
+  --school-today-tint: rgba(46, 125, 50, 0.14);
+  --own-group-tint: rgba(46, 125, 50, 0.22);
+  --bg-pattern-stroke: rgba(134, 239, 172, 0.10);
 }

@@ -138,3 +138,39 @@ def validate_plans_index(index_data: Dict[str, Any]) -> Tuple[bool, List[str]]:
 
     return len(errors) == 0, errors
 
+
+
+CURATED_MOTIFS = {
+    "nautical",
+    "aviation",
+    "logistics",
+    "veterinary",
+    "medicine",
+    "engineering",
+    "it",
+    "general",
+}
+
+
+def validate_tenant_config(config: Dict[str, Any]) -> Tuple[bool, List[str]]:
+    """Waliduje plik config.json tenanta, w tym opcjonalne pole motifs."""
+    errors = []
+    if not isinstance(config, dict):
+        return False, ["Konfiguracja tenanta musi być słownikiem JSON"]
+
+    for req in ["id", "name"]:
+        if not config.get(req):
+            errors.append(f"Brak wymaganego pola '{req}'")
+
+    if "motifs" in config:
+        motifs = config["motifs"]
+        if not isinstance(motifs, list):
+            errors.append("Pole 'motifs' musi być listą")
+        elif len(motifs) > 3:
+            errors.append("Pole 'motifs' może zawierać maksymalnie 3 elementy")
+        else:
+            for idx, m in enumerate(motifs):
+                if not isinstance(m, str):
+                    errors.append(f"motifs[{idx}] musi być tekstem: {m}")
+
+    return len(errors) == 0, errors
