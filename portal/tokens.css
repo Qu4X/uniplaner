@@ -1,0 +1,128 @@
+/* Uniplaner — tokeny projektowe (z szkiców). Wartości są punktem wyjścia: dopasuj do istniejących zmiennych w repo. */
+
+/* ---------- Typografia ---------- */
+:root {
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif; /* nagłówki, nazwa, tytuły kart */
+  --font-body: 'DM Sans', system-ui, sans-serif;               /* reszta */
+  /* Nagłówek marki "Uniplaner": 700, letter-spacing -0.02em, font-optical-sizing:auto,
+     font-variation-settings:'opsz' 96,'wdth' 90 */
+  --fs-micro: 13px;  /* etykiety typu zajęć, liczniki, daty pomocnicze */
+  --fs-small: 14px;  /* etykiety pól, prowadzący */
+  --fs-body: 16px;
+  --fs-card-title: 17px; /* display 600–700 */
+  --fs-h3: 18px;
+  --fs-h2: 20px;
+  --fs-h1: 30px;
+  --fs-brand: clamp(40px, 7vw, 56px);
+}
+
+/* ---------- Promienie, odstępy ---------- */
+:root {
+  --r-field: 8px 8px 0 0;  /* pole wypełnione + dolna krawędź 2px */
+  --r-btn: 8px;
+  --r-card: 12px;          /* karta zajęć, karta wydziału */
+  --r-panel: 16px;         /* modal desktop */
+  --r-sheet: 20px 20px 0 0;/* bottom sheet mobile */
+  --r-pill: 999px;         /* tylko kropki i licznik; nie używać do etykiet tekstowych */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 20px; --sp-6: 24px; --sp-8: 32px;
+  --hit: 44px;             /* minimalny obszar dotyku */
+  --focus-ring: 2px solid var(--app-accent);
+  --focus-offset: 2px;
+}
+
+/* ---------- TOKENY APLIKACJI (strona główna, wybór uczelni) ---------- */
+:root, :root[data-theme='light'] {
+  --app-bg: #F7EFDC;          /* krem */
+  --app-surface: #FFFBF2;     /* pola, karty */
+  --app-text: #2B2316;
+  --app-text-muted: #5E5236;
+  --app-border: #E6DCC3;
+  --app-accent: #E8701A;      /* pomarańcz Uniplaner: jedna wypełniona akcja na ekran */
+  --app-accent-text: #1A1208; /* tekst na pomarańczu */
+  --app-accent-ink: #8F3A00;  /* pomarańcz jako tekst/link na kremie */
+  --app-field-bg: #F3E9CF;
+  --app-field-line: #6B5D3F;
+  --app-card-border: #2B2316;
+  --app-shadow: 5px 5px 0 rgba(43, 35, 22, 0.16);
+  --app-last-visited-bg: #FBDDBA;
+  --app-last-visited-label: #5A3410;
+  --app-code-bg: #EAE0C8;
+}
+:root[data-theme='dark'] {
+  --app-bg: #151517;
+  --app-surface: #1E1E22;
+  --app-text: #F2EEE6;
+  --app-text-muted: #B3AEA3;
+  --app-border: #2E2E34;
+  --app-accent: #F08A3C;
+  --app-accent-text: #1A1208;
+  --app-accent-ink: #F08A3C;
+  --app-field-bg: #2A2A30;
+  --app-field-line: #6E6E78;
+  --app-card-border: #3A3A41;
+  --app-shadow: 5px 5px 0 rgba(0, 0, 0, 0.4);
+  --app-last-visited-bg: #2E2218;
+  --app-last-visited-label: #E8B88A;
+  --app-code-bg: #25252A;
+}
+/* "System": brak atrybutu data-theme + usunięty wpis w localStorage → prefers-color-scheme */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --app-bg: #151517;
+    --app-surface: #1E1E22;
+    --app-text: #F2EEE6;
+    --app-text-muted: #B3AEA3;
+    --app-border: #2E2E34;
+    --app-accent: #F08A3C;
+    --app-accent-text: #1A1208;
+    --app-accent-ink: #F08A3C;
+    --app-field-bg: #2A2A30;
+    --app-field-line: #6E6E78;
+    --app-card-border: #3A3A41;
+    --app-shadow: 5px 5px 0 rgba(0, 0, 0, 0.4);
+    --app-last-visited-bg: #2E2218;
+    --app-last-visited-label: #E8B88A;
+    --app-code-bg: #25252A;
+  }
+}
+
+/* ---------- TOKENY UCZELNI (widok planu) ----------
+   Źródło: konfiguracja adaptera. Poniżej wartości przykładowe dla UMG WN (granat/niebieski).
+   Nie zastępować tokenami --app-*. Kolor tekstu na kolorowych blokach liczyć z luminancji. */
+:root, :root[data-theme='light'] {
+  --school-header-bg: #12274A;
+  --school-header-text: #FFFFFF;
+  --school-header-sub: #CFE0FF;
+  --school-bg: #EAF0FA;
+  --school-surface: #FFFFFF;
+  --school-text: #0F1B33;
+  --school-text-muted: #44566F;
+  --school-border: #A9BBD8;
+  --school-field-bg: #E8EEF9;
+  --school-field-line: #3B5C94;
+  --school-today-tint: rgba(37, 99, 235, 0.08);
+  /* typy zajęć: kolor akcentu (kropka, obramowanie) + tekst etykiety */
+  --lesson-lecture: #2563EB;   --lesson-lecture-text: #1D4ED8;
+  --lesson-exercise: #15803D;  --lesson-exercise-text: #15803D;
+  --lesson-lab: #6D28D9;       --lesson-lab-text: #6D28D9;
+  --lesson-card-bg: #FFFFFF;   /* + nakładka 10–15% koloru typu, border 45% */
+  --own-group-tint: rgba(37, 99, 235, 0.12);
+}
+:root[data-theme='dark'] {
+  --school-header-bg: #0F1D36;
+  --school-header-text: #FFFFFF;
+  --school-header-sub: #8DB8FF;
+  --school-bg: #0A1424;
+  --school-surface: #111F38;
+  --school-text: #E8EEF9;
+  --school-text-muted: #9FB0CC;
+  --school-border: #223657;
+  --school-field-bg: #16284A;
+  --school-field-line: #3B5C94;
+  --school-today-tint: rgba(47, 111, 235, 0.14);
+  --lesson-lecture: #60A5FA;   --lesson-lecture-text: #9CC3FF;
+  --lesson-exercise: #4ADE80;  --lesson-exercise-text: #4ADE80;
+  --lesson-lab: #A78BFA;       --lesson-lab-text: #A78BFA;
+  --lesson-card-bg: #111F38;
+  --own-group-tint: rgba(47, 111, 235, 0.16);
+}
