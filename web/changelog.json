@@ -1,45 +1,12 @@
 [
   {
-    "version": "3.11.0",
-    "date": "2026-10-19",
+    "version": "1.0.0",
+    "date": "2026-10-29",
     "features": [
-      "Nowe okno Wydarzenia z kalendarium nadchodzących wydarzeń w menu bocznym.",
-      "Opcję ukrywania terminów zajęć symulatora manewrowego (GR.SYM-MAN).",
-      "Naprawa błędów i małe zmiany wizualne."
-    ]
-  },
-  {
-    "version": "3.10.1",
-    "date": "2026-10-01",
-    "features": [
-      "Nowe, wygenerowane bezpośrednio z wektora ikony maskowalne PWA.",
-      "Ujednolicenie tła ikony ze splashscreenem (#0d233a) i eliminacja rozmycia na Androidzie 12+."
-    ]
-  },
-  {
-    "version": "3.10.0",
-    "date": "2026-10-01",
-    "features": [
-	  "Pełne wsparcie dla planów studiów niestacjonarnych (NST) oraz II stopnia.",
-      "Usprawniona wyszukiwarka wolnych sal uwzględniająca cykle 2-tygodniowe.",
-      "Nowy system Wydarzeń i Ogłoszeń Studenckich w planie zajęć.",
-      "Karty wydarzeń i okno szczegółów z mapą, opisem i linkami zewnętrznymi.",
-      "Automatyczne dodawanie wydarzeń przez zgłoszenia GitHub Issues.",
-	  "Zwiększony kontrast plakietek w trybie ciemnym (WCAG AA)."
-    ]
-  },
-  {
-    "version": "3.9.0",
-    "date": "2026-09-25",
-    "features": [
-      "Rozpoznawanie typu zajęć na podstawie oficjalnej siatki godzin.",
-      "Oznaczenie typu zajęć kolorami:\n🔵 Wykład\n🟢 Ćwiczenia\n🟣 Laboratorium\n🟠 Symulator",
-      "Eksperymentalna obsługa planów studiów niestacjonarnych (przełącznik w menu – funkcja w fazie testów).",
-      "Wstępna obsługa planów studiów II stopnia.",
-      "Alfabetyczne sortowanie listy kierunków w menu.",
-      "Poprawiony układ kafelków w widoku mobilnym.",
-      "Powiadomienia o aktualizacjach aplikacji.",
-      "Błędy lub pomysły na nowe funkcje?\nZgłoś je w menu O aplikacji."
+      "Wielouczelniana platforma Uniplaner — niezależny plan zajęć dla wielu uczelni i wydziałów.",
+      "Szybki wybór uczelni na stronie głównej z zapamiętywaniem ostatniego planu.",
+      "Trzystanowy przełącznik motywu: Jasny, Ciemny, Systemowy.",
+      "Usprawniony układ kafelków zajęć i ujednolicone oznaczenia sal."
     ]
   }
 ]

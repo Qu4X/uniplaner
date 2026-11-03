@@ -1902,6 +1902,7 @@ select {
     border: none;
     box-shadow: none;
     min-height: 400px;
+    overflow: hidden;
   }
 
   .grid-day-col.is-today {
@@ -2781,8 +2782,8 @@ select {
 .about-plugin-logo-badge {
   width: 56px;
   height: 56px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.04);
+  border-radius: 20%;
+  background: transparent;
   border: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
@@ -2796,7 +2797,7 @@ select {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: inherit;
+  border-radius: 20%;
   display: block;
 }
 

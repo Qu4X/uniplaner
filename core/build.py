@@ -548,6 +548,11 @@ def build_portal(dist_dir: Optional[str] = None, repo_root: Optional[str] = None
             else:
                 shutil.copy2(s, d)
 
+    portal_logo = os.path.join(portal_dir, "assets", "logo.png")
+    if os.path.exists(portal_logo):
+        shutil.copy2(portal_logo, os.path.join(target_dist, "logo.png"))
+        shutil.copy2(portal_logo, os.path.join(target_dist, "favicon.png"))
+
     generate_tenants_registry(repo_root=base, dist_dir=target_dist)
 
 
@@ -664,7 +669,7 @@ def build_tenant(
             html_text = hf.read()
         if has_icon:
             html_text = re.sub(
-                r'<link rel="icon"\s+href="[^"]+">',
+                r'<link\s+rel="icon"[^>]*>',
                 '<link rel="icon" type="image/png" href="icon.png">',
                 html_text
             )
@@ -704,35 +709,33 @@ def build_tenant(
     with open(os.path.join(target_dist, "manifest.json"), "w", encoding="utf-8") as mf:
         json.dump(manifest_data, mf, ensure_ascii=False, indent=2)
 
-    # Scalanie changeloga: globalny web/changelog.json + lokalny tenant changelog.json
+    # Przygotowanie changeloga: wpisy dedykowane danemu tenantowi na górze listy
     tenant_changelog = os.path.join(tenant_dir, "changelog.json")
     global_changelog = os.path.join(base, "web", "changelog.json")
     all_changelogs = []
-    if os.path.exists(global_changelog):
-        try:
-            with open(global_changelog, "r", encoding="utf-8") as gf:
-                g_data = json.load(gf)
-                if isinstance(g_data, list):
-                    all_changelogs.extend(g_data)
-        except Exception as e:
-            logger.warning(f"Błąd wczytywania globalnego changeloga: {e}")
 
     if os.path.exists(tenant_changelog):
         try:
             with open(tenant_changelog, "r", encoding="utf-8") as tf:
                 t_data = json.load(tf)
                 if isinstance(t_data, list):
-                    faculty_tag = config.get("faculty", "Wydział")
-                    for entry in t_data:
-                        t_copy = dict(entry)
-                        if "title" in t_copy and not t_copy["title"].startswith(f"[{faculty_tag}]"):
-                            t_copy["title"] = f"[{faculty_tag}] {t_copy['title']}"
-                        all_changelogs.append(t_copy)
+                    all_changelogs.extend(t_data)
         except Exception as e:
             logger.warning(f"Błąd wczytywania changeloga tenanta: {e}")
 
+    if os.path.exists(global_changelog):
+        try:
+            with open(global_changelog, "r", encoding="utf-8") as gf:
+                g_data = json.load(gf)
+                if isinstance(g_data, list):
+                    known_versions = {str(e.get("version")) for e in all_changelogs}
+                    for entry in g_data:
+                        if str(entry.get("version")) not in known_versions:
+                            all_changelogs.append(entry)
+        except Exception as e:
+            logger.warning(f"Błąd wczytywania globalnego changeloga: {e}")
+
     if all_changelogs:
-        all_changelogs.sort(key=lambda x: str(x.get("date", "")), reverse=True)
         with open(os.path.join(target_dist, "changelog.json"), "w", encoding="utf-8") as cf:
             json.dump(all_changelogs, cf, ensure_ascii=False, indent=2)
 
