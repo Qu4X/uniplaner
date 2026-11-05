@@ -1394,8 +1394,11 @@ select {
 }
 
 .week-status-badge {
-  font-size: 14px;
-  color: var(--school-text-muted);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--school-text);
+  letter-spacing: -0.01em;
 }
 
 .week-title-text {
@@ -1414,6 +1417,38 @@ select {
 
 .week-dates-mobile {
   display: none;
+}
+
+.week-label {
+  text-decoration: underline dotted;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3.5px;
+  text-decoration-color: rgba(148, 163, 184, 0.45);
+}
+
+.week-label .week-status-badge,
+.week-label .week-title-text,
+.week-label .week-dates-inline,
+.week-label .week-dates-mobile {
+  text-decoration: underline dotted;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3.5px;
+  text-decoration-color: rgba(148, 163, 184, 0.45);
+  transition: text-decoration-color 0.15s ease, color 0.15s ease;
+}
+
+.week-label:hover,
+.week-label:hover .week-status-badge,
+.week-label:hover .week-title-text,
+.week-label:hover .week-dates-inline,
+.week-label:hover .week-dates-mobile,
+.week-label:focus-visible,
+.week-label:focus-visible .week-status-badge,
+.week-label:focus-visible .week-title-text,
+.week-label:focus-visible .week-dates-inline,
+.week-label:focus-visible .week-dates-mobile {
+  text-decoration: underline solid;
+  text-decoration-color: currentColor;
 }
 
 @media (max-width: 639px) {
@@ -1456,20 +1491,34 @@ select {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
-  border: 1px solid var(--school-primary, var(--lesson-lecture-text, #1D4ED8));
-  background: transparent;
-  color: var(--school-primary, var(--lesson-lecture-text, #1D4ED8));
+  border: 1px solid rgba(2, 132, 199, 0.45);
+  background-color: var(--lesson-card-bg);
+  background-image: linear-gradient(rgba(2, 132, 199, 0.08), rgba(2, 132, 199, 0.08));
+  color: #0284c7;
   font-family: var(--font-body);
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
   flex-shrink: 0;
   white-space: nowrap;
-  transition: background 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
 .btn-today:hover {
-  background: var(--school-today-tint);
+  background-image: linear-gradient(rgba(2, 132, 199, 0.16), rgba(2, 132, 199, 0.16));
+  border-color: rgba(2, 132, 199, 0.7);
+}
+
+[data-theme="dark"] .btn-today {
+  border-color: rgba(56, 189, 248, 0.45);
+  background-color: var(--lesson-card-bg);
+  background-image: linear-gradient(rgba(56, 189, 248, 0.15), rgba(56, 189, 248, 0.15));
+  color: #38bdf8;
+}
+
+[data-theme="dark"] .btn-today:hover {
+  background-image: linear-gradient(rgba(56, 189, 248, 0.25), rgba(56, 189, 248, 0.25));
+  border-color: rgba(56, 189, 248, 0.7);
 }
 
 @media (max-width: 639px) {
@@ -1880,6 +1929,10 @@ select {
   gap: 0.75rem;
 }
 
+.grid-day-col-badge {
+  display: none;
+}
+
 /* Desktop Schedule View: Grid */
 @media (min-width: 900px) {
   .schedule-week-grid {
@@ -1901,8 +1954,29 @@ select {
     background: transparent;
     border: none;
     box-shadow: none;
-    min-height: 400px;
+    min-height: auto;
+    height: fit-content;
+    align-self: start;
     overflow: hidden;
+  }
+
+  .grid-day-header .grid-day-swap-badge {
+    display: none;
+  }
+
+  .grid-day-col-badge {
+    display: block;
+    width: 100%;
+  }
+
+  .grid-day-swap-badge {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    margin: 0;
+    white-space: normal;
   }
 
   .grid-day-col.is-today {
@@ -1977,14 +2051,19 @@ select {
 
 /* Holiday lesson card variant */
 .lesson-card.holiday-card {
-  border-left: 4px solid #0284c7;
+  border: 1px solid rgba(2, 132, 199, 0.45);
+  border-radius: 12px;
+  background-color: var(--lesson-card-bg);
+  background-image: linear-gradient(rgba(2, 132, 199, 0.08), rgba(2, 132, 199, 0.08));
   padding: 1.25rem 1rem;
   justify-content: center;
   align-items: center;
 }
 
 [data-theme="dark"] .lesson-card.holiday-card {
-  border-left-color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.45);
+  background-color: var(--lesson-card-bg);
+  background-image: linear-gradient(rgba(56, 189, 248, 0.15), rgba(56, 189, 248, 0.15));
 }
 
 .holiday-card-content {
@@ -2058,12 +2137,12 @@ select {
   border: 1px solid var(--school-border);
   border-left-width: 1px;
   box-shadow: none;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .lesson-card:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  transform: none;
+  box-shadow: var(--shadow-sm);
 }
 
 /* Form Styles */
@@ -2290,7 +2369,7 @@ select {
   gap: 5px;
   min-height: auto;
   margin: 0;
-  padding: 2px 6px;
+  padding: 2px 0;
   border: none;
   background: transparent;
   color: inherit;
@@ -2365,7 +2444,7 @@ select {
   max-width: 100%;
   white-space: normal;
   word-break: normal;
-  overflow-wrap: break-word;
+  overflow-wrap: normal;
 }
 
 .lesson-footer .lesson-weeks {
@@ -2382,8 +2461,17 @@ select {
   align-self: flex-end;
   text-align: right;
   white-space: nowrap;
-  display: inline-flex;
-  justify-content: flex-end;
+}
+
+@media (min-width: 900px) {
+  .lesson-footer .lesson-weeks.final-week {
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: normal;
+    max-width: 95px;
+    line-height: 1.25;
+    display: inline-block;
+  }
 }
 
 .lesson-teacher {
@@ -2423,7 +2511,7 @@ select {
   max-width: 100%;
   white-space: normal;
   word-break: normal;
-  overflow-wrap: break-word;
+  overflow-wrap: normal;
   margin: 0;
   padding: 0;
   border: none;
@@ -3700,6 +3788,17 @@ iframe[src*="tally.so"] {
   color: var(--school-header-sub, #8DB8FF);
 }
 
+.lesson-faculty-badge {
+  font-weight: 700;
+  font-size: 11px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background-color: var(--school-border, rgba(141, 184, 255, 0.15));
+  color: var(--school-header-sub, #8DB8FF);
+  letter-spacing: 0.03em;
+  margin-right: 6px;
+}
+
 .modal-slot-subject {
   font-family: var(--font-display);
   font-weight: 600;
@@ -3825,7 +3924,6 @@ iframe[src*="tally.so"] {
 .event-card {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-left: 4px solid var(--event-accent-color, var(--brand-accent));
   border-radius: var(--radius);
   padding: 0.75rem 0.9rem;
   box-shadow: var(--shadow-sm);
@@ -4154,7 +4252,6 @@ iframe[src*="tally.so"] {
 .events-modal-item {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-left: 4px solid var(--event-accent-color, var(--brand-primary));
   border-radius: var(--radius);
   padding: 1rem 1.15rem;
   box-shadow: var(--shadow-sm);
@@ -4562,7 +4659,7 @@ iframe[src*="tally.so"] {
   margin-bottom: 1rem;
   padding: 0.75rem 1rem;
   border-radius: var(--radius);
-  background: #fef9c3;
+  background-color: #fef9c3;
   color: #854d0e;
   border: 1px solid #fde047;
   font-size: 0.875rem;
@@ -4571,6 +4668,9 @@ iframe[src*="tally.so"] {
   flex-direction: column;
   gap: 0.6rem;
   box-shadow: var(--shadow-sm);
+  position: relative;
+  z-index: 2;
+  opacity: 1;
 }
 
 .calendar-notice-item {
@@ -4706,19 +4806,19 @@ iframe[src*="tally.so"] {
 }
 
 [data-theme="dark"] .calendar-notice {
-  background: #422006;
+  background-color: #2e1703;
   color: #fef08a;
   border-color: #854d0e;
 }
 
 .calendar-notice.holiday {
-  background: #e0f2fe;
+  background-color: #e0f2fe;
   color: #0369a1;
   border-color: #bae6fd;
 }
 
 [data-theme="dark"] .calendar-notice.holiday {
-  background: #082f49;
+  background-color: #082f49;
   color: #7dd3fc;
   border-color: #0369a1;
 }

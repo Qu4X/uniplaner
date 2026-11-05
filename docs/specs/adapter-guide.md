@@ -240,6 +240,32 @@ class MojWydzialAdapter(ScheduleSource):
 1. **Czas i czas trwania**: `start_time` i `end_time` w formacie `"HH:MM"`, `duration_minutes` musi być dodatnią liczbą całkowitą równą różnicy czasu.
 2. **Standardowe formy**: `form` musi odpowiadać kluczom zdefiniowanym w `config.json` (`lecture`, `exercise`, `lab`, `project`, `seminar`, `elective`, itp.).
 3. **Flaga `hideable`**: Jeśli dany przedmiot jest fakultetem lub lektoratem z podziałem na grupy wyboru, ustaw `hideable = True` — umożliwi to studentom ukrywanie grup, do których nie uczęszczają.
+4. **Standaryzacja sal (`room`)**:
+   - Preferuj pełne identyfikatory z prefiksem budynku (np. `N102`, `C136`), unikaj niejednoznacznych samych cyfr (np. `102`), które mogą kolidować między różnymi wydziałami na tym samym kampusie.
+   - Nazwy sal ogólnouczelnianych wpisuj jednolicie (np. `Aula`, `Audytorium`, `Basen`). W razie konieczności ujednolicenia używaj `tenants/<uczelnia>/_common/aliases.json`.
+5. **Format prowadzących (`teacher`)**:
+   - Podawaj prowadzącego w czytelnej formie (np. `dr Jan Kowalski` lub `Kowalski Jan`). Silnik `core.normalizer` automatycznie usuwa tytuły naukowe i ujednolica wielkości liter, ale unikanie dziwnych skrótów ułatwia integrację międzywydziałową.
+
+---
+
+## 8. Integracja międzywydziałowa i słowniki uczelniane (`_common/aliases.json`)
+
+Platforma Uniplaner wspiera agregację międzywydziałową w ramach tej samej uczelni (np. `umg/wn` i `umg/wm`):
+* **Współdzielone sale i audytoria:** Zajęcia odbywające się w salach wspólnych są widoczne w module wolnych sal na każdym wydziale z etykietą wydziału źródłowego (np. `[WM]`).
+* **Wspólny słownik uczelni:** W katalogu `tenants/<uczelnia_id>/_common/aliases.json` można definiować globalne aliasy dla całej uczelni:
+  ```json
+  {
+    "teachers": {
+      "Kowalski J.": "Jan Kowalski"
+    },
+    "rooms": {
+      "aula glowna": "Aula",
+      "audytorium": "Audytorium"
+    },
+    "subjects": {}
+  }
+  ```
+* **Audyt kolizji:** Podczas pełnego buildu (`core.build all`) silnik automatycznie wykrywa podwójne rezerwacje sal i prowadzących między wydziałami, zapisując raport do `dist/<uczelnia_id>/reports/conflicts.json`.
 
 ---
 

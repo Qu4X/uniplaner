@@ -441,6 +441,7 @@
           <div class="modal-slot-content-col">
             <div class="modal-slot-top-row">
               ${typeBadgeHtml}
+              ${item.source_faculty ? `<span class="lesson-faculty-badge" title="Zajęcia wydziału ${escapeHtml(item.source_faculty)}">[${escapeHtml(item.source_faculty)}]</span>` : ''}
               ${isUserGroup ? '<span class="user-group-badge">Twoja grupa</span>' : ''}
               ${cycleBadges ? `<div class="modal-slot-badges">${cycleBadges}</div>` : ''}
             </div>

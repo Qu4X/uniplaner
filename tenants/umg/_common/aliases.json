@@ -1,0 +1,10 @@
+{
+  "teachers": {},
+  "rooms": {
+    "aula": "Aula",
+    "audytorium": "Audytorium",
+    "basen": "Basen",
+    "hala": "Hala Sportowa"
+  },
+  "subjects": {}
+}

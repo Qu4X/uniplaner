@@ -589,6 +589,24 @@ def build_all_tenants(
             results[t_slug] = {"error": str(e)}
             raise
 
+    # Agregacja międzywydziałowa per uczelnia (Cross-Faculty Institution Merge)
+    from core.cross_faculty import merge_institution_cross_references
+    inst_groups = defaultdict(list)
+    for t in tenants:
+        inst_groups[t.get("institution", "").lower()].append(t)
+
+    for inst_id, inst_tenants in inst_groups.items():
+        if inst_id:
+            try:
+                merge_institution_cross_references(
+                    inst_id,
+                    dist_dir=target_dist,
+                    repo_root=base,
+                    tenants_list=inst_tenants
+                )
+            except Exception as e:
+                logger.warning(f"Ostrzeżenie podczas agregacji międzywydziałowej dla {inst_id}: {e}", exc_info=True)
+
     build_portal(dist_dir=target_dist, repo_root=base)
     return results
 
