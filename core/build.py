@@ -590,6 +590,7 @@ def build_all_tenants(
             raise
 
     # Agregacja międzywydziałowa per uczelnia (Cross-Faculty Institution Merge)
+    from collections import defaultdict
     from core.cross_faculty import merge_institution_cross_references
     inst_groups = defaultdict(list)
     for t in tenants:
