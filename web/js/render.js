@@ -385,7 +385,7 @@
 
     const weekTitle = prefix || "Tydzień";
     const statusBadge = state.weekOffset === 0
-      ? '<span class="week-status-badge">Bieżący tydzień</span>'
+      ? '<span class="week-status-badge">Bieżący</span>'
       : "";
 
     elements.currentWeekLabel.innerHTML = `
@@ -827,6 +827,7 @@
             <span class="grid-day-header-title">${DNI_PELNE[day]} <span style="font-size: 0.8em; font-weight: normal; opacity: 0.75;">${dayDateFormatted}</span> ${isToday ? '• Dziś' : ''}</span>
             ${swapBadge}
           </div>
+          ${swapBadge ? `<div class="grid-day-col-badge">${swapBadge}</div>` : ''}
           <div class="grid-lessons-list">
             ${lessons.length > 0
             ? lessons.map((l) => renderLessonCardFn(l, targetMonday, day)).join("")

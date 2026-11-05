@@ -1140,6 +1140,22 @@ with open(os.path.join(REPO_ROOT, "portal", "portal.css"), "r", encoding="utf-8"
     check("portal.css zawiera border-radius: 20% dla .faculty-logo-img", "border-radius: 20%;" in portal_css)
 
 
+# ── 35. Weryfikacja reguł stylów UI siatki i kafelków ───────────────────────
+print("\n-- 35. Weryfikacja reguł stylów UI siatki i kafelków -----------------------")
+check("style.css: .lesson-card:hover nie podnosi kafelka (transform: none)", "transform: none;" in web_css)
+check("style.css: .grid-day-col nie posiada min-height: 400px", "min-height: 400px;" not in web_css)
+check("style.css: .lesson-middle-row ma justify-content: space-between dla wyrównania sali", "justify-content: space-between;" in web_css)
+check("style.css: .lesson-card .lesson-room-btn ma padding: 2px 0", "padding: 2px 0;" in web_css)
+check("style.css: .lesson-card.holiday-card nie posiada border-left: 4px", "border-left: 4px" not in web_css.split(".lesson-card.holiday-card")[1].split("}")[0])
+check("style.css: .lesson-footer .lesson-teacher-btn nie łamie słów w połowie", "overflow-wrap: normal;" in web_css)
+check("style.css: .grid-day-swap-badge rozciąga się na 100% szerokości", ".grid-day-swap-badge" in web_css and "width: 100%;" in web_css)
+check("style.css: .week-status-badge ma styl tekstu tytułu tygodnia", "font-family: var(--font-display);" in web_css.split(".week-status-badge")[1].split("}")[0])
+check("style.css: .btn-today ma tło kafelka dnia wolnego", "background-image: linear-gradient(" in web_css.split(".btn-today")[1].split("}")[0])
+check("style.css: .event-card nie posiada border-left: 4px", "border-left: 4px" not in web_css.split(".event-card")[1].split("}")[0])
+check("style.css: .lesson-footer .lesson-weeks.final-week jest nowrap w widoku mobilnym", "white-space: nowrap;" in web_css.split(".lesson-footer .lesson-weeks.final-week")[1].split("}")[0])
+check("style.css: .week-label ma kropkowane podkreślenie z affordance klikalności", "text-decoration: underline dotted;" in web_css and "text-underline-offset: 3.5px;" in web_css and ".week-label" in web_css)
+check("style.css: .grid-day-col-badge jest ukryty domyślnie na mobile", "display: none;" in web_css.split(".grid-day-col-badge")[1].split("}")[0])
+
 # ── Summary ───────────────────────────────────────────────────────────────────
 print("\n" + "="*60)
 passed = sum(1 for ok,_ in results if ok)
